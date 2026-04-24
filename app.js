@@ -60,15 +60,8 @@ function brandShield(){
     </div>`;
 }
 
-function render(){
-  if(currentStep === steps.SEARCH) renderSearch();
-  if(currentStep === steps.CONFIRM) renderConfirm();
-  if(currentStep === steps.IMPORT) renderImport();
-  if(currentStep === steps.ADMIN) renderAdmin();
-  if(currentStep === steps.SUCCESS) renderSuccess();
-}
-
 function renderSearch(){
+  currentStep = steps.SEARCH;
   app.className = 'auth-shell';
   app.innerHTML = `
     <section class="auth-card glass-panel" aria-labelledby="authTitle">
@@ -89,8 +82,10 @@ function renderSearch(){
           <span>Tag do clã</span>
           <input id="clanTag" name="clanTag" type="text" inputmode="text" autocomplete="off" placeholder="Ex: #ABC123" />
         </label>
-        <button class="primary-btn" type="submit"><span>Buscar Clã</span></button>
-        <button class="link-btn" type="button">Ainda não tem um clã? <b>Saiba mais</b></button>
+        <button class="primary-btn" type="submit">
+          <span>Buscar Clã</span>
+        </button>
+        <button class="link-btn" type="button" id="learnMore">Ainda não tem um clã? <b>Saiba mais</b></button>
       </form>
     </section>
   `;
@@ -100,14 +95,14 @@ function renderSearch(){
     const tag = normalizeClanTag(document.querySelector('#clanTag').value || '#DEMO123');
     clan = tag === '#DEMO123' ? getDemoClan() : {...getDemoClan(), tag, name:'Clã encontrado'};
     currentStep = steps.CONFIRM;
-    render();
+    renderConfirm();
   });
 }
 
 function stepper(active){
   const labels = ['Buscar','Confirmar','Importar','Admin','Concluir'];
-  return `<div class="stepper">${labels.map((label,idx)=>`
-    <div class="step-item ${idx+1===active?'active':''}">
+  return `<div class="stepper onboarding-stepper">${labels.map((label,idx)=>`
+    <div class="step-item ${idx+1===active?'active':''} ${idx+1<active?'done':''}">
       <div class="step-dot">${idx+1}</div>
       <div class="step-label">${label}</div>
     </div>`).join('')}</div>`;
@@ -118,7 +113,7 @@ function onboardShell(active, content){
   app.innerHTML = `
     <section class="onboarding-card glass-panel">
       <div class="onboard-top">
-        <button class="back-btn" type="button" id="backBtn">‹</button>
+        <button class="back-btn" type="button" id="backBtn" aria-label="Voltar">‹</button>
         <div class="onboard-title">Onboarding</div>
         <div></div>
       </div>
@@ -128,13 +123,21 @@ function onboardShell(active, content){
   const back = document.querySelector('#backBtn');
   if(back){
     back.addEventListener('click', ()=>{
-      if(currentStep === steps.CONFIRM) currentStep = steps.SEARCH;
-      else if(currentStep === steps.IMPORT) currentStep = steps.CONFIRM;
+      if(currentStep === steps.CONFIRM) return renderSearch();
+      if(currentStep === steps.IMPORT) currentStep = steps.CONFIRM;
       else if(currentStep === steps.ADMIN) currentStep = steps.CONFIRM;
       else if(currentStep === steps.SUCCESS) currentStep = steps.ADMIN;
-      render();
+      renderCurrent();
     });
   }
+}
+
+function renderCurrent(){
+  if(currentStep === steps.SEARCH) return renderSearch();
+  if(currentStep === steps.CONFIRM) return renderConfirm();
+  if(currentStep === steps.IMPORT) return renderImport();
+  if(currentStep === steps.ADMIN) return renderAdmin();
+  if(currentStep === steps.SUCCESS) return renderSuccess();
 }
 
 function renderConfirm(){
@@ -166,8 +169,8 @@ function renderConfirm(){
     <button class="gold-btn" id="confirmClan">Confirmar Clã</button>
     <button class="ghost-btn" id="otherClan">Buscar outro clã</button>
   `);
-  document.querySelector('#confirmClan').addEventListener('click', ()=>{currentStep = steps.IMPORT; render();});
-  document.querySelector('#otherClan').addEventListener('click', ()=>{currentStep = steps.SEARCH; render();});
+  document.querySelector('#confirmClan').addEventListener('click', ()=>{currentStep = steps.IMPORT; renderImport();});
+  document.querySelector('#otherClan').addEventListener('click', ()=>renderSearch());
 }
 
 function renderImport(){
@@ -181,7 +184,7 @@ function renderImport(){
     <div class="import-progress">
       <div class="progress-inner"><div><strong>38</strong><br><span>/47</span></div></div>
     </div>
-    <p class="confirm-copy"><strong>Importados com sucesso</strong></p>
+    <p class="import-sub"><strong>Importados com sucesso</strong></p>
 
     <div class="import-list">
       ${importedMembers.map((m,i)=>`
@@ -192,7 +195,7 @@ function renderImport(){
 
     <div class="note-box">Não feche o app durante a importação.</div>
   `);
-  setTimeout(()=>{currentStep = steps.ADMIN; render();}, 1800);
+  setTimeout(()=>{currentStep = steps.ADMIN; renderAdmin();}, 1800);
 }
 
 function renderAdmin(){
@@ -209,7 +212,7 @@ function renderAdmin(){
     </div>
     <button class="primary-btn" id="createAdmin">Criar conta e iniciar clã</button>
   `);
-  document.querySelector('#createAdmin').addEventListener('click', ()=>{currentStep = steps.SUCCESS; render();});
+  document.querySelector('#createAdmin').addEventListener('click', ()=>{currentStep = steps.SUCCESS; renderSuccess();});
 }
 
 function renderSuccess(){
@@ -227,4 +230,4 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
 
-render();
+renderSearch();

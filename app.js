@@ -124,23 +124,51 @@ function renderSearch(){
   document.querySelector('#backToClan').addEventListener('click', ()=>hideAuthFace());
 }
 
+
+function eyeSvg(){
+  return `<svg class="eye-svg" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </svg>`;
+}
+
+function eyeOffSvg(){
+  return `<svg class="eye-svg" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 3l18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M10.7 5.2A10 10 0 0 1 12 5c6 0 9.5 7 9.5 7a16.7 16.7 0 0 1-3.1 4.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.2 6.8C3.8 8.5 2.5 12 2.5 12s3.5 7 9.5 7a9.8 9.8 0 0 0 4.1-.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function togglePassword(inputId, button){
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const visible = input.type === 'text';
+  input.type = visible ? 'password' : 'text';
+  button.innerHTML = visible ? eyeSvg() : eyeOffSvg();
+  button.setAttribute('aria-label', visible ? 'Mostrar senha' : 'Ocultar senha');
+}
+
 function showLoginFace(){
   const content = document.querySelector('#authBackContent');
   content.innerHTML = `
     <h2>Acessar sistema</h2>
     <p class="auth-mode-copy">Entre com seu email e senha para continuar.</p>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Email</span>
       <input type="email" placeholder="seu@email.com" autocomplete="email" />
     </label>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Senha</span>
-      <input type="password" placeholder="Sua senha" autocomplete="current-password" />
+      <div class="password-wrap">
+        <input id="loginPassword" type="password" placeholder="Sua senha" autocomplete="current-password" />
+        <button type="button" class="eye-btn" aria-label="Mostrar senha" onclick="togglePassword('loginPassword', this)">${eyeSvg()}</button>
+      </div>
     </label>
 
-    <button class="primary-btn" type="button">Entrar</button>
+    <button class="primary-btn auth-main-btn" type="button">Entrar</button>
 
     <button class="link-btn forgot-btn" type="button"><b>Esqueci minha senha</b></button>
 
@@ -158,12 +186,12 @@ function showSignupFace(){
     <h2>Criar cadastro</h2>
     <p class="auth-mode-copy">Valide sua tag para vincular seu perfil ao clã.</p>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Nome</span>
       <input type="text" placeholder="Seu nome" autocomplete="name" />
     </label>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Tag do jogador</span>
       <div class="input-with-btn">
         <input id="playerTag" type="text" placeholder="#PLAYER123" autocomplete="off" />
@@ -172,27 +200,25 @@ function showSignupFace(){
       <small class="tag-feedback" id="tagFeedback"></small>
     </label>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Nick</span>
       <input id="playerNick" type="text" placeholder="Será preenchido após validar" disabled />
     </label>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Email</span>
       <input type="email" placeholder="seu@email.com" autocomplete="email" />
     </label>
 
-    <label class="field">
+    <label class="field auth-field">
       <span>Senha</span>
-      <input type="password" placeholder="Crie uma senha" autocomplete="new-password" />
+      <div class="password-wrap">
+        <input id="signupPassword" type="password" placeholder="Crie uma senha" autocomplete="new-password" />
+        <button type="button" class="eye-btn" aria-label="Mostrar senha" onclick="togglePassword('signupPassword', this)">${eyeSvg()}</button>
+      </div>
     </label>
 
-    <label class="field">
-      <span>Confirmar senha</span>
-      <input type="password" placeholder="Repita a senha" autocomplete="new-password" />
-    </label>
-
-    <button class="primary-btn" type="button">Confirmar cadastro</button>
+    <button class="primary-btn auth-main-btn" type="button">Confirmar cadastro</button>
 
     <div class="member-access compact">
       <span>Já tem conta?</span>

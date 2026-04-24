@@ -91,3 +91,36 @@ body{overflow-x:hidden}
   animation:rise .22s ease-out both;
 }
 .onboard-top{display:grid;grid-template-columns:40px 1fr 40px;align-items:center}.back-btn{width:40px;height:40px;border-radius:14px;border:0;background:transparent;color:#fff;font-size:1.55rem}.onboard-title{text-align:center;font-weight:900}.onboarding-stepper{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:0 4px 6px;position:relative}.onboarding-stepper::before{content:"";position:absolute;left:10%;right:10%;top:15px;height:2px;background:rgba(87,114,175,.34)}.step-item{display:grid;justify-items:center;gap:8px;z-index:1}.step-dot{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;border:2px solid rgba(91,130,255,.55);background:#071226;color:#6fa0ff;font-size:.78rem;font-weight:800}.step-item.active .step-dot{border-color:rgba(255,210,80,.85);background:rgba(248,200,79,.20);color:#ffd65f;box-shadow:0 0 18px rgba(248,200,79,.25)}.step-item.done .step-dot{border-color:rgba(91,130,255,.7);color:#8bb4ff}.step-label{font-size:.58rem;color:#cbd6ee;font-weight:800}.onboard-heading{text-align:center;margin:8px 0 0}.onboard-heading h1{font-size:1.28rem;line-height:1.2;margin:0 0 8px}.onboard-heading p{margin:0;color:#b8c5dc;font-size:.82rem;line-height:1.5}.clan-confirm-card{border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(26,39,69,.75),rgba(8,17,34,.78));border:1px solid rgba(176,199,255,.15)}.clan-main{display:flex;gap:14px;align-items:center;padding:16px}.clan-icon{width:62px;height:62px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}.clan-icon img{width:46px}.clan-main h2{margin:0;font-size:1.25rem}.clan-main p{margin:3px 0 0;color:#aebbd2}.clan-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(176,199,255,.12)}.clan-stat{padding:13px 10px;text-align:center}.clan-stat span{display:block;color:#9eacc7;text-transform:uppercase;font-size:.58rem;font-weight:900;letter-spacing:.08em;margin-bottom:6px}.clan-stat strong{font-size:.95rem}.confirm-copy{text-align:center;margin:auto 0 0}.confirm-copy h3{margin:0 0 8px;font-size:.95rem}.confirm-copy p{margin:0;color:#9eacc7;font-size:.78rem}.ghost-btn{color:var(--gold);background:none;padding:10px 0;border:0;font-weight:900;cursor:pointer}.import-progress{width:170px;height:170px;border-radius:50%;margin:18px auto 4px;background:conic-gradient(var(--gold) 0deg 292deg, rgba(255,255,255,.08) 292deg 360deg);display:grid;place-items:center;box-shadow:0 0 26px rgba(248,200,79,.12)}.progress-inner{width:132px;height:132px;border-radius:50%;background:#06101f;display:grid;place-items:center;text-align:center}.progress-inner strong{font-size:2.5rem;line-height:1}.progress-inner span{font-weight:800;color:#cbd6ee}.import-sub{text-align:center;margin:0;color:#dce6ff;font-size:.78rem}.import-list{border:1px solid rgba(176,199,255,.14);border-radius:14px;overflow:hidden;margin-top:8px}.import-row{display:grid;grid-template-columns:24px 1fr 98px 22px;gap:6px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(176,199,255,.10);font-size:.72rem}.import-row:last-child{border-bottom:0}.import-row small{color:#9eacc7}.ok{color:#62ed87;font-weight:900}.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.16);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}.note-box{border-radius:12px;text-align:center;color:#9eacc7;font-size:.73rem;background:rgba(255,255,255,.04);padding:14px;margin-top:12px}.admin-box{display:grid;gap:12px;margin-top:4px}.success-seal{width:96px;height:96px;margin:22px auto;border-radius:30px;display:grid;place-items:center;background:linear-gradient(180deg,rgba(248,200,79,.23),rgba(248,200,79,.08));border:1px solid rgba(248,200,79,.45);font-size:2.5rem}@media (max-height:720px){.onboarding-card{min-height:auto;gap:16px}.import-progress{width:140px;height:140px}.progress-inner{width:108px;height:108px}.progress-inner strong{font-size:2rem}.step-label{font-size:.52rem}}
+
+
+/* ===== Refino 01: textos + importação animada ===== */
+.animated-import{
+  background:
+    conic-gradient(var(--gold) 0 var(--progress), rgba(255,255,255,.08) var(--progress) 100%) !important;
+  transition: background .45s ease, filter .45s ease;
+  filter: drop-shadow(0 0 18px rgba(248,200,79,.16));
+}
+
+.import-row{
+  transition: transform .22s ease, border-color .22s ease, background .22s ease;
+}
+
+.import-row.imported{
+  background: rgba(39, 209, 127, .07);
+  border-color: rgba(39, 209, 127, .18);
+  transform: translateX(2px);
+}
+
+.import-row .ok{
+  color:#42f093;
+  font-weight:900;
+  text-shadow:0 0 12px rgba(66,240,147,.35);
+}
+
+.import-sub strong{
+  transition: color .25s ease;
+}
+
+.link-btn{
+  text-align:center;
+}

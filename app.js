@@ -77,7 +77,7 @@ function renderSearch(){
       </div>
 
       <form class="setup-box glass-inset" id="clanForm">
-        <h2>Selecione ou cadastre seu clã</h2>
+        <h2>Cadastre seu clã</h2>
         <label class="field">
           <span>Tag do clã</span>
           <input id="clanTag" name="clanTag" type="text" inputmode="text" autocomplete="off" placeholder="Ex: #ABC123" />
@@ -85,7 +85,7 @@ function renderSearch(){
         <button class="primary-btn" type="submit">
           <span>Buscar Clã</span>
         </button>
-        <button class="link-btn" type="button" id="learnMore">Ainda não tem um clã? <b>Saiba mais</b></button>
+        <button class="link-btn" type="button" id="learnMore"><b>Assine agora!</b></button>
       </form>
     </section>
   `;
@@ -174,28 +174,65 @@ function renderConfirm(){
 }
 
 function renderImport(){
-  importedMembers = getDemoMembers();
-  onboardShell(3, `
-    <div class="onboard-heading">
-      <h1>Importando membros</h1>
-      <p>Estamos buscando os membros do seu clã na API do Clash Royale.</p>
-    </div>
+  importedMembers = getDemoMembers().map((member)=>({...member, done:false}));
+  let currentImported = 0;
+  const totalMembers = clan?.members || 47;
 
-    <div class="import-progress">
-      <div class="progress-inner"><div><strong>38</strong><br><span>/47</span></div></div>
-    </div>
-    <p class="import-sub"><strong>Importados com sucesso</strong></p>
+  function paintImport(){
+    const listMarkup = importedMembers.map((m,i)=>`
+        <div class="import-row ${m.done ? 'imported' : ''}">
+          <span>${i+1}</span>
+          <strong>${m.name}</strong>
+          <small>${m.tag}</small>
+          ${m.done ? '<span class="ok">✓</span>' : '<span class="spin"></span>'}
+        </div>`).join('');
 
-    <div class="import-list">
-      ${importedMembers.map((m,i)=>`
-        <div class="import-row">
-          <span>${i+1}</span><strong>${m.name}</strong><small>${m.tag}</small>${m.done?'<span class="ok">✓</span>':'<span class="spin"></span>'}
-        </div>`).join('')}
-    </div>
+    onboardShell(3, `
+      <div class="onboard-heading">
+        <h1>Importando membros</h1>
+        <p>Estamos buscando os membros do seu clã na API do Clash Royale.</p>
+      </div>
 
-    <div class="note-box">Não feche o app durante a importação.</div>
-  `);
-  setTimeout(()=>{currentStep = steps.ADMIN; renderAdmin();}, 1800);
+      <div class="import-progress animated-import" style="--progress:${Math.min(100, Math.round((currentImported / totalMembers) * 100))}%">
+        <div class="progress-inner">
+          <div>
+            <strong id="importCount">${currentImported}</strong><br>
+            <span>/${totalMembers}</span>
+          </div>
+        </div>
+      </div>
+      <p class="import-sub"><strong>${currentImported >= importedMembers.length ? 'Importados com sucesso' : 'Importando membros...'}</strong></p>
+
+      <div class="import-list">
+        ${listMarkup}
+      </div>
+
+      <div class="note-box">Não feche o app durante a importação.</div>
+    `);
+  }
+
+  paintImport();
+
+  const importSteps = [8, 17, 26, 38, 47];
+  let tick = 0;
+
+  const interval = setInterval(()=>{
+    if(tick < importedMembers.length){
+      importedMembers[tick].done = true;
+    }
+
+    currentImported = importSteps[Math.min(tick, importSteps.length - 1)] || totalMembers;
+    tick++;
+    paintImport();
+
+    if(tick > importSteps.length){
+      clearInterval(interval);
+      setTimeout(()=>{
+        currentStep = steps.ADMIN;
+        renderAdmin();
+      }, 650);
+    }
+  }, 620);
 }
 
 function renderAdmin(){

@@ -124,3 +124,114 @@ body{overflow-x:hidden}
 .link-btn{
   text-align:center;
 }
+
+
+/* ===== Auth flip login/cadastro ===== */
+.flip-wrap{
+  perspective: 1200px;
+}
+
+.flip-card-inner{
+  position: relative;
+  width: 100%;
+  min-height: 360px;
+  transform-style: preserve-3d;
+  transition: transform .62s cubic-bezier(.2,.8,.2,1);
+}
+
+.flip-wrap.is-flipped .flip-card-inner{
+  transform: rotateY(180deg);
+}
+
+.flip-face{
+  min-height: 360px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-front{
+  position: relative;
+}
+
+.flip-back{
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 22px;
+}
+
+.flip-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font-size:1.35rem;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.member-access{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px;
+  color:#aebbd2;
+  font-size:.82rem;
+  margin:2px 0 -2px;
+}
+
+.member-access.compact{
+  margin-top:12px;
+}
+
+.inline-link{
+  width:auto;
+  padding:0;
+  margin:0;
+  border:0;
+  background:none;
+  color:#62a8ff;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.sign-link{
+  margin-top:0;
+}
+
+.auth-mode-copy{
+  margin: -4px 0 6px;
+  color:#aebbd2;
+  font-size:.82rem;
+  text-align:center;
+  line-height:1.45;
+}
+
+.forgot-btn{
+  margin-top:2px;
+}
+
+.field input:disabled{
+  opacity:.62;
+  color:#9eacc7;
+  background:rgba(8,17,33,.42);
+}
+
+@media (max-height: 760px){
+  .flip-card-inner,
+  .flip-face{
+    min-height: 330px;
+  }
+  .flip-back{
+    max-height: 430px;
+  }
+}

@@ -165,9 +165,8 @@ body{overflow-x:hidden}
 
 .flip-close{
   position:absolute;
-  top:16px;
+  top:12px;
   right:12px;
-  backdrop-filter: blur(6px);
   width:38px;
   height:38px;
   border-radius:14px;
@@ -302,7 +301,7 @@ body{overflow-x:hidden}
 }
 
 .flip-close{
-  top: 16px !important;
+  top: 8px !important;
   right: 10px !important;
   transform: translateY(-8px);
   z-index: 10;
@@ -403,4 +402,112 @@ body{overflow-x:hidden}
   .auth-main-btn{
     width:100%;
   }
+}
+
+
+/* ===== Refino: fechar alinhado + popup esqueci senha ===== */
+.flip-close{
+  top: 16px !important;
+  right: 12px !important;
+  transform: none !important;
+}
+
+.premium-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  background:rgba(2,8,18,.58);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease;
+}
+
+.premium-modal-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.premium-modal{
+  position:relative;
+  width:min(100%, 360px);
+  border-radius:26px;
+  padding:28px 22px 22px;
+  transform:translateY(14px) scale(.97);
+  opacity:.98;
+  transition:transform .24s cubic-bezier(.2,.8,.2,1);
+}
+
+.premium-modal-overlay.show .premium-modal{
+  transform:translateY(0) scale(1);
+}
+
+.modal-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:40px;
+  height:40px;
+  border-radius:15px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.07);
+  color:#fff;
+  font-size:1.35rem;
+  font-weight:900;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+
+.modal-eyebrow{
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:.16em;
+  font-size:.66rem;
+  font-weight:900;
+  margin-bottom:14px;
+  padding-right:44px;
+}
+
+.premium-modal h2{
+  margin:0 44px 8px 0;
+  font-size:1.32rem;
+  line-height:1.15;
+}
+
+.premium-modal p{
+  margin:0 0 18px;
+  color:#b8c5dc;
+  line-height:1.45;
+  font-size:.88rem;
+}
+
+.modal-field{
+  margin-bottom:16px;
+}
+
+.modal-action{
+  width:100%;
+  margin-top:4px !important;
+}
+
+.modal-feedback{
+  display:block;
+  min-height:20px;
+  margin-top:12px;
+  text-align:center;
+  color:#aebbd2;
+  font-size:.78rem;
+}
+
+.modal-feedback.success{
+  color:#42f093;
+}
+
+.modal-feedback.error{
+  color:#ff6f8f;
 }

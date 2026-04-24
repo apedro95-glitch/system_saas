@@ -170,7 +170,7 @@ function showLoginFace(){
 
     <button class="primary-btn auth-main-btn" type="button">Entrar</button>
 
-    <button class="link-btn forgot-btn" type="button"><b>Esqueci minha senha</b></button>
+    <button class="link-btn forgot-btn" type="button" onclick="openForgotPasswordPopup()" onclick="openForgotPasswordPopup()"><b>Esqueci minha senha</b></button>
 
     <div class="member-access compact">
       <span>Ainda não tem conta?</span>
@@ -273,6 +273,63 @@ function validatePlayerTagMock(){
     btn.textContent = 'Validado';
     btn.classList.add('validated');
   }, 850);
+}
+
+
+function openForgotPasswordPopup(){
+  let overlay = document.querySelector('#forgotPasswordOverlay');
+
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'forgotPasswordOverlay';
+    overlay.className = 'premium-modal-overlay';
+    document.body.appendChild(overlay);
+  }
+
+  overlay.innerHTML = `
+    <div class="premium-modal glass-panel">
+      <button type="button" class="modal-close" onclick="closeForgotPasswordPopup()" aria-label="Fechar">×</button>
+
+      <div class="modal-eyebrow">Recuperação de acesso</div>
+      <h2>Esqueci minha senha</h2>
+      <p>Digite seu e-mail cadastrado para receber o link de recuperação.</p>
+
+      <label class="field modal-field">
+        <span>Email</span>
+        <input id="recoveryEmail" type="email" placeholder="seu@email.com" autocomplete="email" />
+      </label>
+
+      <button class="primary-btn modal-action" type="button" onclick="sendRecoveryMock()">Enviar recuperação</button>
+
+      <small id="recoveryFeedback" class="modal-feedback"></small>
+    </div>
+  `;
+
+  requestAnimationFrame(()=> overlay.classList.add('show'));
+}
+
+function closeForgotPasswordPopup(){
+  const overlay = document.querySelector('#forgotPasswordOverlay');
+  if(!overlay) return;
+  overlay.classList.remove('show');
+  setTimeout(()=> overlay.remove(), 220);
+}
+
+function sendRecoveryMock(){
+  const input = document.querySelector('#recoveryEmail');
+  const feedback = document.querySelector('#recoveryFeedback');
+  const email = String(input?.value || '').trim();
+
+  feedback.className = 'modal-feedback';
+
+  if(!email || !email.includes('@')){
+    feedback.textContent = 'Informe um e-mail válido.';
+    feedback.classList.add('error');
+    return;
+  }
+
+  feedback.textContent = 'Link de recuperação enviado. Verifique sua caixa de entrada.';
+  feedback.classList.add('success');
 }
 
 function hideAuthFace(){

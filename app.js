@@ -330,6 +330,7 @@ function sendRecoveryMock(){
 
   feedback.textContent = 'Link de recuperação enviado. Verifique sua caixa de entrada.';
   feedback.classList.add('success');
+  setTimeout(()=> closeForgotPasswordPopup(), 1200);
 }
 
 function hideAuthFace(){
@@ -497,7 +498,7 @@ function renderSuccess(){
       <h1>Clã configurado!</h1>
       <p>O ambiente do seu clã está pronto para começar.</p>
     </div>
-    <button class="primary-btn" type="button">Entrar no sistema</button>
+    <button class="primary-btn" type="button" onclick="window.location.href='dashboard.html'">Entrar no sistema</button>
   `);
 }
 

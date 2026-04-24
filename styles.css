@@ -165,8 +165,9 @@ body{overflow-x:hidden}
 
 .flip-close{
   position:absolute;
-  top:12px;
+  top:16px;
   right:12px;
+  backdrop-filter: blur(6px);
   width:38px;
   height:38px;
   border-radius:14px;

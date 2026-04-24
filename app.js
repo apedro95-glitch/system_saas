@@ -76,17 +76,38 @@ function renderSearch(){
         <p>Gerencie seu clã com inteligência, estratégia e dados em tempo real.</p>
       </div>
 
-      <form class="setup-box glass-inset" id="clanForm">
-        <h2>Cadastre seu clã</h2>
-        <label class="field">
-          <span>Tag do clã</span>
-          <input id="clanTag" name="clanTag" type="text" inputmode="text" autocomplete="off" placeholder="Ex: #ABC123" />
-        </label>
-        <button class="primary-btn" type="submit">
-          <span>Buscar Clã</span>
-        </button>
-        <button class="link-btn" type="button" id="learnMore"><b>Assine agora!</b></button>
-      </form>
+      <div class="flip-wrap" id="authFlip">
+        <div class="flip-card-inner">
+
+          <form class="setup-box glass-inset flip-face flip-front" id="clanForm">
+            <h2>Cadastre seu clã</h2>
+
+            <label class="field">
+              <span>Tag do clã</span>
+              <input id="clanTag" name="clanTag" type="text" inputmode="text" autocomplete="off" placeholder="Ex: #ABC123" />
+            </label>
+
+            <button class="primary-btn" type="submit">
+              <span>Buscar Clã</span>
+            </button>
+
+            <div class="member-access">
+              <span>Já é membro?</span>
+              <button type="button" class="inline-link" id="openLogin">Login</button>
+              <span>ou</span>
+              <button type="button" class="inline-link" id="openSignup">Cadastre-se</button>
+            </div>
+
+            <button class="link-btn sign-link" type="button" id="learnMore"><b>Assine agora!</b></button>
+          </form>
+
+          <div class="setup-box glass-inset flip-face flip-back" id="authBack">
+            <button type="button" class="flip-close" id="backToClan" aria-label="Voltar">×</button>
+            <div id="authBackContent"></div>
+          </div>
+
+        </div>
+      </div>
     </section>
   `;
 
@@ -97,6 +118,140 @@ function renderSearch(){
     currentStep = steps.CONFIRM;
     renderConfirm();
   });
+
+  document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());
+  document.querySelector('#openSignup').addEventListener('click', ()=>showSignupFace());
+  document.querySelector('#backToClan').addEventListener('click', ()=>hideAuthFace());
+}
+
+function showLoginFace(){
+  const content = document.querySelector('#authBackContent');
+  content.innerHTML = `
+    <h2>Acessar sistema</h2>
+    <p class="auth-mode-copy">Entre com seu email e senha para continuar.</p>
+
+    <label class="field">
+      <span>Email</span>
+      <input type="email" placeholder="seu@email.com" autocomplete="email" />
+    </label>
+
+    <label class="field">
+      <span>Senha</span>
+      <input type="password" placeholder="Sua senha" autocomplete="current-password" />
+    </label>
+
+    <button class="primary-btn" type="button">Entrar</button>
+
+    <button class="link-btn forgot-btn" type="button"><b>Esqueci minha senha</b></button>
+
+    <div class="member-access compact">
+      <span>Ainda não tem conta?</span>
+      <button type="button" class="inline-link" onclick="showSignupFace()">Cadastre-se</button>
+    </div>
+  `;
+  document.querySelector('#authFlip').classList.add('is-flipped');
+}
+
+function showSignupFace(){
+  const content = document.querySelector('#authBackContent');
+  content.innerHTML = `
+    <h2>Criar cadastro</h2>
+    <p class="auth-mode-copy">Valide sua tag para vincular seu perfil ao clã.</p>
+
+    <label class="field">
+      <span>Nome</span>
+      <input type="text" placeholder="Seu nome" autocomplete="name" />
+    </label>
+
+    <label class="field">
+      <span>Tag do jogador</span>
+      <div class="input-with-btn">
+        <input id="playerTag" type="text" placeholder="#PLAYER123" autocomplete="off" />
+        <button type="button" id="validateTagBtn">Validar</button>
+      </div>
+      <small class="tag-feedback" id="tagFeedback"></small>
+    </label>
+
+    <label class="field">
+      <span>Nick</span>
+      <input id="playerNick" type="text" placeholder="Será preenchido após validar" disabled />
+    </label>
+
+    <label class="field">
+      <span>Email</span>
+      <input type="email" placeholder="seu@email.com" autocomplete="email" />
+    </label>
+
+    <label class="field">
+      <span>Senha</span>
+      <input type="password" placeholder="Crie uma senha" autocomplete="new-password" />
+    </label>
+
+    <label class="field">
+      <span>Confirmar senha</span>
+      <input type="password" placeholder="Repita a senha" autocomplete="new-password" />
+    </label>
+
+    <button class="primary-btn" type="button">Confirmar cadastro</button>
+
+    <div class="member-access compact">
+      <span>Já tem conta?</span>
+      <button type="button" class="inline-link" onclick="showLoginFace()">Login</button>
+    </div>
+  `;
+
+  document.querySelector('#authFlip').classList.add('is-flipped');
+
+  const validateBtn = document.querySelector('#validateTagBtn');
+  validateBtn.addEventListener('click', validatePlayerTagMock);
+}
+
+function validatePlayerTagMock(){
+  const tagInput = document.querySelector('#playerTag');
+  const nickInput = document.querySelector('#playerNick');
+  const feedback = document.querySelector('#tagFeedback');
+  const btn = document.querySelector('#validateTagBtn');
+
+  const value = String(tagInput.value || '').trim();
+
+  feedback.className = 'tag-feedback';
+  nickInput.value = '';
+
+  if(!value){
+    feedback.textContent = 'Digite uma tag para validar.';
+    feedback.classList.add('error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Validando...';
+  feedback.textContent = 'Consultando jogador...';
+  feedback.classList.add('loading');
+
+  setTimeout(()=>{
+    const normalized = value.startsWith('#') ? value.toUpperCase() : `#${value.toUpperCase()}`;
+
+    if(normalized.length < 5){
+      feedback.className = 'tag-feedback error';
+      feedback.textContent = 'Tag inválida. Confira e tente novamente.';
+      btn.disabled = false;
+      btn.textContent = 'Validar';
+      return;
+    }
+
+    tagInput.value = normalized;
+    nickInput.value = normalized === '#DEMO123' ? 'Pedrin Demo' : 'Jogador validado';
+    feedback.className = 'tag-feedback success';
+    feedback.textContent = 'Tag validada com sucesso.';
+    btn.disabled = false;
+    btn.textContent = 'Validado';
+    btn.classList.add('validated');
+  }, 850);
+}
+
+function hideAuthFace(){
+  const flip = document.querySelector('#authFlip');
+  if(flip) flip.classList.remove('is-flipped');
 }
 
 function stepper(active){

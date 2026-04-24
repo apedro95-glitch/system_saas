@@ -126,7 +126,7 @@ body{overflow-x:hidden}
 }
 
 
-/* ===== Auth flip login/cadastro ===== */
+/* ===== Auth flip login/cadastro completo ===== */
 .flip-wrap{
   perspective: 1200px;
 }
@@ -134,7 +134,7 @@ body{overflow-x:hidden}
 .flip-card-inner{
   position: relative;
   width: 100%;
-  min-height: 360px;
+  min-height: 392px;
   transform-style: preserve-3d;
   transition: transform .62s cubic-bezier(.2,.8,.2,1);
 }
@@ -144,7 +144,7 @@ body{overflow-x:hidden}
 }
 
 .flip-face{
-  min-height: 360px;
+  min-height: 392px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -160,6 +160,7 @@ body{overflow-x:hidden}
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-top: 22px;
+  max-height: 520px;
 }
 
 .flip-close{
@@ -175,6 +176,9 @@ body{overflow-x:hidden}
   font-size:1.35rem;
   font-weight:800;
   cursor:pointer;
+  display:grid;
+  place-items:center;
+  z-index:3;
 }
 
 .member-access{
@@ -220,16 +224,70 @@ body{overflow-x:hidden}
   margin-top:2px;
 }
 
+.input-with-btn{
+  display:flex;
+  gap:8px;
+  width:100%;
+}
+
+.input-with-btn input{
+  flex:1;
+  min-width:0;
+}
+
+.input-with-btn button{
+  width:auto;
+  margin:0;
+  padding:0 14px;
+  border-radius:13px;
+  border:1px solid rgba(176,199,255,.18);
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  color:#fff;
+  font-weight:900;
+  font-size:.78rem;
+  cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.input-with-btn button:disabled{
+  opacity:.72;
+  cursor:not-allowed;
+}
+
+.input-with-btn button.validated{
+  border-color:rgba(66,240,147,.42);
+  color:#42f093;
+}
+
 .field input:disabled{
-  opacity:.62;
-  color:#9eacc7;
+  opacity:.68;
+  color:#d8e2f4;
   background:rgba(8,17,33,.42);
+}
+
+.tag-feedback{
+  min-height:18px;
+  margin-top:6px;
+  font-size:.72rem;
+  color:#9eacc7;
+}
+
+.tag-feedback.loading{
+  color:#79a6ff;
+}
+
+.tag-feedback.success{
+  color:#42f093;
+}
+
+.tag-feedback.error{
+  color:#ff6f8f;
 }
 
 @media (max-height: 760px){
   .flip-card-inner,
   .flip-face{
-    min-height: 330px;
+    min-height: 352px;
   }
   .flip-back{
     max-height: 430px;

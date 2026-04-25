@@ -172,11 +172,13 @@ document.querySelector('.dash-bell')?.addEventListener('click', ()=>{
   renderModalNotifications();
   document.querySelector('#notificationsOverlay')?.classList.add('show');
   document.body.classList.add('modal-open');
+  document.documentElement.classList.add('modal-open');
 });
 
 document.querySelector('#closeNotifications')?.addEventListener('click', ()=>{
   document.querySelector('#notificationsOverlay')?.classList.remove('show');
   document.body.classList.remove('modal-open');
+  document.documentElement.classList.remove('modal-open');
 });
 
 document.addEventListener('gesturestart', (event)=> event.preventDefault());
@@ -196,10 +198,49 @@ document.querySelector('#notificationsOverlay')?.addEventListener('click', (even
   if(event.target.id === 'notificationsOverlay'){
     event.currentTarget.classList.remove('show');
     document.body.classList.remove('modal-open');
+  document.documentElement.classList.remove('modal-open');
   }
 });
 
 renderDashboardNotifications();
+</script>
+
+
+<script id="menu-evolution-js">
+document.querySelectorAll('.bottom-nav .nav-btn').forEach((btn)=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.bottom-nav .nav-btn').forEach((item)=> item.classList.remove('active', 'tap'));
+    btn.classList.add('active', 'tap');
+
+    if(navigator.vibrate){
+      navigator.vibrate(12);
+    }
+
+    setTimeout(()=> btn.classList.remove('tap'), 260);
+  });
+});
+</script>
+
+
+<script id="menu-active-position-js">
+function updateMenuActiveIndicator(){
+  const nav = document.querySelector('.bottom-nav');
+  const active = document.querySelector('.bottom-nav .nav-btn.active');
+  if(!nav || !active) return;
+
+  const navRect = nav.getBoundingClientRect();
+  const activeRect = active.getBoundingClientRect();
+  const center = activeRect.left + activeRect.width / 2 - navRect.left;
+  const percent = (center / navRect.width) * 100;
+  nav.style.setProperty('--active-x', `${percent}%`);
+}
+
+window.addEventListener('resize', updateMenuActiveIndicator);
+document.addEventListener('DOMContentLoaded', updateMenuActiveIndicator);
+document.querySelectorAll('.bottom-nav .nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> setTimeout(updateMenuActiveIndicator, 20));
+});
+updateMenuActiveIndicator();
 </script>
 
 </body>

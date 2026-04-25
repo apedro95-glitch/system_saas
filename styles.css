@@ -1152,3 +1152,150 @@ body.modal-open .bottom-nav{
   width:18px !important;
   height:18px !important;
 }
+
+
+/* ===== MENU EVOLUÍDO: glow, transição, indicador ativo ===== */
+html.modal-open,
+body.modal-open{
+  overflow:hidden !important;
+  height:100% !important;
+  touch-action:none;
+}
+
+.bottom-nav{
+  isolation:isolate;
+  overflow:visible !important;
+}
+
+.bottom-nav::before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at var(--active-x, 50%) 50%, rgba(255,214,95,.18), transparent 18%),
+    linear-gradient(180deg, rgba(255,255,255,.035), transparent);
+  opacity:.95;
+  pointer-events:none;
+  z-index:-1;
+  transition:background-position .28s ease, opacity .28s ease;
+}
+
+.nav-btn{
+  position:relative;
+  transition:
+    color .24s ease,
+    opacity .24s ease,
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    filter .24s ease !important;
+}
+
+.nav-btn svg{
+  transition:
+    transform .24s cubic-bezier(.2,.8,.2,1),
+    filter .24s ease,
+    opacity .24s ease !important;
+}
+
+.nav-btn span{
+  transition:
+    color .24s ease,
+    transform .24s ease,
+    opacity .24s ease !important;
+}
+
+.nav-btn.active{
+  color:#ffd65f !important;
+  filter:drop-shadow(0 0 11px rgba(255,214,95,.28));
+}
+
+.nav-btn.active:not(.nav-home)::after{
+  content:"";
+  position:absolute;
+  top:3px;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#ffd65f;
+  box-shadow:0 0 12px rgba(255,214,95,.8);
+}
+
+.nav-btn.active:not(.nav-home) svg{
+  transform:translateY(-2px) scale(1.08);
+}
+
+.nav-btn.active:not(.nav-home) span{
+  transform:translateY(1px);
+}
+
+.nav-btn.tap{
+  animation:navTap .26s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes navTap{
+  0%{transform:scale(1)}
+  45%{transform:scale(.88)}
+  100%{transform:scale(1)}
+}
+
+.nav-home{
+  transition:transform .28s cubic-bezier(.2,.8,.2,1), filter .28s ease !important;
+}
+
+.nav-home.active{
+  filter:drop-shadow(0 0 18px rgba(255,214,95,.36));
+}
+
+.nav-home.tap{
+  animation:homeTap .32s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes homeTap{
+  0%{transform:translateY(-20px) scale(1)}
+  45%{transform:translateY(-20px) scale(.90)}
+  100%{transform:translateY(-20px) scale(1)}
+}
+
+.nav-home::before{
+  content:"";
+  position:absolute;
+  top:-4px;
+  left:50%;
+  transform:translateX(-50%);
+  width:66px;
+  height:66px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,214,95,.28), transparent 68%);
+  opacity:.9;
+  pointer-events:none;
+  z-index:-1;
+  animation:homeGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes homeGlow{
+  0%,100%{opacity:.55; transform:translateX(-50%) scale(.94)}
+  50%{opacity:1; transform:translateX(-50%) scale(1.08)}
+}
+
+/* feedback premium ao pressionar */
+.nav-btn:active svg{
+  transform:scale(.9);
+}
+
+.nav-home:active svg{
+  transform:scale(.94);
+}
+
+/* Popup aberto: além de esconder menu, bloqueia gestos e scroll */
+body.modal-open .dashboard-shell{
+  overflow:hidden !important;
+  max-height:100svh !important;
+}
+
+body.modal-open .dashboard-phone{
+  pointer-events:none;
+}
+
+body.modal-open .notifications-overlay{
+  pointer-events:auto;
+}

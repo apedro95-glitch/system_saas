@@ -1403,3 +1403,100 @@ body.modal-open .bottom-nav{opacity:0!important;transform:translateX(-50%) trans
 .attacks-row .day-fame.red{
   color:#ff5d73;
 }
+
+/* ===== WAR V3 FIX: alinhamento real da tabela + calendário clicável ===== */
+.war-table-head,
+.war-row{
+  grid-template-columns:minmax(0,1.35fr) minmax(72px,.55fr) minmax(86px,.7fr) !important;
+  column-gap:10px !important;
+}
+
+.war-table-head span{
+  display:block;
+  width:100%;
+}
+
+.war-table-head span:nth-child(1){
+  text-align:left !important;
+  justify-self:start !important;
+}
+
+.war-table-head span:nth-child(2){
+  text-align:center !important;
+  justify-self:center !important;
+}
+
+.war-table-head span:nth-child(3){
+  text-align:left !important;
+  justify-self:start !important;
+}
+
+.war-row > :nth-child(1){
+  justify-self:stretch !important;
+}
+
+.war-row > :nth-child(2){
+  justify-self:center !important;
+  text-align:center !important;
+}
+
+.war-row > :nth-child(3){
+  justify-self:start !important;
+  text-align:left !important;
+}
+
+.members-row .fame{
+  min-width:76px;
+}
+
+.attacks-row .day-fame{
+  justify-self:center !important;
+  text-align:center !important;
+}
+
+.attacks-row .attack-dots{
+  justify-self:start !important;
+  justify-content:flex-start !important;
+  min-width:86px;
+}
+
+.calendar-mini button{
+  cursor:pointer;
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.calendar-mini button:active{
+  transform:scale(.96);
+}
+
+.calendar-mini button.active{
+  border-color:rgba(255,214,95,.58) !important;
+}
+
+.months-scroll{
+  display:flex !important;
+  overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+  gap:8px;
+  padding:2px 2px 8px;
+  margin-inline:-2px;
+}
+
+.months-scroll button{
+  min-width:72px;
+  flex:0 0 auto;
+  scroll-snap-align:center;
+}
+
+.months-scroll::-webkit-scrollbar{
+  display:none;
+}
+
+@media(max-width:370px){
+  .war-table-head,
+  .war-row{
+    grid-template-columns:minmax(0,1.25fr) minmax(60px,.5fr) minmax(78px,.7fr) !important;
+    column-gap:8px !important;
+  }
+}

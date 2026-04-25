@@ -7,24 +7,105 @@ const warMembers=[
 {name:'Gabriel',avatar:'G',weekly:'2/16',fame:7650,dayFame:950,dayAttacks:1},
 {name:'Matheus',avatar:'M',weekly:'0/16',fame:0,dayFame:0,dayAttacks:0}
 ];
+
+const fullMonths={Jan:'Janeiro',Fev:'Fevereiro',Mar:'Março',Abr:'Abril',Mai:'Maio',Jun:'Junho',Jul:'Julho',Ago:'Agosto',Set:'Setembro',Out:'Outubro',Nov:'Novembro',Dez:'Dezembro'};
+const days=['Quinta-feira','Sexta-feira','Sábado','Domingo'];
+const shortDays=['Qui','Sex','Sáb','Dom'];
+
 let activeWarTab='members';
+let selectedMonth='Abr';
+let selectedWeek='S4';
+let selectedDay=0;
+
 function fameClass(v){return v>=11000?'green':v>=9500?'yellow':'red'}
 function fmt(v){return v.toLocaleString('pt-BR')}
 function dots(n){return '<div class="attack-dots">'+[0,1,2,3].map(i=>`<i class="${i<n?'done':''}"></i>`).join('')+'</div>'}
+
+function updateWarHeader(){
+ const title=document.querySelector('#warTitle');
+ const day=document.querySelector('#warDayLabel');
+ if(title) title.textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;
+ if(day) day.textContent=activeWarTab==='attacks'?days[selectedDay]:'';
+}
+
 function renderWarList(){
-const list=document.querySelector('#warList'),head=document.querySelector('#warTableHead'),day=document.querySelector('#warDayLabel');
-if(activeWarTab==='members'){
-day.textContent='';
-head.innerHTML='<span>Membro</span><span>Ataques</span><span>Fame</span>';
-list.innerHTML=warMembers.map((m,i)=>`<div class="war-row members-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}">${m.avatar}</span><strong>${m.name}</strong></div><strong class="attack-count">${m.weekly}</strong><strong class="fame ${fameClass(m.fame)}">${fmt(m.fame)}</strong></div>`).join('');
-}else{
-day.textContent='Quinta-feira';
-head.innerHTML='<span>Membro</span><span>Fame</span><span>Hoje</span>';
-list.innerHTML=warMembers.map((m,i)=>`<div class="war-row attacks-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}">${m.avatar}</span><strong>${m.name}</strong></div><strong class="day-fame ${fameClass(m.dayFame * 4)}">${fmt(m.dayFame)}</strong>${dots(m.dayAttacks)}</div>`).join('');
-}}
-document.querySelectorAll('.war-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.war-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeWarTab=btn.dataset.tab;renderWarList()}));
-document.querySelector('#openWarCalendar')?.addEventListener('click',()=>{document.body.classList.add('modal-open');document.documentElement.classList.add('modal-open');document.querySelector('#calendarDays').classList.toggle('hidden',activeWarTab==='members');document.querySelector('#calendarSubtitle').textContent=activeWarTab==='members'?'Mês e semana ativa da guerra':'Semana e dia ativo da janela';document.querySelector('#warCalendarOverlay').classList.add('show')});
-function closeCal(){document.querySelector('#warCalendarOverlay')?.classList.remove('show');document.body.classList.remove('modal-open');document.documentElement.classList.remove('modal-open')}
+ const list=document.querySelector('#warList'),head=document.querySelector('#warTableHead');
+ updateWarHeader();
+
+ if(activeWarTab==='members'){
+  head.innerHTML='<span>Membro</span><span>Ataques</span><span>Fame</span>';
+  list.innerHTML=warMembers.map((m,i)=>`<div class="war-row members-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}">${m.avatar}</span><strong>${m.name}</strong></div><strong class="attack-count">${m.weekly}</strong><strong class="fame ${fameClass(m.fame)}">${fmt(m.fame)}</strong></div>`).join('');
+ }else{
+  head.innerHTML='<span>Membro</span><span>Fame</span><span>Hoje</span>';
+  list.innerHTML=warMembers.map((m,i)=>`<div class="war-row attacks-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}">${m.avatar}</span><strong>${m.name}</strong></div><strong class="day-fame ${fameClass(m.dayFame*4)}">${fmt(m.dayFame)}</strong>${dots(m.dayAttacks)}</div>`).join('');
+ }
+}
+
+function updateCalendarText(){
+ const title=document.querySelector('.war-calendar-modal h2');
+ const subtitle=document.querySelector('#calendarSubtitle');
+ if(title) title.textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;
+ if(subtitle) subtitle.textContent=activeWarTab==='members'?'Mês e semana ativa da guerra':`${days[selectedDay]} da janela de guerra`;
+}
+
+function bindCalendar(){
+ document.querySelectorAll('.calendar-months button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+   selectedMonth=btn.dataset.value;
+   document.querySelectorAll('.calendar-months button').forEach(b=>b.classList.remove('active'));
+   btn.classList.add('active');
+   updateWarHeader(); updateCalendarText();
+  });
+ });
+
+ document.querySelectorAll('.calendar-weeks button').forEach(btn=>{
+  if(!btn.dataset.value) btn.dataset.value=btn.textContent.trim();
+  btn.addEventListener('click',()=>{
+   selectedWeek=btn.dataset.value;
+   document.querySelectorAll('.calendar-weeks button').forEach(b=>b.classList.remove('active'));
+   btn.classList.add('active');
+   updateWarHeader(); updateCalendarText();
+  });
+ });
+
+ const daysBox=document.querySelector('#calendarDays');
+ if(daysBox){
+  daysBox.innerHTML=shortDays.map((d,i)=>`<button data-value="${i}" class="${i===selectedDay?'active':''}">${d}</button>`).join('');
+  daysBox.querySelectorAll('button').forEach(btn=>{
+   btn.addEventListener('click',()=>{
+    selectedDay=Number(btn.dataset.value);
+    daysBox.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    updateWarHeader(); updateCalendarText();
+   });
+  });
+ }
+}
+
+document.querySelectorAll('.war-tab').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.war-tab').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+ activeWarTab=btn.dataset.tab;
+ renderWarList();
+}));
+
+document.querySelector('#openWarCalendar')?.addEventListener('click',()=>{
+ document.body.classList.add('modal-open');
+ document.documentElement.classList.add('modal-open');
+ bindCalendar();
+ document.querySelector('#calendarDays')?.classList.toggle('hidden',activeWarTab==='members');
+ updateCalendarText();
+ document.querySelector('#warCalendarOverlay')?.classList.add('show');
+});
+
+function closeCal(){
+ document.querySelector('#warCalendarOverlay')?.classList.remove('show');
+ document.body.classList.remove('modal-open');
+ document.documentElement.classList.remove('modal-open');
+}
+
 document.querySelector('#closeWarCalendar')?.addEventListener('click',closeCal);
 document.querySelector('#warCalendarOverlay')?.addEventListener('click',e=>{if(e.target.id==='warCalendarOverlay')closeCal()});
+
+bindCalendar();
 renderWarList();

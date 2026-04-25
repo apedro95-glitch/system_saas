@@ -521,3 +521,138 @@ body{overflow-x:hidden}
 .note-row{display:grid;grid-template-columns:30px 1fr 20px;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid rgba(176,199,255,.10)}.note-row:last-child{border-bottom:0}.note-row svg{width:23px;height:23px;color:#d9e5f7}.note-row strong{display:block;font-size:.82rem}.note-row span{display:block;margin-top:3px;color:#9eacc7;font-size:.72rem}.red-dot{width:8px;height:8px;border-radius:50%;background:#ff4e68;justify-self:end}.note-row em{justify-self:end;color:#9eacc7;font-style:normal}
 .bottom-nav{position:absolute;left:0;right:0;bottom:0;height:82px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(7,1fr);gap:2px;background:linear-gradient(180deg,rgba(4,10,20,.70),rgba(3,7,15,.96));border-top:1px solid rgba(176,199,255,.10);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.nav-btn{width:100%;border:0;background:none;color:#d7e1f4;display:grid;place-items:center;align-content:center;gap:4px;padding:0;cursor:pointer;font:inherit;min-width:0}.nav-btn svg{width:24px;height:24px}.nav-btn span{font-size:.55rem;white-space:nowrap;font-weight:800;letter-spacing:-.02em}.nav-btn.active{color:#ffd65f}.nav-home{transform:translateY(-14px)}.nav-home svg{width:34px;height:34px;padding:11px;box-sizing:content-box;border-radius:50%;background:linear-gradient(180deg,rgba(255,214,95,.95),rgba(218,147,24,.95));color:#071327;border:1px solid rgba(255,255,255,.22);box-shadow:0 12px 28px rgba(248,200,79,.28),0 0 0 7px rgba(255,255,255,.05)}.nav-home span{margin-top:2px;color:#ffd65f}
 @media (max-width:370px){.dashboard-phone{padding-inline:12px}.nav-btn span{font-size:.5rem}.highlight-grid{gap:6px}}
+
+
+/* ===== Dashboard V2: scroll livre + menu fixo real ===== */
+.dashboard-shell{
+  align-items:start !important;
+  place-items:start center !important;
+  min-height:100svh !important;
+  height:auto !important;
+  overflow-x:hidden;
+  padding:8px 8px 0 !important;
+}
+
+.dashboard-phone{
+  min-height:100svh !important;
+  height:auto !important;
+  overflow:visible !important;
+  padding-bottom:calc(128px + env(safe-area-inset-bottom)) !important;
+  margin-bottom:0 !important;
+}
+
+.bottom-nav{
+  position:fixed !important;
+  left:50% !important;
+  right:auto !important;
+  bottom:0 !important;
+  transform:translateX(-50%) !important;
+  width:min(100%,390px) !important;
+  max-width:390px !important;
+  height:88px !important;
+  z-index:900 !important;
+  border-radius:22px 22px 0 0;
+  padding:8px 10px calc(10px + env(safe-area-inset-bottom)) !important;
+  box-shadow:0 -18px 40px rgba(0,0,0,.38);
+}
+
+.nav-home{
+  transform:translateY(-18px) !important;
+}
+
+.notifications-card{
+  max-height:260px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Modal notificações do sino */
+.notifications-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  background:rgba(2,8,18,.58);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease;
+}
+
+.notifications-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.notifications-modal{
+  width:min(100%,360px);
+  max-height:72svh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  position:relative;
+  border-radius:26px;
+  padding:28px 22px 20px;
+  transform:translateY(12px) scale(.97);
+  transition:transform .24s cubic-bezier(.2,.8,.2,1);
+}
+
+.notifications-overlay.show .notifications-modal{
+  transform:translateY(0) scale(1);
+}
+
+.notifications-modal h2{
+  margin:0 44px 8px 0;
+  font-size:1.35rem;
+}
+
+.notifications-modal p{
+  margin:0 0 18px;
+  color:#b8c5dc;
+  line-height:1.45;
+  font-size:.88rem;
+}
+
+.modal-notification-list{
+  display:grid;
+  gap:10px;
+}
+
+.modal-note-row{
+  display:grid;
+  grid-template-columns:1fr 12px;
+  align-items:center;
+  gap:10px;
+  padding:14px;
+  border-radius:16px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(176,199,255,.10);
+}
+
+.modal-note-row strong{
+  display:block;
+  font-size:.88rem;
+}
+
+.modal-note-row span{
+  display:block;
+  margin-top:4px;
+  color:#9eacc7;
+  font-size:.74rem;
+}
+
+.modal-note-row i{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#ff4e68;
+  box-shadow:0 0 10px rgba(255,78,104,.7);
+}
+
+@supports (-webkit-touch-callout: none){
+  html, body{
+    overscroll-behavior:none;
+  }
+}

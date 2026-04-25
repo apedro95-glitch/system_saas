@@ -24,7 +24,7 @@
         <p>Visão geral do seu clã</p>
       </section>
 
-      <section class="dash-card glass-inset">
+      <section class="dash-card glass-inset go-war-card" role="button" tabindex="0" onclick="window.location.href='war.html'">
         <div class="dash-card-head"><span>GUERRA ATUAL</span><b>Em andamento</b></div>
         <h2>Abril • Semana 4</h2>
         <div class="war-grid">
@@ -241,6 +241,16 @@ document.querySelectorAll('.bottom-nav .nav-btn').forEach(btn=>{
   btn.addEventListener('click', ()=> setTimeout(updateMenuActiveIndicator, 20));
 });
 updateMenuActiveIndicator();
+</script>
+
+
+<script id="dashboard-go-war-js">
+document.querySelector('.go-war-card')?.addEventListener('keydown', (event)=>{
+  if(event.key === 'Enter' || event.key === ' '){
+    event.preventDefault();
+    window.location.href = 'war.html';
+  }
+});
 </script>
 
 </body>

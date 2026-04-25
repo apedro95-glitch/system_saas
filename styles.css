@@ -1316,3 +1316,90 @@ body.modal-open .notifications-overlay{
 .calendar-mini{display:grid;gap:14px;margin-top:16px}.calendar-months,.calendar-weeks,.calendar-days{display:grid;gap:8px}.calendar-months{grid-template-columns:repeat(3,1fr)}.calendar-weeks,.calendar-days{grid-template-columns:repeat(4,1fr)}.calendar-mini button{border:1px solid rgba(176,199,255,.14);border-radius:14px;background:rgba(255,255,255,.055);color:#d8e2f4;padding:12px 8px;font-weight:900}.calendar-mini button.active{color:#071327;background:linear-gradient(180deg,#ffd65f,#d99221);box-shadow:0 10px 24px rgba(255,214,95,.22)}.hidden{display:none!important}
 body.modal-open .bottom-nav{opacity:0!important;transform:translateX(-50%) translateY(22px) scale(.96)!important;pointer-events:none!important}
 @media(max-width:370px){.war-table-head,.war-row{grid-template-columns:minmax(0,1fr) 64px 78px}}
+
+
+/* ===== War V2 updates: dashboard link + months scroll + alignment ===== */
+.go-war-card{
+  cursor:pointer;
+  transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+
+.go-war-card:active{
+  transform:scale(.985);
+}
+
+.go-war-card:hover{
+  border-color:rgba(121,166,255,.28);
+  box-shadow:0 0 24px rgba(48,109,255,.12);
+}
+
+.months-scroll{
+  display:flex !important;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+  gap:8px;
+  padding:2px 2px 8px;
+  margin-inline:-2px;
+}
+
+.months-scroll::-webkit-scrollbar{
+  display:none;
+}
+
+.months-scroll button{
+  min-width:72px;
+  flex:0 0 auto;
+  scroll-snap-align:center;
+}
+
+.war-table-head{
+  align-items:center;
+}
+
+.war-table-head span:nth-child(1){
+  text-align:left;
+}
+
+.war-table-head span:nth-child(2){
+  text-align:center;
+}
+
+.war-table-head span:nth-child(3){
+  text-align:left;
+}
+
+.war-row > strong:nth-child(2),
+.war-row .attack-count,
+.war-row .day-fame{
+  text-align:center;
+  justify-self:center;
+}
+
+.war-row > strong:nth-child(3),
+.war-row .fame{
+  text-align:left;
+  justify-self:start;
+}
+
+.attacks-row .attack-dots{
+  justify-content:flex-start;
+  justify-self:start;
+}
+
+.attacks-row .day-fame{
+  color:#7fb0ff;
+  font-weight:900;
+}
+
+.attacks-row .day-fame.green{
+  color:#42f093;
+}
+
+.attacks-row .day-fame.yellow{
+  color:#ffd65f;
+}
+
+.attacks-row .day-fame.red{
+  color:#ff5d73;
+}

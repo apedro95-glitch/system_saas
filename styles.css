@@ -1030,3 +1030,125 @@ html{
     height:22px !important;
   }
 }
+
+
+/* ===== V5: ícones semi-fill estilo mockup ===== */
+.nav-svg{
+  display:block;
+  width:25px !important;
+  height:25px !important;
+}
+
+.nav-btn{
+  color:#dbe6f8 !important;
+}
+
+.nav-btn.active{
+  color:#ffd65f !important;
+}
+
+.nav-btn:not(.active){
+  opacity:.92;
+}
+
+.nav-home .nav-svg{
+  width:34px !important;
+  height:34px !important;
+}
+
+.dash-bell svg{
+  width:28px !important;
+  height:28px !important;
+  color:#dfe8fb;
+}
+
+.tbrs-arrow{
+  width:18px !important;
+  height:18px !important;
+}
+
+.note-item.open .tbrs-arrow,
+.modal-note-row.open .tbrs-arrow{
+  transform:rotate(180deg);
+}
+
+
+/* ===== PATCH: popup oculta menu + setas alinhadas ===== */
+body.modal-open .bottom-nav{
+  opacity:0 !important;
+  transform:translateX(-50%) translateY(22px) scale(.96) !important;
+  pointer-events:none !important;
+}
+
+.bottom-nav{
+  transition:opacity .22s ease, transform .22s ease !important;
+}
+
+/* Notificações da Dashboard: coluna fixa para ícone, texto, status e seta */
+.note-summary{
+  grid-template-columns:30px minmax(0,1fr) 16px 26px !important;
+  column-gap:10px !important;
+}
+
+.note-summary .red-dot{
+  grid-column:3 !important;
+  justify-self:center !important;
+}
+
+.note-summary .tbrs-arrow,
+.note-summary .note-arrow{
+  grid-column:4 !important;
+  justify-self:center !important;
+  align-self:center !important;
+  margin:0 !important;
+  width:18px !important;
+  height:18px !important;
+}
+
+/* Central: cabeçalho fixo e lista rolando independente */
+.notifications-modal{
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.notifications-modal-head{
+  flex:0 0 auto !important;
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:linear-gradient(180deg, rgba(9,18,34,.96), rgba(9,18,34,.82));
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  margin:-28px -22px 14px;
+  padding:28px 22px 14px;
+  border-bottom:1px solid rgba(176,199,255,.08);
+}
+
+.modal-notification-scroll{
+  flex:1 1 auto !important;
+  max-height:calc(72svh - 160px);
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Central: coluna fixa para texto, status e seta */
+.modal-note-summary{
+  grid-template-columns:minmax(0,1fr) 16px 26px !important;
+  column-gap:10px !important;
+}
+
+.modal-note-summary i{
+  grid-column:2 !important;
+  justify-self:center !important;
+}
+
+.modal-note-summary .tbrs-arrow,
+.modal-note-summary .modal-arrow{
+  grid-column:3 !important;
+  justify-self:center !important;
+  align-self:center !important;
+  margin:0 !important;
+  width:18px !important;
+  height:18px !important;
+}

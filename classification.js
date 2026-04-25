@@ -47,7 +47,7 @@ function renderAll(){renderPodium();renderTable()}
 document.querySelectorAll('.ranking-tab').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.ranking-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeTab=btn.dataset.tab;renderAll()});
 function updateRankingPeriod(){
  const el=document.querySelector('#rankingPeriodLabel');
- if(el) el.textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;
+ if(el) el.innerHTML=`<strong>${fullMonths[selectedMonth]}</strong><span>Semana ${selectedWeek.replace('S','')}</span>`;
 }
 function renderCalendar(){const m=document.querySelector('#rankingMonths'),w=document.querySelector('#rankingWeeks');m.innerHTML=months.map(x=>`<button data-value="${x}" class="${x===selectedMonth?'active':''}">${x}</button>`).join('');w.innerHTML=['S1','S2','S3','S4'].map(x=>`<button data-value="${x}" class="${x===selectedWeek?'active':''}">${x}</button>`).join('');[m,w].forEach(box=>box.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(box===m)selectedMonth=b.dataset.value;else selectedWeek=b.dataset.value;box.querySelectorAll('button').forEach(z=>z.classList.remove('active'));b.classList.add('active');document.querySelector('#rankingCalendarTitle').textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;updateRankingPeriod()}));document.querySelector('#rankingCalendarTitle').textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;updateRankingPeriod()}
 function openOverlay(id){document.body.classList.add('modal-open');document.documentElement.classList.add('modal-open');document.querySelector(id).classList.add('show')}

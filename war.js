@@ -26,6 +26,8 @@ function updateWarHeader(){
  const day=document.querySelector('#warDayLabel');
  if(title) title.textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;
  if(day) day.textContent=activeWarTab==='attacks'?days[selectedDay]:'';
+ const period=document.querySelector('#warPeriodLabel');
+ if(period) period.innerHTML=`<strong>${fullMonths[selectedMonth]}</strong><span>Semana ${selectedWeek.replace('S','')}</span>`;
 }
 
 function renderWarList(){

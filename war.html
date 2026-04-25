@@ -11,11 +11,19 @@
 <body>
 <main class="dashboard-shell war-shell">
 <section class="dashboard-phone war-phone glass-panel">
-<header class="war-header">
-<div>
-<p class="war-kicker">Guerra</p>
-<h1 id="warTitle">Abril • Semana 4</h1>
-<span class="war-day" id="warDayLabel"></span>
+<header class="war-header war-header-refined">
+<div class="war-title-icon war-title-stack">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+    <circle cx="6" cy="6" r="2.15" fill="currentColor"/>
+    <circle cx="18" cy="6" r="2.15" fill="currentColor"/>
+  </svg>
+  <div class="menu-period" id="warPeriodLabel"><strong>Abril</strong><span>Semana 4</span></div>
+</div>
+<div class="war-heading-text">
+  <p class="war-kicker">Guerra</p>
+  <h1 id="warTitle">Abril • Semana 4</h1>
+  <span class="war-day" id="warDayLabel"></span>
 </div>
 <button class="calendar-btn" id="openWarCalendar" aria-label="Calendário">
 <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" fill="currentColor" opacity=".18"/><path d="M8 3v4M16 3v4M4 9h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="7" y="12" width="3" height="3" rx=".7" fill="currentColor"/><rect x="12" y="12" width="3" height="3" rx=".7" fill="currentColor" opacity=".75"/></svg>

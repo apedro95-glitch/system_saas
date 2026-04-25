@@ -1655,3 +1655,121 @@ html, body{
     width:74px !important;
   }
 }
+
+
+/* ===== Header refino Guerra/Classificação ===== */
+.ranking-header{
+  grid-template-columns:104px minmax(0,1fr) 48px !important;
+  align-items:start !important;
+}
+
+.ranking-title-stack,
+.war-title-stack{
+  width:104px !important;
+  min-height:104px;
+  border-radius:22px !important;
+  align-content:center;
+  justify-items:center;
+  gap:8px;
+  padding:10px 8px;
+  box-sizing:border-box;
+}
+
+.ranking-title-stack svg,
+.war-title-stack svg{
+  width:34px !important;
+  height:34px !important;
+}
+
+.menu-period{
+  display:grid;
+  justify-items:center;
+  gap:1px;
+  line-height:1.05;
+  text-align:center;
+}
+
+.menu-period strong{
+  font-size:1.02rem;
+  color:#fff;
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+
+.menu-period span{
+  color:#aebbd2;
+  font-size:.72rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.ranking-period{
+  display:none !important;
+}
+
+.ranking-header h1{
+  margin-top:8px !important;
+}
+
+.ranking-header p{
+  max-width:190px;
+}
+
+/* Guerra com ícone no mesmo padrão */
+.war-header-refined{
+  display:grid !important;
+  grid-template-columns:104px minmax(0,1fr) 48px;
+  align-items:start !important;
+  gap:12px !important;
+}
+
+.war-title-icon{
+  width:104px;
+  min-height:104px;
+  border-radius:22px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(176,199,255,.14);
+  color:#dfe8fb;
+  display:grid;
+  place-items:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.war-heading-text{
+  min-width:0;
+}
+
+.war-heading-text .war-kicker{
+  margin-top:8px !important;
+}
+
+.war-heading-text h1{
+  display:none !important;
+}
+
+.war-heading-text .war-day{
+  margin-top:8px;
+}
+
+@media(max-width:370px){
+  .ranking-header,
+  .war-header-refined{
+    grid-template-columns:92px minmax(0,1fr) 44px !important;
+    gap:10px !important;
+  }
+
+  .ranking-title-stack,
+  .war-title-stack,
+  .war-title-icon{
+    width:92px !important;
+    min-height:96px !important;
+  }
+
+  .menu-period strong{
+    font-size:.92rem;
+  }
+
+  .menu-period span{
+    font-size:.66rem;
+  }
+}

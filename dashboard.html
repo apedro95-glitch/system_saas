@@ -50,6 +50,10 @@
         <div class="dash-section-label">ÚLTIMAS NOTIFICAÇÕES</div>
         <div class="dashboard-notification-list" id="dashboardNotificationList"></div>
       </section>
+    </section>
+  
+    
+
 
       <nav class="bottom-nav" aria-label="Menu principal">
         <button class="nav-btn"><svg viewBox="0 0 24 24"><path d="M4 20 20 4M14 4h6v6M20 20 4 4M4 10V4h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Guerra</span></button>
@@ -60,12 +64,10 @@
         <button class="nav-btn"><svg viewBox="0 0 24 24"><path d="M5 19h14l1-10-5 3-3-7-3 7-5-3 1 10Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Liderança</span></button>
         <button class="nav-btn"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM4 12H2M22 12h-2M12 4V2M12 22v-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M17.7 6.3l1.4-1.4M4.9 19.1l1.4-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Config.</span></button>
       </nav>
-    </section>
-  
-    <div class="notifications-overlay" id="notificationsOverlay" aria-hidden="true">
+<div class="notifications-overlay" id="notificationsOverlay" aria-hidden="true">
       <div class="notifications-modal glass-panel">
         <div class="notifications-modal-head">
-          <button class="modal-close" id="closeNotifications" aria-label="Fechar">×</button>
+          <button class="modal-close" id="closeNotifications" aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg></button>
           <div class="modal-eyebrow">Central</div>
           <h2>Notificações</h2>
           <p>Últimas mensagens do seu clã</p>
@@ -128,7 +130,7 @@ function renderDashboardNotifications(){
           <span>${n.time}</span>
         </div>
         ${n.unread ? '<i class="red-dot"></i>' : ''}
-        <em class="note-arrow">⌄</em>
+        <svg class="note-arrow tbrs-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="note-details">${n.text}</div>
     </article>
@@ -154,7 +156,7 @@ function renderModalNotifications(){
           <span>${n.time}</span>
         </div>
         ${n.unread ? '<i></i>' : ''}
-        <em>⌄</em>
+        <svg class="modal-arrow tbrs-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="modal-note-details">${n.text}</div>
     </article>

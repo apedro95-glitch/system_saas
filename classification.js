@@ -11,7 +11,17 @@ const rankingData=[
 {name:'Matheus',role:'Membro',avatar:'M',general:6480,tournament:8,donSent:430,donReceived:510,weeks:{S1:2,S2:2,S3:3,S4:1}},
 {name:'Felipe',role:'Membro',avatar:'F',general:5230,tournament:6,donSent:380,donReceived:610,weeks:{S1:1,S2:2,S3:2,S4:1}}
 ];
-function crownSvg(p){const c=p===1?'#ffd65f':p===2?'#dbeafe':'#ffb070';return `<svg class="rank-crown" viewBox="0 0 24 24"><path d="M3.5 10.2 7.2 6l4.8 5.2L16.8 6l3.7 4.2v8.3A1.5 1.5 0 0 1 19 20H5a1.5 1.5 0 0 1-1.5-1.5v-8.3Z" fill="${c}"/></svg>`}
+function crownSvg(p){
+ const c=p===1?'#ffd65f':p===2?'#dbeafe':'#ffb070';
+ const shadow=p===1?'rgba(255,214,95,.55)':p===2?'rgba(219,234,254,.38)':'rgba(255,176,112,.42)';
+ return `<svg class="rank-crown crown-rank-${p}" viewBox="0 0 64 64" aria-hidden="true" style="--crown-shadow:${shadow}">
+  <path d="M8 26l10-12 14 16 14-16 10 12v22a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V26Z" fill="${c}"/>
+  <path d="M14 43h36" stroke="rgba(6,14,30,.28)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="18" cy="14" r="4" fill="${c}"/>
+  <circle cx="32" cy="20" r="4" fill="${c}"/>
+  <circle cx="46" cy="14" r="4" fill="${c}"/>
+ </svg>`
+}
 function rows(){const k=activeTab==='general'?'general':activeTab==='tournament'?'tournament':'donSent';return [...rankingData].sort((a,b)=>b[k]-a[k])}
 function value(item){if(activeTab==='general')return item.general.toLocaleString('pt-BR'); if(activeTab==='tournament')return `${item.tournament} PTS`; return {sent:item.donSent,rec:item.donReceived}}
 function renderPodium(){const order=[rows()[1],rows()[0],rows()[2]];document.querySelector('#podium').innerHTML=order.map((it,i)=>{const p=i===1?1:i===0?2:3,v=value(it),d=typeof v==='object'?v.sent:v;return `<article class="podium-card podium-${p}">${crownSvg(p)}<div class="podium-avatar avatar-${p}">${it.avatar}</div><span class="podium-place">${p}</span><strong>${it.name}</strong><small>${d}</small></article>`}).join('')}

@@ -1773,3 +1773,69 @@ html, body{
     font-size:.66rem;
   }
 }
+
+.dashboard-war-block{
+ margin-top:16px;
+ padding:18px;
+ border-radius:20px;
+ background:rgba(255,255,255,.05);
+ border:1px solid rgba(176,199,255,.12);
+ backdrop-filter:blur(12px);
+}
+
+.war-block-header{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-start;
+}
+
+.war-block-title{
+ font-size:.7rem;
+ color:#9fb0c9;
+ letter-spacing:.12em;
+}
+
+.war-block-header h3{
+ font-size:1.2rem;
+ font-weight:800;
+ margin-top:4px;
+}
+
+.war-block-day{
+ font-size:.75rem;
+ color:#8fa3c5;
+ display:block;
+ margin-top:4px;
+}
+
+.war-block-stats{
+ display:flex;
+ justify-content:space-between;
+ margin-top:14px;
+}
+
+.war-block-stats h2{
+ font-size:1.4rem;
+ font-weight:900;
+}
+
+.war-progress{
+ margin-top:10px;
+ height:6px;
+ background:rgba(255,255,255,.08);
+ border-radius:10px;
+ overflow:hidden;
+}
+
+.war-progress .bar{
+ width:60%;
+ height:100%;
+ background:linear-gradient(90deg,#5aa2ff,#7ab8ff);
+}
+
+.war-status{
+ padding:6px 12px;
+ border-radius:999px;
+ font-size:.7rem;
+ font-weight:700;
+}

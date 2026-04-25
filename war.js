@@ -111,3 +111,35 @@ document.querySelector('#warCalendarOverlay')?.addEventListener('click',e=>{if(e
 
 bindCalendar();
 renderWarList();
+
+function updateWarStatus(){
+ const status=document.getElementById('warStatus');
+ const monthNow=new Date().getMonth();
+ if(selectedMonth < monthNow){
+   status.textContent='Finalizado';
+   status.style.background='rgba(120,120,120,.25)';
+ }else if(selectedMonth > monthNow){
+   status.textContent='Futuro';
+   status.style.background='rgba(80,140,255,.25)';
+ }else{
+   status.textContent='Em andamento';
+   status.style.background='rgba(40,200,120,.25)';
+ }
+}
+
+function updateWarBlock(){
+ const period=document.getElementById('warBlockPeriod');
+ const day=document.getElementById('warBlockDay');
+ period.textContent = fullMonths[selectedMonth] + ' • Semana ' + selectedWeek.replace('S','');
+
+ if(activeWarTab==='attacks'){
+   day.textContent = days[selectedDay];
+   day.style.display='block';
+ }else{
+   day.style.display='none';
+ }
+
+ updateWarStatus();
+}
+
+setTimeout(updateWarBlock,200);

@@ -656,3 +656,227 @@ body{overflow-x:hidden}
     overscroll-behavior:none;
   }
 }
+
+
+/* ===== Dashboard V3: menu flutuante + notificações dinâmicas ===== */
+html{
+  touch-action:manipulation;
+  -webkit-text-size-adjust:100%;
+}
+
+.dashboard-shell{
+  align-items:start !important;
+  place-items:start center !important;
+  min-height:100svh !important;
+  height:auto !important;
+  overflow-x:hidden !important;
+  padding:8px 8px 0 !important;
+}
+
+.dashboard-phone{
+  min-height:100svh !important;
+  height:auto !important;
+  overflow:visible !important;
+  padding-bottom:calc(138px + env(safe-area-inset-bottom)) !important;
+}
+
+.bottom-nav{
+  position:fixed !important;
+  left:50% !important;
+  right:auto !important;
+  bottom:calc(14px + env(safe-area-inset-bottom)) !important;
+  transform:translateX(-50%) !important;
+  width:min(calc(100% - 28px),390px) !important;
+  max-width:390px !important;
+  height:82px !important;
+  z-index:950 !important;
+  border-radius:28px !important;
+  padding:8px 10px !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.52), 0 0 0 1px rgba(176,199,255,.12);
+  background:linear-gradient(180deg, rgba(8,18,36,.86), rgba(3,8,18,.94)) !important;
+  backdrop-filter:blur(22px) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+  border:1px solid rgba(176,199,255,.13) !important;
+}
+
+.nav-home{
+  transform:translateY(-20px) !important;
+}
+
+.dashboard-notification-list{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+}
+
+.note-item{
+  border-bottom:1px solid rgba(176,199,255,.08);
+}
+
+.note-item:last-child{
+  border-bottom:0;
+}
+
+.note-summary{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:inherit;
+  padding:12px 0;
+  display:grid;
+  grid-template-columns:30px 1fr 12px 20px;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+}
+
+.note-summary svg{
+  width:23px;
+  height:23px;
+  color:#d9e5f7;
+}
+
+.note-summary strong{
+  display:block;
+  font-size:.84rem;
+}
+
+.note-summary span{
+  display:block;
+  margin-top:3px;
+  color:#9eacc7;
+  font-size:.72rem;
+}
+
+.note-arrow{
+  justify-self:end;
+  color:#9eacc7;
+  font-style:normal;
+  transition:transform .2s ease;
+}
+
+.note-item.open .note-arrow{
+  transform:rotate(180deg);
+}
+
+.note-details{
+  max-height:0;
+  overflow:hidden;
+  color:#aebbd2;
+  font-size:.76rem;
+  line-height:1.45;
+  padding:0 0 0 40px;
+  transition:max-height .25s ease, padding .25s ease;
+}
+
+.note-item.open .note-details{
+  max-height:120px;
+  padding:0 0 13px 40px;
+}
+
+.notifications-modal{
+  width:min(100%,360px);
+  max-height:76svh;
+  overflow:hidden !important;
+  display:flex;
+  flex-direction:column;
+}
+
+.notifications-modal-head{
+  flex:0 0 auto;
+  padding-bottom:16px;
+}
+
+.notifications-modal .modal-close{
+  top:12px;
+  right:12px;
+}
+
+.modal-notification-scroll{
+  flex:1 1 auto;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-right:2px;
+}
+
+.modal-notification-list{
+  display:grid;
+  gap:10px;
+}
+
+.modal-note-row{
+  display:block !important;
+  padding:0 !important;
+  overflow:hidden;
+}
+
+.modal-note-summary{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:inherit;
+  padding:14px;
+  display:grid;
+  grid-template-columns:1fr 12px 18px;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+}
+
+.modal-note-summary strong{
+  display:block;
+  font-size:.88rem;
+}
+
+.modal-note-summary span{
+  display:block;
+  margin-top:4px;
+  color:#9eacc7;
+  font-size:.74rem;
+}
+
+.modal-note-summary i{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#ff4e68;
+  box-shadow:0 0 10px rgba(255,78,104,.7);
+}
+
+.modal-note-summary em{
+  font-style:normal;
+  color:#9eacc7;
+  transition:transform .2s ease;
+}
+
+.modal-note-row.open .modal-note-summary em{
+  transform:rotate(180deg);
+}
+
+.modal-note-details{
+  max-height:0;
+  overflow:hidden;
+  color:#aebbd2;
+  font-size:.76rem;
+  line-height:1.45;
+  padding:0 14px;
+  transition:max-height .25s ease, padding .25s ease;
+}
+
+.modal-note-row.open .modal-note-details{
+  max-height:150px;
+  padding:0 14px 14px;
+}
+
+@media (max-width:370px){
+  .bottom-nav{
+    width:min(calc(100% - 18px),390px) !important;
+  }
+  .nav-btn span{
+    font-size:.48rem !important;
+  }
+}

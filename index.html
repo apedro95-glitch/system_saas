@@ -66,5 +66,23 @@
   </main>
 
   <script src="app.js"></script>
+
+<script id="members-nav-blindado">
+(function(){
+  const membersBtn = document.getElementById('nav-members');
+  if(!membersBtn) return;
+
+  membersBtn.removeAttribute('data-construction');
+  membersBtn.onclick = null;
+
+  membersBtn.addEventListener('click', function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    window.location.href = 'members.html';
+  }, true);
+})();
+</script>
+
 </body>
 </html>

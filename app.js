@@ -496,8 +496,36 @@ function renderAdmin(){
     </div>
     <button class="primary-btn" id="createAdmin">Criar conta e iniciar clã</button>
   `);
-  document.querySelector('#createAdmin').addEventListener('click', ()=>{currentStep = steps.SUCCESS; renderSuccess();});
-}
+  document.querySelector('#createAdmin').addEventListener('click', async ()=>{
+
+  const inputs = document.querySelectorAll('.admin-box input');
+
+  const nome = inputs[0].value;
+  const email = inputs[1].value;
+  const senha = inputs[2].value;
+  const playerTag = inputs[3].value;
+
+  if(!nome || !email || !senha){
+    alert("Preencha todos os campos");
+    return;
+  }
+
+  try {
+
+    await createClanAdmin({
+      email,
+      senha,
+      clanTag: clan.tag
+    });
+    
+currentStep = steps.SUCCESS;
+renderSuccess();
+
+  } catch (err){
+    alert("Erro ao criar conta: " + err.message);
+  }
+
+});
 
 function renderSuccess(){
   onboardShell(5, `

@@ -2159,3 +2159,66 @@ html, body{
 .dash-bell:not(.has-unread) .red-dot{
   opacity:0 !important;
 }
+
+
+/* ===== WAR BLOCO PADRÃO DASHBOARD - FIX FINAL APLICADO ===== */
+.war-dashboard-copy{
+  padding:16px !important;
+  border-radius:20px !important;
+}
+
+.war-dashboard-copy .dash-section-label{
+  font-size:.72rem !important;
+  letter-spacing:.14em !important;
+  margin-bottom:10px !important;
+}
+
+.war-dashboard-copy h2{
+  font-size:1.15rem !important;
+  font-weight:900 !important;
+  letter-spacing:-.02em !important;
+  line-height:1.15 !important;
+}
+
+.war-dashboard-copy .war-block-day{
+  font-size:.78rem !important;
+}
+
+.war-dashboard-copy .dash-war-stats{
+  margin-top:14px !important;
+}
+
+.war-dashboard-copy .dash-war-stats span{
+  font-size:.78rem !important;
+  margin-bottom:4px !important;
+}
+
+.war-dashboard-copy .dash-war-stats strong{
+  font-size:1.2rem !important;
+  font-weight:900 !important;
+  line-height:1.08 !important;
+}
+
+.war-dashboard-copy .dash-fame,
+.war-dashboard-copy .war-block-fame{
+  color:#85adff !important;
+}
+
+.war-dashboard-copy .dash-progress,
+.war-dashboard-copy .war-block-progress{
+  height:6px !important;
+  margin-top:10px !important;
+}
+
+.war-state-pill{
+  padding:5px 9px !important;
+  font-size:.65rem !important;
+  font-weight:800 !important;
+  gap:6px !important;
+  letter-spacing:.04em !important;
+}
+
+.war-state-pill i{
+  width:6px !important;
+  height:6px !important;
+}

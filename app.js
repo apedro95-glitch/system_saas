@@ -111,13 +111,21 @@ function renderSearch(){
     </section>
   `;
 
-  document.querySelector('#clanForm').addEventListener('submit', (event)=>{
-    event.preventDefault();
-    const tag = normalizeClanTag(document.querySelector('#clanTag').value || '#DEMO123');
-    clan = tag === '#DEMO123' ? getDemoClan() : {...getDemoClan(), tag, name:'Clã encontrado'};
-    currentStep = steps.CONFIRM;
-    renderConfirm();
-  });
+  document.getElementById("clanForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const tag = document.getElementById("clanTag").value;
+
+  if(!tag){
+    alert("Digite a tag do clã");
+    return;
+  }
+
+  // simulação (depois API real)
+  document.getElementById("resultBox").classList.remove("hidden");
+
+  localStorage.setItem("selectedClan", tag);
+});
 
   document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());
   document.querySelector('#openSignup').addEventListener('click', ()=>showSignupFace());

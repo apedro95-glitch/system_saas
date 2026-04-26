@@ -1,5 +1,6 @@
 const months=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const fullMonths={Jan:'Janeiro',Fev:'Fevereiro',Mar:'Março',Abr:'Abril',Mai:'Maio',Jun:'Junho',Jul:'Julho',Ago:'Agosto',Set:'Setembro',Out:'Outubro',Nov:'Novembro',Dez:'Dezembro'};
+const params=new URLSearchParams(window.location.search);
 let selectedMonth='Abr', selectedWeek='S4', activeTab='general';
 const rankingData=[
 {name:'Pedrin',role:'Co-líder',avatar:'P',general:62550,tournament:19,donSent:1284,donReceived:320,weeks:{S1:6,S2:6,S3:7,S4:0}},
@@ -55,7 +56,7 @@ function closeOverlay(id){document.querySelector(id).classList.remove('show');do
 document.querySelector('#openRankingCalendar').onclick=()=>{renderCalendar();openOverlay('#rankingCalendarOverlay')};document.querySelector('#closeRankingCalendar').onclick=()=>closeOverlay('#rankingCalendarOverlay');document.querySelector('#rankingCalendarOverlay').onclick=e=>{if(e.target.id==='rankingCalendarOverlay')closeOverlay('#rankingCalendarOverlay')};
 function openDetail(name){const it=rankingData.find(x=>x.name===name);document.querySelector('#detailName').textContent=it.name;document.querySelector('#detailRole').textContent=`${it.role} • Pontuação semanal do mês vigente`;document.querySelector('#detailTotal').textContent=`${it.tournament} PTS`;document.querySelector('#detailWeeks').innerHTML=['S1','S2','S3','S4'].map(w=>`<div><span>${w}</span><strong>${it.weeks[w]}</strong></div>`).join('');openOverlay('#rankingDetailOverlay')}
 document.querySelector('#closeRankingDetail').onclick=()=>closeOverlay('#rankingDetailOverlay');document.querySelector('#rankingDetailOverlay').onclick=e=>{if(e.target.id==='rankingDetailOverlay')closeOverlay('#rankingDetailOverlay')};
-document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('gesturechange',e=>e.preventDefault());document.addEventListener('gestureend',e=>e.preventDefault());updateRankingPeriod();renderAll();
+document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('gesturechange',e=>e.preventDefault());document.addEventListener('gestureend',e=>e.preventDefault());updateRankingPeriod();document.querySelectorAll('.ranking-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===activeTab));renderAll();
 let lastTouchEndRanking=0;
 document.addEventListener('touchend',e=>{
  const now=Date.now();

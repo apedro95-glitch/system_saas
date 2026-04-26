@@ -13,16 +13,50 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 
-// =============================
-// CADASTRO MEMBRO
-// =============================
+// ========================================
+// 👑 CRIAR ADMIN (ONBOARDING)
+// ========================================
+window.createClanAdmin = async function ({ email, senha, clanTag }) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+    const user = userCredential.user;
+
+    // salva usuário
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email,
+      clanTag,
+      role: "admin",
+      active: true,
+      createdAt: serverTimestamp()
+    });
+
+    // salva clã
+    await setDoc(doc(db, "clans", clanTag), {
+      clanTag,
+      name: "Clã TopBRS",
+      active: true,
+      ownerUid: user.uid,
+      createdAt: serverTimestamp()
+    });
+
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+
+// ========================================
+// 👤 CADASTRO MEMBRO
+// ========================================
 window.registerUser = async function ({ email, senha, playerTag }) {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // 🔥 valida se existe algum clã com esse player
-    const clanTag = localStorage.getItem("selectedClan"); // do onboarding
+    const clanTag = localStorage.getItem("selectedClan");
 
     if (!clanTag) {
       alert("Clã não identificado.");
@@ -47,9 +81,9 @@ window.registerUser = async function ({ email, senha, playerTag }) {
 };
 
 
-// =============================
-// LOGIN
-// =============================
+// ========================================
+// 🔐 LOGIN
+// ========================================
 window.loginUser = async function ({ email, senha }) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, senha);

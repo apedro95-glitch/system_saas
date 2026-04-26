@@ -2222,3 +2222,26 @@ html, body{
   width:6px !important;
   height:6px !important;
 }
+
+/* ===== FINAL WAR MATCH DASHBOARD ===== */
+.war-dashboard-copy h2{font-size:1rem !important;}
+.war-dashboard-copy .dash-war-stats strong{font-size:1.05rem !important;}
+.war-dashboard-copy .dash-war-stats span{font-size:.7rem !important;}
+
+.war-state-pill{
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  font-size:.7rem !important;
+  font-weight:800;
+}
+
+.war-state-pill.em{color:#22c55e !important;}
+.war-state-pill.final{color:#9ca3af !important;}
+.war-state-pill.future{color:#60a5fa !important;}
+
+.menu-subtitle{
+  font-size:.75rem !important;
+  opacity:.7;
+}

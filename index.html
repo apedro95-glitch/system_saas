@@ -67,15 +67,18 @@
 
   <script src="app.js"></script>
 
-<script id="members-nav-blindado">
+
+
+
+<script id="members-nav-scoped-fix">
 (function(){
-  const membersBtn = document.getElementById('nav-members');
-  if(!membersBtn) return;
+  const nav = document.querySelector('.bottom-nav');
+  if(!nav) return;
 
-  membersBtn.removeAttribute('data-construction');
-  membersBtn.onclick = null;
+  nav.addEventListener('click', function(event){
+    const membersBtn = event.target.closest('#nav-members');
+    if(!membersBtn) return;
 
-  membersBtn.addEventListener('click', function(event){
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();

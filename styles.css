@@ -2291,3 +2291,38 @@ html, body{
   background:transparent !important;
   border:none !important;
 }
+
+
+/* === onboarding-import-fix === */
+.onboarding-step,
+.import-step{
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.import-ring{
+  will-change: background;
+  transition: background 0.3s linear;
+}
+
+.import-row{
+  transition: all 0.25s ease;
+}
+
+.import-row.done{
+  background: rgba(34,197,94,0.1);
+}
+
+.import-row.loading::after{
+  content:"";
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.2);
+  border-top-color:#fff;
+  animation:spin 0.7s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}

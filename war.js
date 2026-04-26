@@ -49,19 +49,20 @@ function updateWarStatus(){
  if(!pill) return;
 
  const label=pill.querySelector('b');
+ const dot=pill.querySelector('i');
  const state=getWarState();
 
- pill.classList.remove('state-current','state-finished','state-future');
+ pill.classList.remove('state-current','state-finished','state-future','em','final','future');
 
  if(state==='finished'){
-  pill.classList.add('state-finished');
-  label.textContent='Finalizado';
+  pill.classList.add('final');
+  if(label) label.textContent='FINALIZADO';
  }else if(state==='future'){
-  pill.classList.add('state-future');
-  label.textContent='Futuro';
+  pill.classList.add('future');
+  if(label) label.textContent='FUTURO';
  }else{
-  pill.classList.add('state-current');
-  label.textContent='Em andamento';
+  pill.classList.add('em');
+  if(label) label.textContent='EM ANDAMENTO';
  }
 }
 

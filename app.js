@@ -111,20 +111,22 @@ function renderSearch(){
     </section>
   `;
 
-  document.getElementById("clanForm").addEventListener("submit", function(e){
-  e.preventDefault();
+  document.querySelector('#clanForm').addEventListener('submit', (event)=>{
+  event.preventDefault();
 
-  const tag = document.getElementById("clanTag").value;
+  const input = document.querySelector('#clanTag');
+  const tag = normalizeClanTag(input.value || '#DEMO123');
 
-  if(!tag){
-    alert("Digite a tag do clã");
-    return;
-  }
+  clan = {
+    ...getDemoClan(),
+    tag,
+    name: tag === '#DEMO123' ? 'Os Brabos BR' : 'Clã Teste'
+  };
 
-  // simulação (depois API real)
-  document.getElementById("resultBox").classList.remove("hidden");
+  localStorage.setItem('selectedClan', tag);
 
-  localStorage.setItem("selectedClan", tag);
+  currentStep = steps.CONFIRM;
+  renderConfirm();
 });
 
   document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());

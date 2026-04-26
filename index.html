@@ -66,26 +66,5 @@
   </main>
 
   <script src="app.js"></script>
-
-
-
-
-<script id="members-nav-scoped-fix">
-(function(){
-  const nav = document.querySelector('.bottom-nav');
-  if(!nav) return;
-
-  nav.addEventListener('click', function(event){
-    const membersBtn = event.target.closest('#nav-members');
-    if(!membersBtn) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    window.location.href = 'members.html';
-  }, true);
-})();
-</script>
-
 </body>
 </html>

@@ -2414,21 +2414,3 @@ html, body{
   opacity:1 !important;
   transform:scale(1) !important;
 }
-
-
-/* ===== Scoped Members Nav Fix ===== */
-.dash-top,
-.dashboard-top,
-.clan-header,
-.dashboard-header{
-  pointer-events:auto !important;
-}
-
-.dash-bell{
-  margin-left:auto !important;
-  position:relative !important;
-}
-
-.bottom-nav #nav-members{
-  pointer-events:auto !important;
-}

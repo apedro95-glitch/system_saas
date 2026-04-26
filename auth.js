@@ -12,51 +12,59 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-// CADASTRO ADMIN
-window.createAdminAccount = async function ({ nome, nick, email, senha, clanTag }) {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-  const user = userCredential.user;
 
-  await setDoc(doc(db, "users", user.uid), {
-    uid: user.uid,
-    nome,
-    nick,
-    email,
-    clanTag,
-    role: "admin",
-    active: true,
-    createdAt: serverTimestamp()
-  });
+// =============================
+// CADASTRO MEMBRO
+// =============================
+window.registerUser = async function ({ email, senha, playerTag }) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+    const user = userCredential.user;
 
-  await setDoc(doc(db, "clans", clanTag), {
-    clanTag,
-    name: "Os Brabos BR",
-    ownerUid: user.uid,
-    active: true,
-    createdAt: serverTimestamp()
-  });
+    // 🔥 valida se existe algum clã com esse player
+    const clanTag = localStorage.getItem("selectedClan"); // do onboarding
 
-  window.location.href = "dashboard.html";
+    if (!clanTag) {
+      alert("Clã não identificado.");
+      return;
+    }
+
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email,
+      playerTag,
+      clanTag,
+      role: "member",
+      active: true,
+      createdAt: serverTimestamp()
+    });
+
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    alert(error.message);
+  }
 };
 
+
+// =============================
 // LOGIN
+// =============================
 window.loginUser = async function ({ email, senha }) {
-  const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-  const user = userCredential.user;
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+    const user = userCredential.user;
 
-  const userSnap = await getDoc(doc(db, "users", user.uid));
+    const userSnap = await getDoc(doc(db, "users", user.uid));
 
-  if (!userSnap.exists()) {
-    alert("Usuário sem cadastro no sistema.");
-    return;
+    if (!userSnap.exists()) {
+      alert("Usuário não encontrado.");
+      return;
+    }
+
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    alert("Erro no login: " + error.message);
   }
-
-  const userData = userSnap.data();
-
-  if (!userData.active || !userData.clanTag) {
-    alert("Acesso bloqueado. Fale com o administrador.");
-    return;
-  }
-
-  window.location.href = "dashboard.html";
 };

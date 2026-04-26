@@ -111,10 +111,10 @@ function renderWarList(){
 
  if(activeWarTab==='members'){
   head.innerHTML='<span>Membro</span><span>Ataques</span><span>Fame</span>';
-  list.innerHTML=warMembers.map((m,i)=>`<div class="war-row members-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}">${m.avatar}</span><strong>${m.name}</strong></div><strong class="attack-count">${m.weekly}</strong><strong class="fame ${fameClass(m.fame)}">${fmt(m.fame)}</strong></div>`).join('');
+  list.innerHTML=warMembers.map((m,i)=>`<div class="war-row members-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}"><img src="assets/icons/profile-user.svg" alt="" aria-hidden="true"></span><strong>${m.name}</strong></div><strong class="attack-count">${m.weekly}</strong><strong class="fame ${fameClass(m.fame)}">${fmt(m.fame)}</strong></div>`).join('');
  }else{
   head.innerHTML='<span>Membro</span><span>Fame</span><span>Hoje</span>';
-  list.innerHTML=warMembers.map((m,i)=>`<div class="war-row attacks-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}">${m.avatar}</span><strong>${m.name}</strong></div><strong class="day-fame ${fameClass(m.dayFame*4)}">${fmt(m.dayFame)}</strong>${dots(m.dayAttacks)}</div>`).join('');
+  list.innerHTML=warMembers.map((m,i)=>`<div class="war-row attacks-row"><div class="war-member-cell"><span class="war-avatar tier-${Math.min(i+1,4)}"><img src="assets/icons/profile-user.svg" alt="" aria-hidden="true"></span><strong>${m.name}</strong></div><strong class="day-fame ${fameClass(m.dayFame*4)}">${fmt(m.dayFame)}</strong>${dots(m.dayAttacks)}</div>`).join('');
  }
 }
 

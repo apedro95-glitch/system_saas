@@ -31,7 +31,7 @@ function renderPodium(){
   const p=i===1?1:i===0?2:3,v=value(it),d=typeof v==='object'?v.sent:v;
   return `<article class="podium-card podium-${p}" data-name="${it.name}">
    ${crownSvg(p)}
-   <div class="podium-avatar avatar-${p}">${it.avatar}</div>
+   <div class="podium-avatar avatar-${p}"><img src="assets/icons/profile-user.svg" alt="" aria-hidden="true"></div>
    <span class="podium-place">${p}</span>
    <strong>${it.name}</strong>
    <small>${d}</small>

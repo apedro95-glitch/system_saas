@@ -2371,3 +2371,46 @@ html, body{
 .member-filter-options button{border:1px solid rgba(176,199,255,.14);border-radius:14px;background:rgba(255,255,255,.055);color:#d8e2f4;padding:12px 8px;font-weight:900}
 .member-filter-options button.active{color:#071327;background:linear-gradient(180deg,#ffd65f,#d99221);border-color:rgba(255,214,95,.58)}
 @media(max-width:370px){.member-row{grid-template-columns:44px minmax(0,1fr) 24px 78px;gap:8px}.member-trophies strong{font-size:.82rem}.member-perm{width:21px;height:21px}}
+
+
+/* ===== FIX Membros/Nav + Notificações lidas + Avatar global ===== */
+.war-avatar,
+.podium-avatar{
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+}
+
+.war-avatar img,
+.podium-avatar img{
+  width:58%;
+  height:58%;
+  object-fit:contain;
+  opacity:.92;
+  color:currentColor;
+}
+
+.podium-avatar img{
+  width:52%;
+  height:52%;
+}
+
+.modal-note-row:not(.unread) .modal-note-summary > i:not(.ghost-dot),
+.note-item:not(.unread) .red-dot{
+  opacity:0 !important;
+  transform:scale(.4) !important;
+}
+
+.ghost-dot{
+  opacity:0 !important;
+}
+
+.dash-bell:not(.has-unread)::after{
+  opacity:0 !important;
+  transform:scale(.6) !important;
+}
+
+.dash-bell.has-unread::after{
+  opacity:1 !important;
+  transform:scale(1) !important;
+}

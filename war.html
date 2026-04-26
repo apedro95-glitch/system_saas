@@ -22,20 +22,41 @@
 </div>
 <div class="war-heading-text">
   <p class="war-kicker">Guerra</p>
-  <h1 id="warTitle">Abril • Semana 4</h1>
-  <span class="war-day" id="warDayLabel"></span>
+  <p class="war-subtitle">Acompanhe o desempenho do clã na guerra semanal</p>
 </div>
 <button class="calendar-btn" id="openWarCalendar" aria-label="Calendário">
 <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" fill="currentColor" opacity=".18"/><path d="M8 3v4M16 3v4M4 9h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="7" y="12" width="3" height="3" rx=".7" fill="currentColor"/><rect x="12" y="12" width="3" height="3" rx=".7" fill="currentColor" opacity=".75"/></svg>
 </button>
 </header>
+<section class="dashboard-war-block glass-inset">
+  <div class="war-block-head">
+    <div>
+      <span class="war-block-label">GUERRA ATUAL</span>
+      <h2 id="warBlockPeriod">Abril • Semana 4</h2>
+      <p class="war-block-day" id="warBlockDay" hidden>Quinta-feira</p>
+    </div>
 
-<div class="war-status-line"><span class="status-pill"><i></i> Em andamento</span></div>
+    <span class="war-state-pill state-current" id="warStatusPill">
+      <i></i>
+      <b>Em andamento</b>
+    </span>
+  </div>
 
-<section class="war-summary glass-inset">
-<div><small>Ataques usados</small><strong>32 / 47</strong></div>
-<div><small>Fame</small><strong class="war-fame">89.560</strong></div>
-<div class="war-progress"><span style="width:68%"></span></div>
+  <div class="war-block-grid">
+    <div>
+      <small>Ataques usados</small>
+      <strong id="warAttacksUsed">32 / 320</strong>
+    </div>
+
+    <div>
+      <small>Fame</small>
+      <strong class="war-block-fame" id="warBlockFame">89.560</strong>
+    </div>
+  </div>
+
+  <div class="war-block-progress">
+    <span id="warBlockProgressBar" style="width:10%"></span>
+  </div>
 </section>
 
 <div class="war-tabs glass-inset">

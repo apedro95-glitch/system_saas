@@ -9,8 +9,14 @@ const warMembers=[
 ];
 
 const fullMonths={Jan:'Janeiro',Fev:'Fevereiro',Mar:'Março',Abr:'Abril',Mai:'Maio',Jun:'Junho',Jul:'Julho',Ago:'Agosto',Set:'Setembro',Out:'Outubro',Nov:'Novembro',Dez:'Dezembro'};
+const monthOrder=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const days=['Quinta-feira','Sexta-feira','Sábado','Domingo'];
 const shortDays=['Qui','Sex','Sáb','Dom'];
+
+const CURRENT_MONTH='Abr';
+const CURRENT_WEEK='S4';
+const SYSTEM_ELIGIBLE_MEMBERS=20;
+const WEEKLY_ATTACKS_PER_MEMBER=16;
 
 let activeWarTab='members';
 let selectedMonth='Abr';
@@ -21,13 +27,81 @@ function fameClass(v){return v>=11000?'green':v>=9500?'yellow':'red'}
 function fmt(v){return v.toLocaleString('pt-BR')}
 function dots(n){return '<div class="attack-dots">'+[0,1,2,3].map(i=>`<i class="${i<n?'done':''}"></i>`).join('')+'</div>'}
 
+function weekNumber(week){
+ return Number(String(week).replace('S','')) || 1;
+}
+
+function getWarState(){
+ const selectedMonthIndex=monthOrder.indexOf(selectedMonth);
+ const currentMonthIndex=monthOrder.indexOf(CURRENT_MONTH);
+ const selectedWeekNumber=weekNumber(selectedWeek);
+ const currentWeekNumber=weekNumber(CURRENT_WEEK);
+
+ if(selectedMonthIndex < currentMonthIndex) return 'finished';
+ if(selectedMonthIndex > currentMonthIndex) return 'future';
+ if(selectedWeekNumber < currentWeekNumber) return 'finished';
+ if(selectedWeekNumber > currentWeekNumber) return 'future';
+ return 'current';
+}
+
+function updateWarStatus(){
+ const pill=document.querySelector('#warStatusPill');
+ if(!pill) return;
+
+ const label=pill.querySelector('b');
+ const state=getWarState();
+
+ pill.classList.remove('state-current','state-finished','state-future');
+
+ if(state==='finished'){
+  pill.classList.add('state-finished');
+  label.textContent='Finalizado';
+ }else if(state==='future'){
+  pill.classList.add('state-future');
+  label.textContent='Futuro';
+ }else{
+  pill.classList.add('state-current');
+  label.textContent='Em andamento';
+ }
+}
+
+function updateWarBlock(){
+ const period=document.querySelector('#warBlockPeriod');
+ const day=document.querySelector('#warBlockDay');
+ const attacks=document.querySelector('#warAttacksUsed');
+ const fame=document.querySelector('#warBlockFame');
+ const progress=document.querySelector('#warBlockProgressBar');
+
+ const totalAttacks=SYSTEM_ELIGIBLE_MEMBERS*WEEKLY_ATTACKS_PER_MEMBER;
+ const usedAttacks=warMembers.reduce((sum,m)=>{
+  const done=Number(String(m.weekly).split('/')[0]) || 0;
+  return sum+done;
+ },0);
+ const totalFame=warMembers.reduce((sum,m)=>sum+m.fame,0);
+
+ if(period) period.textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;
+
+ if(day){
+  if(activeWarTab==='attacks'){
+   day.hidden=false;
+   day.textContent=days[selectedDay];
+  }else{
+   day.hidden=true;
+   day.textContent='';
+  }
+ }
+
+ if(attacks) attacks.textContent=`${usedAttacks} / ${totalAttacks}`;
+ if(fame) fame.textContent=fmt(totalFame);
+ if(progress) progress.style.width=`${Math.min(100,(usedAttacks/totalAttacks)*100)}%`;
+
+ updateWarStatus();
+}
+
 function updateWarHeader(){
- const title=document.querySelector('#warTitle');
- const day=document.querySelector('#warDayLabel');
- if(title) title.textContent=`${fullMonths[selectedMonth]} • Semana ${selectedWeek.replace('S','')}`;
- if(day) day.textContent=activeWarTab==='attacks'?days[selectedDay]:'';
  const period=document.querySelector('#warPeriodLabel');
  if(period) period.innerHTML=`<strong>${fullMonths[selectedMonth]}</strong><span>Semana ${selectedWeek.replace('S','')}</span>`;
+ updateWarBlock();
 }
 
 function renderWarList(){
@@ -56,7 +130,8 @@ function bindCalendar(){
    selectedMonth=btn.dataset.value;
    document.querySelectorAll('.calendar-months button').forEach(b=>b.classList.remove('active'));
    btn.classList.add('active');
-   updateWarHeader(); updateCalendarText();
+   updateWarHeader();
+   updateCalendarText();
   });
  });
 
@@ -66,7 +141,8 @@ function bindCalendar(){
    selectedWeek=btn.dataset.value;
    document.querySelectorAll('.calendar-weeks button').forEach(b=>b.classList.remove('active'));
    btn.classList.add('active');
-   updateWarHeader(); updateCalendarText();
+   updateWarHeader();
+   updateCalendarText();
   });
  });
 
@@ -78,7 +154,8 @@ function bindCalendar(){
     selectedDay=Number(btn.dataset.value);
     daysBox.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    updateWarHeader(); updateCalendarText();
+    updateWarHeader();
+    updateCalendarText();
    });
   });
  }
@@ -109,37 +186,20 @@ function closeCal(){
 document.querySelector('#closeWarCalendar')?.addEventListener('click',closeCal);
 document.querySelector('#warCalendarOverlay')?.addEventListener('click',e=>{if(e.target.id==='warCalendarOverlay')closeCal()});
 
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('gesturechange',e=>e.preventDefault());
+document.addEventListener('gestureend',e=>e.preventDefault());
+
+let lastTouchEndWar=0;
+document.addEventListener('touchend',e=>{
+ const now=Date.now();
+ if(now-lastTouchEndWar<=300)e.preventDefault();
+ lastTouchEndWar=now;
+},{passive:false});
+
+document.addEventListener('touchmove',e=>{
+ if(e.touches && e.touches.length>1)e.preventDefault();
+},{passive:false});
+
 bindCalendar();
 renderWarList();
-
-function updateWarStatus(){
- const status=document.getElementById('warStatus');
- const monthNow=new Date().getMonth();
- if(selectedMonth < monthNow){
-   status.textContent='Finalizado';
-   status.style.background='rgba(120,120,120,.25)';
- }else if(selectedMonth > monthNow){
-   status.textContent='Futuro';
-   status.style.background='rgba(80,140,255,.25)';
- }else{
-   status.textContent='Em andamento';
-   status.style.background='rgba(40,200,120,.25)';
- }
-}
-
-function updateWarBlock(){
- const period=document.getElementById('warBlockPeriod');
- const day=document.getElementById('warBlockDay');
- period.textContent = fullMonths[selectedMonth] + ' • Semana ' + selectedWeek.replace('S','');
-
- if(activeWarTab==='attacks'){
-   day.textContent = days[selectedDay];
-   day.style.display='block';
- }else{
-   day.style.display='none';
- }
-
- updateWarStatus();
-}
-
-setTimeout(updateWarBlock,200);

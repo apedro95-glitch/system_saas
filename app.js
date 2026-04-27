@@ -114,20 +114,36 @@ function renderSearch(){
   document.querySelector('#clanForm').addEventListener('submit', (event)=>{
   event.preventDefault();
 
-  const input = document.querySelector('#clanTag');
-  const tag = normalizeClanTag(input.value || '#DEMO123');
+  const clanForm = document.querySelector('#clanForm');
+  const clanInput = document.querySelector('#clanTag');
+
+  clanForm.addEventListener('submit', handleClanSearch);
+
+  function handleClanSearch(event){
+    event.preventDefault();
+
+    let value = clanInput.value.trim();
+
+    // 🔥 aceita qualquer coisa (modo teste)
+    if(!value){
+      value = '#DEMO123';
+  }
+
+  const tag = normalizeClanTag(value);
 
   clan = {
     ...getDemoClan(),
     tag,
-    name: tag === '#DEMO123' ? 'Os Brabos BR' : 'Clã Teste'
+    name: 'Clã Teste'
   };
 
   localStorage.setItem('selectedClan', tag);
 
+  console.log('TAG FUNCIONANDO:', tag);
+
   currentStep = steps.CONFIRM;
   renderConfirm();
-});
+}
 
   document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());
   document.querySelector('#openSignup').addEventListener('click', ()=>showSignupFace());

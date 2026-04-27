@@ -38,7 +38,7 @@
 
     <span class="war-state-pill state-current" id="warStatusPill">
       <i></i>
-      <b>Em andamento</b>
+      <b><span data-war-status>Fora da janela</span></b>
     </span>
   </div>
 
@@ -49,7 +49,7 @@
     </div>
     <div>
       <span>Fame</span>
-      <strong class="dash-fame war-block-fame" id="warBlockFame">89.560</strong>
+      <strong class="dash-fame war-block-fame" id="warBlockFame"><span data-war-fame>0</span></strong>
     </div>
   </div>
 
@@ -173,5 +173,6 @@ document.querySelectorAll('[data-construction="true"]').forEach(btn=>{
 });
 </script>
 <script type="module" src="auth-guard.js"></script>
+  <script type="module" src="war-real.js?v=real-batch1"></script>
 </body>
 </html>

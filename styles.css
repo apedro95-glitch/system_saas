@@ -2414,3 +2414,12 @@ html, body{
   opacity:1 !important;
   transform:scale(1) !important;
 }
+
+.is-muted{ background:rgba(148,163,184,.18)!important; color:#cbd5e1!important; border-color:rgba(148,163,184,.28)!important; }
+.notification-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.notification-copy{flex:1;display:flex;flex-direction:column;gap:3px;}
+.notification-copy strong{color:#fff;font-weight:800;}
+.notification-copy span,.notification-copy p{color:rgba(226,232,240,.72);margin:0;}
+.notification-dot{width:10px;height:10px;border-radius:50%;background:#f05b72;box-shadow:0 0 14px rgba(240,91,114,.65);}
+.notification-chevron{background:transparent;border:0;color:#dbe7ff;font-size:24px;}
+.dot.empty{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(148,163,184,.26);margin-right:6px;}

@@ -17,7 +17,7 @@ import {
 // ========================================
 // 👑 CRIAR ADMIN (ONBOARDING)
 // ========================================
-window.createClanAdmin = async function ({ nome, email, senha, playerTag, clanTag, clanName, clanData }) {
+window.createClanAdmin = async function ({ nome, email, senha, playerTag, clanTag, clanName, clanData, importedMembers = [] }) {
   const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
   const user = userCredential.user;
 
@@ -33,16 +33,30 @@ window.createClanAdmin = async function ({ nome, email, senha, playerTag, clanTa
   });
 
   await setDoc(doc(db, "clans", clanTag), {
-    clanTag,
-    name: clanName || clanData?.name || "Clã TopBRS",
-    badge: clanData?.badge || null,
-    members: clanData?.members || 0,
-    trophies: clanData?.trophies || null,
-    location: clanData?.location || null,
-    ownerUid: user.uid,
-    active: true,
-    createdAt: serverTimestamp()
-  });
+      clanTag,
+      name: clanName || clanData?.name || "Clã TopBRS",
+      badge: clanData?.badge || null,
+      members: clanData?.members || 0,
+      trophies: clanData?.trophies || null,
+      location: clanData?.location || null,
+      active: true,
+      ownerUid: user.uid,
+      createdAt: serverTimestamp()
+    });
+
+    for (const member of importedMembers) {
+      const memberId = String(member.tag || member.name).replace("#", "");
+      if(!memberId) continue;
+
+      await setDoc(doc(db, "clans", clanTag, "members", memberId), {
+        name: member.name || "",
+        tag: member.tag || "",
+        role: member.role || "member",
+        trophies: member.trophies || 0,
+        active: true,
+        importedAt: serverTimestamp()
+      });
+    }
 
   localStorage.setItem("topbrs_user_uid", user.uid);
   localStorage.setItem("topbrs_clan_tag", clanTag);

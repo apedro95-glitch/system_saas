@@ -1,4 +1,6 @@
-const API_BASE_URL = 'https://jake-enhance-jewel-endorsed.trycloudflare.com';
+const app = document.querySelector('#app');
+const API_BASE_URL = "https://provides-berry-sponsors-ride.trycloudflare.com";
+window.TOPBRS_APP_VERSION = 'clash-search-final-fix-1';
 
 const steps = {
   SEARCH: 'search',
@@ -17,18 +19,18 @@ function normalizeClanTag(value){
   return cleaned.startsWith('#') ? cleaned : `#${cleaned}`;
 }
 
+function cleanTag(value){
+  return normalizeClanTag(value).replace('#','');
+}
 
 async function fetchClanFromApi(tag){
-  const cleanTag = normalizeClanTag(tag).replace('#', '');
-
-  const response = await fetch(`${API_BASE_URL}/api/clan/${encodeURIComponent(cleanTag)}`, {
+  const response = await fetch(`${API_BASE_URL}/api/clan/${encodeURIComponent(cleanTag(tag))}`, {
     method: 'GET',
     headers: { 'Accept': 'application/json' },
     cache: 'no-store'
   });
 
-  let data = null;
-
+  let data;
   try{
     data = await response.json();
   }catch(error){
@@ -36,10 +38,31 @@ async function fetchClanFromApi(tag){
   }
 
   if(!response.ok || !data.ok || !data.clan){
-    throw new Error(data?.message || data?.details?.reason || 'Clã não encontrado. Verifique a tag.');
+    throw new Error(data?.message || data?.details?.reason || 'Clã não encontrado. Confira a tag.');
   }
 
   return data.clan;
+}
+
+async function fetchClanMembersFromApi(tag){
+  try{
+    const response = await fetch(`${API_BASE_URL}/api/clan/${encodeURIComponent(cleanTag(tag))}/members`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || !data.ok){
+      return [];
+    }
+
+    return Array.isArray(data.members) ? data.members : [];
+  }catch(error){
+    console.warn('Não foi possível carregar membros reais agora:', error);
+    return [];
+  }
 }
 
 function mapApiClan(apiClan){
@@ -54,23 +77,22 @@ function mapApiClan(apiClan){
   };
 }
 
-function getDemoClan(){
-  return {
-    name:'Os Brabos BR',
-    tag:'#DEMO123',
-    badge:'assets/icons/clan.svg',
-    members:47,
-    trophies:'62.580',
-    location:'Brasil'
-  };
+function mapApiMembers(apiMembers){
+  return apiMembers.map((m)=>({
+    name: m.name || 'Membro',
+    tag: m.tag || '#SEM_TAG',
+    role: m.role || 'member',
+    trophies: m.trophies || 0,
+    done: false
+  }));
 }
 
 function getDemoMembers(){
   return [
-    {name:'Pedrin', tag:'#PLP9QG8R', done:true},
-    {name:'Lucas', tag:'#G9QJ80P', done:true},
+    {name:'Pedrin', tag:'#PLP9QG8R', done:false},
+    {name:'Lucas', tag:'#G9QJ80P', done:false},
     {name:'Vini', tag:'#LJ9Q2PP', done:false},
-    {name:'Samuel', tag:'#Q2J9U9LP', done:false}
+    {name:'Samuel', tag:'#Q2J9LP', done:false}
   ];
 }
 
@@ -95,12 +117,6 @@ function brandShield(){
         <circle cx="60" cy="73" r="7" fill="#071327" opacity=".32" />
       </svg>
     </div>`;
-}
-
-
-
-function showClanSearchError(message){
-  alert(message || 'Não foi possível buscar o clã. Confira a tag e tente novamente.');
 }
 
 function renderSearch(){
@@ -154,66 +170,46 @@ function renderSearch(){
     </section>
   `;
 
-  document.querySelector('#clanForm').addEventListener('submit', async (event)=>{
-  event.preventDefault();
+  document.querySelector('#clanForm')?.addEventListener('submit', async (event)=>{
+    event.preventDefault();
 
-  const input = document.querySelector('#clanTag');
-  const btn = event.currentTarget.querySelector('button[type="submit"]');
-  const btnText = btn?.querySelector('span');
+    const form = event.currentTarget;
+    const input = document.querySelector('#clanTag');
+    const btn = form.querySelector('button[type="submit"]');
+    const btnText = btn?.querySelector('span');
+    const tag = normalizeClanTag(input?.value || '');
 
-  const tag = normalizeClanTag(input.value);
-
-  if(!tag || tag === '#'){
-    alert('Digite a tag do clã.');
-    return;
-  }
-
-  try{
-    btn.disabled = true;
-    if(btnText) btnText.textContent = 'Buscando...';
-
-    const cleanTag = tag.replace('#', '');
-    const response = await fetch(`${API_BASE_URL}/api/clan/${cleanTag}`, {
-      cache: 'no-store'
-    });
-
-    const data = await response.json();
-
-    if(!response.ok || !data.ok || !data.clan){
-      throw new Error(data.message || 'Clã não encontrado.');
+    if(!tag || tag === '#'){
+      alert('Digite a tag do clã.');
+      return;
     }
 
-    const apiClan = data.clan;
+    try{
+      if(btn) btn.disabled = true;
+      if(btnText) btnText.textContent = 'Buscando...';
 
-    clan = {
-      name: apiClan.name,
-      tag: apiClan.tag,
-      badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || 'assets/icons/clan.svg',
-      members: apiClan.members || apiClan.memberList?.length || 0,
-      trophies: Number(apiClan.clanScore || 0).toLocaleString('pt-BR'),
-      location: apiClan.location?.name || 'Não informado',
-      raw: apiClan
-    };
+      const apiClan = await fetchClanFromApi(tag);
+      clan = mapApiClan(apiClan);
 
-    localStorage.setItem('selectedClan', clan.tag);
-    localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
+      localStorage.setItem('selectedClan', clan.tag);
+      localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
 
-    currentStep = steps.CONFIRM;
-    renderConfirm();
+      currentStep = steps.CONFIRM;
+      renderConfirm();
 
-  }catch(error){
-    alert(error.message || 'Erro ao buscar clã.');
-  }finally{
-    btn.disabled = false;
-    if(btnText) btnText.textContent = 'Buscar Clã';
-  }
-});
+    }catch(error){
+      console.error('Erro ao buscar clã real:', error);
+      alert(error.message || 'Erro ao buscar clã.');
+    }finally{
+      if(btn) btn.disabled = false;
+      if(btnText) btnText.textContent = 'Buscar Clã';
+    }
+  });
 
   document.querySelector('#openLogin')?.addEventListener('click', ()=>showLoginFace());
   document.querySelector('#openSignup')?.addEventListener('click', ()=>showSignupFace());
   document.querySelector('#backToClan')?.addEventListener('click', ()=>hideAuthFace());
 }
-
 
 function eyeSvg(){
   return `<svg class="eye-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -260,44 +256,42 @@ function showLoginFace(){
 
     <button class="primary-btn auth-main-btn" id="loginBtn" type="button">Entrar</button>
 
-    <button class="link-btn forgot-btn" type="button" onclick="openForgotPasswordPopup()" onclick="openForgotPasswordPopup()"><b>Esqueci minha senha</b></button>
+    <button class="link-btn forgot-btn" type="button" onclick="openForgotPasswordPopup()"><b>Esqueci minha senha</b></button>
 
     <div class="member-access compact">
       <span>Ainda não tem conta?</span>
       <button type="button" class="inline-link" onclick="showSignupFace()">Cadastre-se</button>
     </div>
   `;
-  document.querySelector('#authFlip').classList.add('is-flipped');
 
-  const loginBtn = document.querySelector('#loginBtn');
-  if(loginBtn){
-    loginBtn.addEventListener('click', async ()=>{
-      const email = String(document.querySelector('#loginEmail')?.value || '').trim();
-      const senha = String(document.querySelector('#loginPassword')?.value || '').trim();
+  document.querySelector('#authFlip')?.classList.add('is-flipped');
 
-      if(!email || !senha){
-        alert('Digite email e senha.');
-        return;
-      }
+  document.querySelector('#loginBtn')?.addEventListener('click', async ()=>{
+    const email = String(document.querySelector('#loginEmail')?.value || '').trim();
+    const senha = String(document.querySelector('#loginPassword')?.value || '').trim();
 
-      if(typeof loginUser !== 'function'){
-        alert('Login ainda não carregou. Verifique auth.js.');
-        return;
-      }
+    if(!email || !senha){
+      alert('Digite email e senha.');
+      return;
+    }
 
-      try{
-        loginBtn.disabled = true;
-        loginBtn.textContent = 'Entrando...';
+    if(typeof loginUser !== 'function'){
+      alert('Login ainda não carregou. Verifique auth.js.');
+      return;
+    }
 
-        await loginUser({ email, senha });
+    const btn = document.querySelector('#loginBtn');
 
-      }catch(error){
-        alert('Erro ao entrar: ' + error.message);
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Entrar';
-      }
-    });
-  }
+    try{
+      btn.disabled = true;
+      btn.textContent = 'Entrando...';
+      await loginUser({ email, senha });
+    }catch(error){
+      alert('Erro ao entrar: ' + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  });
 }
 
 function showSignupFace(){
@@ -308,7 +302,7 @@ function showSignupFace(){
 
     <label class="field auth-field">
       <span>Nome</span>
-      <input type="text" placeholder="Seu nome" autocomplete="name" />
+      <input id="signupName" type="text" placeholder="Seu nome" autocomplete="name" />
     </label>
 
     <label class="field auth-field">
@@ -327,7 +321,7 @@ function showSignupFace(){
 
     <label class="field auth-field">
       <span>Email</span>
-      <input id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email" />
+      <input id="signupEmail" type="email" placeholder="seu@email.com" autocomplete="email" />
     </label>
 
     <label class="field auth-field">
@@ -338,7 +332,7 @@ function showSignupFace(){
       </div>
     </label>
 
-    <button class="primary-btn auth-main-btn" type="button">Confirmar cadastro</button>
+    <button class="primary-btn auth-main-btn" id="signupBtn" type="button">Confirmar cadastro</button>
 
     <div class="member-access compact">
       <span>Já tem conta?</span>
@@ -346,10 +340,37 @@ function showSignupFace(){
     </div>
   `;
 
-  document.querySelector('#authFlip').classList.add('is-flipped');
+  document.querySelector('#authFlip')?.classList.add('is-flipped');
 
-  const validateBtn = document.querySelector('#validateTagBtn');
-  validateBtn.addEventListener('click', validatePlayerTagMock);
+  document.querySelector('#validateTagBtn')?.addEventListener('click', validatePlayerTagMock);
+
+  document.querySelector('#signupBtn')?.addEventListener('click', async ()=>{
+    const email = String(document.querySelector('#signupEmail')?.value || '').trim();
+    const senha = String(document.querySelector('#signupPassword')?.value || '').trim();
+    const playerTag = String(document.querySelector('#playerTag')?.value || '').trim();
+
+    if(!email || !senha || !playerTag){
+      alert('Preencha email, senha e tag do jogador.');
+      return;
+    }
+
+    if(typeof registerUser !== 'function'){
+      alert('Cadastro ainda não carregou. Verifique auth.js.');
+      return;
+    }
+
+    try{
+      const btn = document.querySelector('#signupBtn');
+      btn.disabled = true;
+      btn.textContent = 'Criando cadastro...';
+      await registerUser({ email, senha, playerTag: normalizeClanTag(playerTag) });
+    }catch(error){
+      alert('Erro ao cadastrar: ' + error.message);
+      const btn = document.querySelector('#signupBtn');
+      btn.disabled = false;
+      btn.textContent = 'Confirmar cadastro';
+    }
+  });
 }
 
 function validatePlayerTagMock(){
@@ -358,7 +379,7 @@ function validatePlayerTagMock(){
   const feedback = document.querySelector('#tagFeedback');
   const btn = document.querySelector('#validateTagBtn');
 
-  const value = String(tagInput.value || '').trim();
+  const value = String(tagInput?.value || '').trim();
 
   feedback.className = 'tag-feedback';
   nickInput.value = '';
@@ -375,7 +396,7 @@ function validatePlayerTagMock(){
   feedback.classList.add('loading');
 
   setTimeout(()=>{
-    const normalized = value.startsWith('#') ? value.toUpperCase() : `#${value.toUpperCase()}`;
+    const normalized = normalizeClanTag(value);
 
     if(normalized.length < 5){
       feedback.className = 'tag-feedback error';
@@ -392,9 +413,8 @@ function validatePlayerTagMock(){
     btn.disabled = false;
     btn.textContent = 'Validado';
     btn.classList.add('validated');
-  }, 850);
+  }, 650);
 }
-
 
 function openForgotPasswordPopup(){
   let overlay = document.querySelector('#forgotPasswordOverlay');
@@ -507,7 +527,7 @@ function renderConfirm(){
 
     <div class="clan-confirm-card">
       <div class="clan-main">
-        <div class="clan-icon"><img src="${clan.badge}" alt="" referrerpolicy="no-referrer" onerror="this.src=\'assets/icons/clan.svg\'"></div>
+        <div class="clan-icon"><img src="${clan.badge}" alt="" referrerpolicy="no-referrer" onerror="this.src='assets/icons/clan.svg'"></div>
         <div>
           <h2>${clan.name}</h2>
           <p>${clan.tag}</p>
@@ -528,17 +548,20 @@ function renderConfirm(){
     <button class="gold-btn" id="confirmClan">Confirmar Clã</button>
     <button class="ghost-btn" id="otherClan">Buscar outro clã</button>
   `);
-  document.querySelector('#confirmClan').addEventListener('click', ()=>{currentStep = steps.IMPORT; renderImport();});
-  document.querySelector('#otherClan').addEventListener('click', ()=>renderSearch());
+  document.querySelector('#confirmClan')?.addEventListener('click', ()=>{currentStep = steps.IMPORT; renderImport();});
+  document.querySelector('#otherClan')?.addEventListener('click', ()=>renderSearch());
 }
 
-function renderImport(){
-  importedMembers = getDemoMembers().map((member)=>({...member, done:false}));
+async function renderImport(){
+  const realMembers = await fetchClanMembersFromApi(clan.tag);
+  const mappedMembers = mapApiMembers(realMembers);
+  importedMembers = (mappedMembers.length ? mappedMembers : getDemoMembers()).map((member)=>({...member, done:false}));
+
   let currentImported = 0;
-  const totalMembers = clan?.members || 47;
+  const totalMembers = clan?.members || importedMembers.length || 47;
 
   function paintImport(){
-    const listMarkup = importedMembers.map((m,i)=>`
+    const listMarkup = importedMembers.slice(0, 6).map((m,i)=>`
         <div class="import-row ${m.done ? 'imported' : ''}">
           <span>${i+1}</span>
           <strong>${m.name}</strong>
@@ -572,26 +595,26 @@ function renderImport(){
 
   paintImport();
 
-  const importSteps = [8, 17, 26, 38, 47];
   let tick = 0;
-
+  const stepsCount = Math.max(1, importedMembers.length);
   const interval = setInterval(()=>{
     if(tick < importedMembers.length){
       importedMembers[tick].done = true;
     }
 
-    currentImported = importSteps[Math.min(tick, importSteps.length - 1)] || totalMembers;
+    const progressRatio = Math.min(1, (tick + 1) / stepsCount);
+    currentImported = Math.min(totalMembers, Math.max(1, Math.round(totalMembers * progressRatio)));
     tick++;
     paintImport();
 
-    if(tick > importSteps.length){
+    if(tick >= stepsCount){
       clearInterval(interval);
       setTimeout(()=>{
         currentStep = steps.ADMIN;
         renderAdmin();
       }, 650);
     }
-  }, 620);
+  }, 420);
 }
 
 function renderAdmin(){
@@ -608,7 +631,7 @@ function renderAdmin(){
     </div>
     <button class="primary-btn" id="createAdmin">Criar conta e iniciar clã</button>
   `);
-  document.querySelector('#createAdmin').addEventListener('click', async ()=>{
+  document.querySelector('#createAdmin')?.addEventListener('click', async ()=>{
     const btn = document.querySelector('#createAdmin');
     const inputs = document.querySelectorAll('.admin-box input');
 
@@ -638,17 +661,10 @@ function renderAdmin(){
         playerTag,
         clanTag: clan.tag,
         clanName: clan.name,
-        clanData: clan
+        clanData: clan,
+        importedMembers
       });
 
-    }catch(error){
-      alert('Erro ao criar admin: ' + error.message);
-      btn.disabled = false;
-      btn.textContent = 'Criar conta e iniciar clã';
-    }
-  });
-
-      // createClanAdmin redireciona para dashboard.html ao finalizar.
     }catch(error){
       alert('Erro ao criar admin: ' + error.message);
       btn.disabled = false;
@@ -667,5 +683,7 @@ function renderSuccess(){
     <button class="primary-btn" type="button" onclick="window.location.href='dashboard.html'">Entrar no sistema</button>
   `);
 }
+
+/* Service Worker desativado temporariamente para evitar cache antigo durante testes da API. */
 
 renderSearch();

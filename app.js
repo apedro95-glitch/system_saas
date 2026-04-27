@@ -1,4 +1,4 @@
-const app = document.querySelector('#app');
+const API_BASE_URL = "http://5.189.165.94:3001";
 
 const steps = {
   SEARCH: 'search',
@@ -111,23 +111,55 @@ function renderSearch(){
     </section>
   `;
 
-  document.querySelector('#clanForm').addEventListener('submit', (event)=>{
-    event.preventDefault();
+  document.querySelector('#clanForm').addEventListener('submit', async (event)=>{
+  event.preventDefault();
 
-    const rawTag = document.querySelector('#clanTag').value || '#DEMO123';
-    const tag = normalizeClanTag(rawTag);
+  const btn = event.currentTarget.querySelector('button[type="submit"]');
+  const input = document.querySelector('#clanTag');
+
+  const tag = normalizeClanTag(input.value);
+
+  if(!tag || tag === '#'){
+    alert('Digite a tag do clã.');
+    return;
+  }
+
+  try{
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Buscando...';
+
+    const cleanTag = tag.replace('#', '');
+    const response = await fetch(`${API_BASE_URL}/api/clan/${cleanTag}`);
+    const data = await response.json();
+
+    if(!response.ok || !data.ok){
+      throw new Error(data.message || 'Clã não encontrado.');
+    }
+
+    const apiClan = data.clan;
 
     clan = {
-      ...getDemoClan(),
-      tag,
-      name: tag === '#DEMO123' ? 'Os Brabos BR' : 'Clã Teste'
+      name: apiClan.name,
+      tag: apiClan.tag,
+      badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || 'assets/icons/clan.svg',
+      members: apiClan.members || apiClan.memberList?.length || 0,
+      trophies: Number(apiClan.clanScore || 0).toLocaleString('pt-BR'),
+      location: apiClan.location?.name || 'Não informado',
+      raw: apiClan
     };
 
-    localStorage.setItem('selectedClan', tag);
+    localStorage.setItem('selectedClan', clan.tag);
 
     currentStep = steps.CONFIRM;
     renderConfirm();
-  });
+
+  }catch(error){
+    alert(error.message || 'Erro ao buscar clã.');
+  }finally{
+    btn.disabled = false;
+    btn.querySelector('span').textContent = 'Buscar Clã';
+  }
+});
 
   document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());
   document.querySelector('#openSignup').addEventListener('click', ()=>showSignupFace());

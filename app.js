@@ -60,6 +60,46 @@ function brandShield(){
     </div>`;
 }
 
+
+async function fetchClanFromApi(tag){
+  const cleanTag = normalizeClanTag(tag).replace('#', '');
+
+  const response = await fetch(`${API_BASE_URL}/api/clan/${encodeURIComponent(cleanTag)}`, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' }
+  });
+
+  let data = null;
+
+  try{
+    data = await response.json();
+  }catch(error){
+    throw new Error('Resposta inválida da API.');
+  }
+
+  if(!response.ok || !data.ok || !data.clan){
+    throw new Error(data?.message || data?.details?.reason || 'Clã não encontrado.');
+  }
+
+  return data.clan;
+}
+
+function mapApiClan(apiClan){
+  return {
+    name: apiClan.name || 'Clã encontrado',
+    tag: apiClan.tag || '#SEM_TAG',
+    badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || apiClan.badgeUrls?.large || 'assets/icons/clan.svg',
+    members: apiClan.members || apiClan.memberList?.length || 0,
+    trophies: Number(apiClan.clanScore || apiClan.clanWarTrophies || 0).toLocaleString('pt-BR'),
+    location: apiClan.location?.name || 'Não informado',
+    raw: apiClan
+  };
+}
+
+function showClanSearchError(message){
+  alert(message || 'Não foi possível buscar o clã. Confira a tag e tente novamente.');
+}
+
 function renderSearch(){
   currentStep = steps.SEARCH;
   app.className = 'auth-shell';
@@ -112,54 +152,41 @@ function renderSearch(){
   `;
 
   document.querySelector('#clanForm').addEventListener('submit', async (event)=>{
-  event.preventDefault();
+    event.preventDefault();
 
-  const btn = event.currentTarget.querySelector('button[type="submit"]');
-  const input = document.querySelector('#clanTag');
+    const form = event.currentTarget;
+    const input = document.querySelector('#clanTag');
+    const btn = form.querySelector('button[type="submit"]');
+    const btnText = btn?.querySelector('span');
 
-  const tag = normalizeClanTag(input.value);
+    const tag = normalizeClanTag(input?.value || '');
 
-  if(!tag || tag === '#'){
-    alert('Digite a tag do clã.');
-    return;
-  }
-
-  try{
-    btn.disabled = true;
-    btn.querySelector('span').textContent = 'Buscando...';
-
-    const cleanTag = tag.replace('#', '');
-    const response = await fetch(`${API_BASE_URL}/api/clan/${cleanTag}`);
-    const data = await response.json();
-
-    if(!response.ok || !data.ok){
-      throw new Error(data.message || 'Clã não encontrado.');
+    if(!tag || tag === '#'){
+      alert('Digite a tag do clã.');
+      return;
     }
 
-    const apiClan = data.clan;
+    try{
+      if(btn) btn.disabled = true;
+      if(btnText) btnText.textContent = 'Buscando...';
 
-    clan = {
-      name: apiClan.name,
-      tag: apiClan.tag,
-      badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || 'assets/icons/clan.svg',
-      members: apiClan.members || apiClan.memberList?.length || 0,
-      trophies: Number(apiClan.clanScore || 0).toLocaleString('pt-BR'),
-      location: apiClan.location?.name || 'Não informado',
-      raw: apiClan
-    };
+      const apiClan = await fetchClanFromApi(tag);
+      clan = mapApiClan(apiClan);
 
-    localStorage.setItem('selectedClan', clan.tag);
+      localStorage.setItem('selectedClan', clan.tag);
+      localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
 
-    currentStep = steps.CONFIRM;
-    renderConfirm();
+      currentStep = steps.CONFIRM;
+      renderConfirm();
 
-  }catch(error){
-    alert(error.message || 'Erro ao buscar clã.');
-  }finally{
-    btn.disabled = false;
-    btn.querySelector('span').textContent = 'Buscar Clã';
-  }
-});
+    }catch(error){
+      console.error('Erro ao buscar clã:', error);
+      showClanSearchError(error.message || 'Load failed');
+    }finally{
+      if(btn) btn.disabled = false;
+      if(btnText) btnText.textContent = 'Buscar Clã';
+    }
+  });
 
   document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());
   document.querySelector('#openSignup').addEventListener('click', ()=>showSignupFace());
@@ -588,7 +615,9 @@ function renderAdmin(){
         email,
         senha,
         playerTag,
-        clanTag: clan.tag
+        clanTag: clan.tag,
+        clanName: clan.name,
+        clanData: clan
       });
 
       // createClanAdmin redireciona para dashboard.html ao finalizar.

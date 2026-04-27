@@ -155,65 +155,57 @@ function renderSearch(){
   `;
 
   document.querySelector('#clanForm').addEventListener('submit', async (event)=>{
-    event.preventDefault();
+  event.preventDefault();
 
-    const form = event.currentTarget;
-    const input = document.querySelector('#clanTag');
-    const btn = form.querySelector('button[type="submit"]');
-    const btnText = btn?.querySelector('span');
+  const input = document.querySelector('#clanTag');
+  const btn = event.currentTarget.querySelector('button[type="submit"]');
+  const btnText = btn?.querySelector('span');
 
-    const tag = normalizeClanTag(input?.value || '');
+  const tag = normalizeClanTag(input.value);
 
-    if(!tag || tag === '#'){
-      alert('Digite a tag do clã.');
-      return;
+  if(!tag || tag === '#'){
+    alert('Digite a tag do clã.');
+    return;
+  }
+
+  try{
+    btn.disabled = true;
+    if(btnText) btnText.textContent = 'Buscando...';
+
+    const cleanTag = tag.replace('#', '');
+    const response = await fetch(`${API_BASE_URL}/api/clan/${cleanTag}`, {
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || !data.ok || !data.clan){
+      throw new Error(data.message || 'Clã não encontrado.');
     }
 
-    try{
-      if(btn) btn.disabled = true;
-      if(btnText) btnText.textContent = 'Buscando...';
+    const apiClan = data.clan;
 
-      const apiClan = await fetchClanFromApi(tag);
-      clan = mapApiClan(apiClan);
+    clan = {
+      name: apiClan.name,
+      tag: apiClan.tag,
+      badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || 'assets/icons/clan.svg',
+      members: apiClan.members || apiClan.memberList?.length || 0,
+      trophies: Number(apiClan.clanScore || 0).toLocaleString('pt-BR'),
+      location: apiClan.location?.name || 'Não informado',
+      raw: apiClan
+    };
 
-      localStorage.setItem('selectedClan', clan.tag);
-      localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
+    localStorage.setItem('selectedClan', clan.tag);
+    localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
 
-      currentStep = steps.CONFIRM;
-      renderConfirm();
-
-    }catch(error){
-      console.error('Erro ao buscar clã real:', error);
-      alert(error.message || 'Erro ao buscar clã.');
-    }finally{
-      if(btn) btn.disabled = false;
-      if(btnText) btnText.textContent = 'Buscar Clã';
-    }
-  });
-
-  }catch(error){
-    console.error(error);
-    alert(error.message || 'Erro ao buscar clã');
-  }finally{
-    btn.disabled = false;
-    if(btnText) btnText.textContent = 'Buscar Clã';
-  }
-});
-
-  }catch(error){
-    console.error(error);
-    alert(error.message || 'Erro ao buscar clã');
-  }finally{
-    btn.disabled = false;
-    if(btnText) btnText.textContent = 'Buscar Clã';
-  }
-});
+    currentStep = steps.CONFIRM;
+    renderConfirm();
 
   }catch(error){
     alert(error.message || 'Erro ao buscar clã.');
   }finally{
     btn.disabled = false;
-    btn.querySelector('span').textContent = 'Buscar Clã';
+    if(btnText) btnText.textContent = 'Buscar Clã';
   }
 });
 

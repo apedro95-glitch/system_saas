@@ -167,7 +167,7 @@ function showLoginFace(){
 
     <label class="field auth-field">
       <span>Email</span>
-      <input type="email" placeholder="seu@email.com" autocomplete="email" />
+      <input id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email" />
     </label>
 
     <label class="field auth-field">
@@ -178,7 +178,7 @@ function showLoginFace(){
       </div>
     </label>
 
-    <button class="primary-btn auth-main-btn" type="button">Entrar</button>
+    <button class="primary-btn auth-main-btn" id="loginBtn" type="button">Entrar</button>
 
     <button class="link-btn forgot-btn" type="button" onclick="openForgotPasswordPopup()" onclick="openForgotPasswordPopup()"><b>Esqueci minha senha</b></button>
 
@@ -188,6 +188,36 @@ function showLoginFace(){
     </div>
   `;
   document.querySelector('#authFlip').classList.add('is-flipped');
+
+  const loginBtn = document.querySelector('#loginBtn');
+  if(loginBtn){
+    loginBtn.addEventListener('click', async ()=>{
+      const email = String(document.querySelector('#loginEmail')?.value || '').trim();
+      const senha = String(document.querySelector('#loginPassword')?.value || '').trim();
+
+      if(!email || !senha){
+        alert('Digite email e senha.');
+        return;
+      }
+
+      if(typeof loginUser !== 'function'){
+        alert('Login ainda não carregou. Verifique auth.js.');
+        return;
+      }
+
+      try{
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Entrando...';
+
+        await loginUser({ email, senha });
+
+      }catch(error){
+        alert('Erro ao entrar: ' + error.message);
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Entrar';
+      }
+    });
+  }
 }
 
 function showSignupFace(){
@@ -217,7 +247,7 @@ function showSignupFace(){
 
     <label class="field auth-field">
       <span>Email</span>
-      <input type="email" placeholder="seu@email.com" autocomplete="email" />
+      <input id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email" />
     </label>
 
     <label class="field auth-field">

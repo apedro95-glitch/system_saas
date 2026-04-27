@@ -2,7 +2,8 @@ import { auth, db } from "./firebase-config.js";
 
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 import {
@@ -39,6 +40,8 @@ window.createClanAdmin = async function ({ nome, email, senha, playerTag, clanTa
     createdAt: serverTimestamp()
   });
 
+  localStorage.setItem("topbrs_user_uid", user.uid);
+  localStorage.setItem("topbrs_clan_tag", clanTag);
   window.location.href = "dashboard.html";
 };
 
@@ -80,20 +83,32 @@ window.registerUser = async function ({ email, senha, playerTag }) {
 // 🔐 LOGIN
 // ========================================
 window.loginUser = async function ({ email, senha }) {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
+  const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+  const user = userCredential.user;
 
-    const userSnap = await getDoc(doc(db, "users", user.uid));
+  const userSnap = await getDoc(doc(db, "users", user.uid));
 
-    if (!userSnap.exists()) {
-      alert("Usuário não encontrado.");
-      return;
-    }
-
-    window.location.href = "dashboard.html";
-
-  } catch (error) {
-    alert("Erro no login: " + error.message);
+  if (!userSnap.exists()) {
+    await signOut(auth);
+    throw new Error("Usuário não encontrado no sistema.");
   }
+
+  const userData = userSnap.data();
+
+  if (!userData.active || !userData.clanTag) {
+    await signOut(auth);
+    throw new Error("Acesso bloqueado. Fale com o administrador.");
+  }
+
+  const clanSnap = await getDoc(doc(db, "clans", userData.clanTag));
+
+  if (!clanSnap.exists() || !clanSnap.data().active) {
+    await signOut(auth);
+    throw new Error("Clã inativo ou não encontrado.");
+  }
+
+  localStorage.setItem("topbrs_user", JSON.stringify(userData));
+  localStorage.setItem("topbrs_clan", JSON.stringify(clanSnap.data()));
+
+  window.location.href = "dashboard.html";
 };

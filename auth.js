@@ -16,35 +16,30 @@ import {
 // ========================================
 // 👑 CRIAR ADMIN (ONBOARDING)
 // ========================================
-window.createClanAdmin = async function ({ email, senha, clanTag }) {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
+window.createClanAdmin = async function ({ nome, email, senha, playerTag, clanTag }) {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+  const user = userCredential.user;
 
-    // salva usuário
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      email,
-      clanTag,
-      role: "admin",
-      active: true,
-      createdAt: serverTimestamp()
-    });
+  await setDoc(doc(db, "users", user.uid), {
+    uid: user.uid,
+    nome,
+    email,
+    playerTag,
+    clanTag,
+    role: "admin",
+    active: true,
+    createdAt: serverTimestamp()
+  });
 
-    // salva clã
-    await setDoc(doc(db, "clans", clanTag), {
-      clanTag,
-      name: "Clã TopBRS",
-      active: true,
-      ownerUid: user.uid,
-      createdAt: serverTimestamp()
-    });
+  await setDoc(doc(db, "clans", clanTag), {
+    clanTag,
+    name: "Clã TopBRS",
+    ownerUid: user.uid,
+    active: true,
+    createdAt: serverTimestamp()
+  });
 
-    window.location.href = "dashboard.html";
-
-  } catch (error) {
-    alert(error.message);
-  }
+  window.location.href = "dashboard.html";
 };
 
 

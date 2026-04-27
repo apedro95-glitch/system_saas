@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://5.189.165.94:3001";
+const API_BASE_URL = "https://provides-berry-sponsors-ride.trycloudflare.com";
 
 const steps = {
   SEARCH: 'search',
@@ -154,8 +154,9 @@ function renderSearch(){
   document.querySelector('#clanForm').addEventListener('submit', async (event)=>{
   event.preventDefault();
 
-  const btn = event.currentTarget.querySelector('button[type="submit"]');
   const input = document.querySelector('#clanTag');
+  const btn = event.currentTarget.querySelector('button[type="submit"]');
+  const btnText = btn?.querySelector('span');
 
   const tag = normalizeClanTag(input.value);
 
@@ -166,32 +167,57 @@ function renderSearch(){
 
   try{
     btn.disabled = true;
-    btn.querySelector('span').textContent = 'Buscando...';
+    if(btnText) btnText.textContent = 'Buscando...';
 
-    const cleanTag = tag.replace('#', '');
-    const response = await fetch(`${API_BASE_URL}/api/clan/${cleanTag}`);
+    const response = await fetch(`${API_BASE_URL}/api/clan/${tag.replace('#','')}`);
     const data = await response.json();
 
-    if(!response.ok || !data.ok){
-      throw new Error(data.message || 'Clã não encontrado.');
+    if(!data.ok){
+      throw new Error(data.message || 'Clã não encontrado');
     }
 
-    const apiClan = data.clan;
-
     clan = {
-      name: apiClan.name,
-      tag: apiClan.tag,
-      badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || 'assets/icons/clan.svg',
-      members: apiClan.members || apiClan.memberList?.length || 0,
-      trophies: Number(apiClan.clanScore || 0).toLocaleString('pt-BR'),
-      location: apiClan.location?.name || 'Não informado',
-      raw: apiClan
+      name: data.clan.name,
+      tag: data.clan.tag,
+      badge: data.clan.badgeUrls?.medium || data.clan.badgeUrls?.small,
+      members: data.clan.members,
+      trophies: Number(data.clan.clanScore || 0).toLocaleString('pt-BR'),
+      location: data.clan.location?.name || 'Não informado',
+      raw: data.clan
     };
 
     localStorage.setItem('selectedClan', clan.tag);
+    localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
 
     currentStep = steps.CONFIRM;
     renderConfirm();
+
+  }catch(error){
+    console.error(error);
+    alert(error.message || 'Erro ao buscar clã');
+  }finally{
+    btn.disabled = false;
+    if(btnText) btnText.textContent = 'Buscar Clã';
+  }
+});
+
+  }catch(error){
+    console.error(error);
+    alert(error.message || 'Erro ao buscar clã');
+  }finally{
+    btn.disabled = false;
+    if(btnText) btnText.textContent = 'Buscar Clã';
+  }
+});
+
+  }catch(error){
+    console.error(error);
+    alert(error.message || 'Erro ao buscar clã');
+  }finally{
+    btn.disabled = false;
+    if(btnText) btnText.textContent = 'Buscar Clã';
+  }
+});
 
   }catch(error){
     alert(error.message || 'Erro ao buscar clã.');

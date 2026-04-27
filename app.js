@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://provides-berry-sponsors-ride.trycloudflare.com';
+const API_BASE_URL = 'https://asked-invention-messaging-rice.trycloudflare.com';
 
 const steps = {
   SEARCH: 'search',

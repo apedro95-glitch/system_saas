@@ -113,8 +113,18 @@ function renderSearch(){
 
   document.querySelector('#clanForm').addEventListener('submit', (event)=>{
     event.preventDefault();
-    const tag = normalizeClanTag(document.querySelector('#clanTag').value || '#DEMO123');
-    clan = tag === '#DEMO123' ? getDemoClan() : {...getDemoClan(), tag, name:'Clã encontrado'};
+
+    const rawTag = document.querySelector('#clanTag').value || '#DEMO123';
+    const tag = normalizeClanTag(rawTag);
+
+    clan = {
+      ...getDemoClan(),
+      tag,
+      name: tag === '#DEMO123' ? 'Os Brabos BR' : 'Clã Teste'
+    };
+
+    localStorage.setItem('selectedClan', tag);
+
     currentStep = steps.CONFIRM;
     renderConfirm();
   });
@@ -488,7 +498,44 @@ function renderAdmin(){
     </div>
     <button class="primary-btn" id="createAdmin">Criar conta e iniciar clã</button>
   `);
-  document.querySelector('#createAdmin').addEventListener('click', ()=>{currentStep = steps.SUCCESS; renderSuccess();});
+  document.querySelector('#createAdmin').addEventListener('click', async ()=>{
+    const btn = document.querySelector('#createAdmin');
+    const inputs = document.querySelectorAll('.admin-box input');
+
+    const nome = String(inputs[0]?.value || '').trim();
+    const email = String(inputs[1]?.value || '').trim();
+    const senha = String(inputs[2]?.value || '').trim();
+    const playerTag = normalizeClanTag(inputs[3]?.value || '#DEMO123');
+
+    if(!nome || !email || !senha){
+      alert('Preencha nome, email e senha.');
+      return;
+    }
+
+    if(typeof createClanAdmin !== 'function'){
+      alert('Firebase não carregou. Confira auth.js e firebase-config.js.');
+      return;
+    }
+
+    try{
+      btn.disabled = true;
+      btn.textContent = 'Criando conta...';
+
+      await createClanAdmin({
+        nome,
+        email,
+        senha,
+        playerTag,
+        clanTag: clan.tag
+      });
+
+      // createClanAdmin redireciona para dashboard.html ao finalizar.
+    }catch(error){
+      alert('Erro ao criar admin: ' + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Criar conta e iniciar clã';
+    }
+  });
 }
 
 function renderSuccess(){

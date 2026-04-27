@@ -253,6 +253,14 @@ document.querySelectorAll('[data-construction="true"]').forEach(btn=>{
   });
 });
 </script>
+<button
+  onclick="logoutUser()"
+style="position:fixed;top:20px;right:20px;z-index:9999;"
+>
+  Sair
+</button>
+
+<script type="module" src="auth.js"></script>
 <script type="module" src="auth-guard.js"></script>
 </body>
 </html>

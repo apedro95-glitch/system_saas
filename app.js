@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://accompanying-homeless-burns-fellowship.trycloudflare.com';
+const API_BASE_URL = 'https://provides-berry-sponsors-ride.trycloudflare.com';
 
 const steps = {
   SEARCH: 'search',
@@ -15,6 +15,43 @@ let importedMembers = [];
 function normalizeClanTag(value){
   const cleaned = String(value || '').trim().toUpperCase().replace(/\s+/g,'');
   return cleaned.startsWith('#') ? cleaned : `#${cleaned}`;
+}
+
+
+async function fetchClanFromApi(tag){
+  const cleanTag = normalizeClanTag(tag).replace('#', '');
+
+  const response = await fetch(`${API_BASE_URL}/api/clan/${encodeURIComponent(cleanTag)}`, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' },
+    cache: 'no-store'
+  });
+
+  let data = null;
+
+  try{
+    data = await response.json();
+  }catch(error){
+    throw new Error('Resposta inválida da API.');
+  }
+
+  if(!response.ok || !data.ok || !data.clan){
+    throw new Error(data?.message || data?.details?.reason || 'Clã não encontrado. Verifique a tag.');
+  }
+
+  return data.clan;
+}
+
+function mapApiClan(apiClan){
+  return {
+    name: apiClan.name || 'Clã encontrado',
+    tag: apiClan.tag || '#SEM_TAG',
+    badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.large || apiClan.badgeUrls?.small || 'assets/icons/clan.svg',
+    members: apiClan.members || apiClan.memberList?.length || 0,
+    trophies: Number(apiClan.clanScore || apiClan.clanWarTrophies || 0).toLocaleString('pt-BR'),
+    location: apiClan.location?.name || 'Não informado',
+    raw: apiClan
+  };
 }
 
 function getDemoClan(){
@@ -61,40 +98,6 @@ function brandShield(){
 }
 
 
-async function fetchClanFromApi(tag){
-  const cleanTag = normalizeClanTag(tag).replace('#', '');
-
-  const response = await fetch(`${API_BASE_URL}/api/clan/${encodeURIComponent(cleanTag)}`, {
-    method: 'GET',
-    headers: { 'Accept': 'application/json' }
-  });
-
-  let data = null;
-
-  try{
-    data = await response.json();
-  }catch(error){
-    throw new Error('Resposta inválida da API.');
-  }
-
-  if(!response.ok || !data.ok || !data.clan){
-    throw new Error(data?.message || data?.details?.reason || 'Clã não encontrado.');
-  }
-
-  return data.clan;
-}
-
-function mapApiClan(apiClan){
-  return {
-    name: apiClan.name || 'Clã encontrado',
-    tag: apiClan.tag || '#SEM_TAG',
-    badge: apiClan.badgeUrls?.medium || apiClan.badgeUrls?.small || apiClan.badgeUrls?.large || 'assets/icons/clan.svg',
-    members: apiClan.members || apiClan.memberList?.length || 0,
-    trophies: Number(apiClan.clanScore || apiClan.clanWarTrophies || 0).toLocaleString('pt-BR'),
-    location: apiClan.location?.name || 'Não informado',
-    raw: apiClan
-  };
-}
 
 function showClanSearchError(message){
   alert(message || 'Não foi possível buscar o clã. Confira a tag e tente novamente.');
@@ -158,6 +161,7 @@ function renderSearch(){
     const input = document.querySelector('#clanTag');
     const btn = form.querySelector('button[type="submit"]');
     const btnText = btn?.querySelector('span');
+
     const tag = normalizeClanTag(input?.value || '');
 
     if(!tag || tag === '#'){
@@ -179,7 +183,7 @@ function renderSearch(){
       renderConfirm();
 
     }catch(error){
-      console.error('Erro ao buscar clã:', error);
+      console.error('Erro ao buscar clã real:', error);
       alert(error.message || 'Erro ao buscar clã.');
     }finally{
       if(btn) btn.disabled = false;
@@ -511,7 +515,7 @@ function renderConfirm(){
 
     <div class="clan-confirm-card">
       <div class="clan-main">
-        <div class="clan-icon"><img src="${clan.badge}" alt=""></div>
+        <div class="clan-icon"><img src="${clan.badge}" alt="" referrerpolicy="no-referrer" onerror="this.src=\'assets/icons/clan.svg\'"></div>
         <div>
           <h2>${clan.name}</h2>
           <p>${clan.tag}</p>

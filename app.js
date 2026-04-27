@@ -1,5 +1,5 @@
 const app = document.querySelector('#app');
-const API_BASE_URL = "https://provides-berry-sponsors-ride.trycloudflare.com";
+const API_BASE_URL = 'https://delight-rom-bookstore-relaxation.trycloudflare.com';
 window.TOPBRS_APP_VERSION = 'clash-search-final-fix-1';
 
 const steps = {

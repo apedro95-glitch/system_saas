@@ -102,7 +102,7 @@ window.loginUser = async function ({ email, senha }) {
 
   const clanSnap = await getDoc(doc(db, "clans", userData.clanTag));
 
-  if (!clanSnap.exists() || !clanSnap.data().active) {
+  if (!clanSnap.exists() || !clanSnap.data()?.active) {
     await signOut(auth);
     throw new Error("Clã inativo ou não encontrado.");
   }
@@ -111,4 +111,14 @@ window.loginUser = async function ({ email, senha }) {
   localStorage.setItem("topbrs_clan", JSON.stringify(clanSnap.data()));
 
   window.location.href = "dashboard.html";
+};
+
+window.logoutUser = async function () {
+  localStorage.removeItem("topbrs_user");
+  localStorage.removeItem("topbrs_clan");
+  localStorage.removeItem("topbrs_user_uid");
+  localStorage.removeItem("topbrs_clan_tag");
+
+  await signOut(auth);
+  window.location.href = "index.html";
 };

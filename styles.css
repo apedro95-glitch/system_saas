@@ -2423,7 +2423,3 @@ html, body{
 .notification-dot{width:10px;height:10px;border-radius:50%;background:#f05b72;box-shadow:0 0 14px rgba(240,91,114,.65);}
 .notification-chevron{background:transparent;border:0;color:#dbe7ff;font-size:24px;}
 .dot.empty{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(148,163,184,.26);margin-right:6px;}
-
-.highlight-grid article{cursor:pointer}
-.notification-row.expanded .notification-body,.notification-item.expanded .notification-body{display:block!important}
-.war-state-pill.final,.war-state-pill .is-muted{background:rgba(148,163,184,.16)!important;color:#d7dee9!important;border-color:rgba(148,163,184,.25)!important}

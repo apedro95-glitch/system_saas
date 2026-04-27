@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://provides-berry-sponsors-ride.trycloudflare.com";
+const API_BASE_URL = 'https://provides-berry-sponsors-ride.trycloudflare.com';
 
 const steps = {
   SEARCH: 'search',
@@ -152,54 +152,40 @@ function renderSearch(){
   `;
 
   document.querySelector('#clanForm').addEventListener('submit', async (event)=>{
-  event.preventDefault();
+    event.preventDefault();
 
-  const input = document.querySelector('#clanTag');
-  const btn = event.currentTarget.querySelector('button[type="submit"]');
-  const btnText = btn?.querySelector('span');
+    const form = event.currentTarget;
+    const input = document.querySelector('#clanTag');
+    const btn = form.querySelector('button[type="submit"]');
+    const btnText = btn?.querySelector('span');
+    const tag = normalizeClanTag(input?.value || '');
 
-  const tag = normalizeClanTag(input.value);
-
-  if(!tag || tag === '#'){
-    alert('Digite a tag do clã.');
-    return;
-  }
-
-  try{
-    btn.disabled = true;
-    if(btnText) btnText.textContent = 'Buscando...';
-
-    const response = await fetch(`${API_BASE_URL}/api/clan/${tag.replace('#','')}`);
-    const data = await response.json();
-
-    if(!data.ok){
-      throw new Error(data.message || 'Clã não encontrado');
+    if(!tag || tag === '#'){
+      alert('Digite a tag do clã.');
+      return;
     }
 
-    clan = {
-      name: data.clan.name,
-      tag: data.clan.tag,
-      badge: data.clan.badgeUrls?.medium || data.clan.badgeUrls?.small,
-      members: data.clan.members,
-      trophies: Number(data.clan.clanScore || 0).toLocaleString('pt-BR'),
-      location: data.clan.location?.name || 'Não informado',
-      raw: data.clan
-    };
+    try{
+      if(btn) btn.disabled = true;
+      if(btnText) btnText.textContent = 'Buscando...';
 
-    localStorage.setItem('selectedClan', clan.tag);
-    localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
+      const apiClan = await fetchClanFromApi(tag);
+      clan = mapApiClan(apiClan);
 
-    currentStep = steps.CONFIRM;
-    renderConfirm();
+      localStorage.setItem('selectedClan', clan.tag);
+      localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
 
-  }catch(error){
-    console.error(error);
-    alert(error.message || 'Erro ao buscar clã');
-  }finally{
-    btn.disabled = false;
-    if(btnText) btnText.textContent = 'Buscar Clã';
-  }
-});
+      currentStep = steps.CONFIRM;
+      renderConfirm();
+
+    }catch(error){
+      console.error('Erro ao buscar clã:', error);
+      alert(error.message || 'Erro ao buscar clã.');
+    }finally{
+      if(btn) btn.disabled = false;
+      if(btnText) btnText.textContent = 'Buscar Clã';
+    }
+  });
 
   }catch(error){
     console.error(error);
@@ -227,9 +213,9 @@ function renderSearch(){
   }
 });
 
-  document.querySelector('#openLogin').addEventListener('click', ()=>showLoginFace());
-  document.querySelector('#openSignup').addEventListener('click', ()=>showSignupFace());
-  document.querySelector('#backToClan').addEventListener('click', ()=>hideAuthFace());
+  document.querySelector('#openLogin')?.addEventListener('click', ()=>showLoginFace());
+  document.querySelector('#openSignup')?.addEventListener('click', ()=>showSignupFace());
+  document.querySelector('#backToClan')?.addEventListener('click', ()=>hideAuthFace());
 }
 
 
@@ -641,7 +627,7 @@ function renderAdmin(){
     }
 
     if(typeof createClanAdmin !== 'function'){
-      alert('Firebase não carregou. Confira auth.js e firebase-config.js.');
+      alert('Firebase não carregou. Verifique auth.js e firebase-config.js.');
       return;
     }
 
@@ -658,6 +644,13 @@ function renderAdmin(){
         clanName: clan.name,
         clanData: clan
       });
+
+    }catch(error){
+      alert('Erro ao criar admin: ' + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Criar conta e iniciar clã';
+    }
+  });
 
       // createClanAdmin redireciona para dashboard.html ao finalizar.
     }catch(error){

@@ -1,0 +1,36 @@
+import { loadClan, loadMembers, formatNumber, periodLabelNow, warWindowState } from './real-data.js';
+
+const clan=await loadClan();
+const members=(await loadMembers()).filter(m=>!m.removed);
+const name=document.querySelector('.dash-clan strong');
+const tag=document.querySelector('.dash-clan span');
+const badge=document.querySelector('.dash-badge img');
+if(name) name.textContent=clan?.name||'TopBRS';
+if(tag) tag.textContent=clan?.clanTag||clan?.tag||'#ABC123';
+if(badge){ badge.src=clan?.badge||'assets/icons/clan.svg'; badge.onerror=()=>badge.src='assets/icons/clan.svg'; }
+
+const p=periodLabelNow();
+document.querySelectorAll('[data-war-month-week]').forEach(el=>el.textContent=p.label);
+const war=warWindowState();
+const total=(members.length||Number(clan?.members||0)||0)*16;
+document.querySelectorAll('[data-war-status]').forEach(el=>el.textContent=war.status==='EM ANDAMENTO'?'Em andamento':'Fora da janela');
+document.querySelectorAll('[data-war-attacks]').forEach(el=>el.textContent=`${war.attacksUsed} / ${total}`);
+document.querySelectorAll('[data-war-fame]').forEach(el=>el.textContent=formatNumber(war.fame));
+document.querySelectorAll('.progress-line span,.dash-progress span').forEach(el=>el.style.width='0%');
+
+const top=[...members].sort((a,b)=>(b.trophies||0)-(a.trophies||0))[0];
+const don=[...members].sort((a,b)=>(b.donations||0)-(a.donations||0))[0];
+document.querySelectorAll('[data-highlight-top-name]').forEach(el=>el.textContent=top?.name||'Sem dados');
+document.querySelectorAll('[data-highlight-top-value]').forEach(el=>el.textContent=top?formatNumber(top.trophies):'0');
+document.querySelectorAll('[data-highlight-active-name]').forEach(el=>el.textContent='Em breve');
+document.querySelectorAll('[data-highlight-active-value]').forEach(el=>el.textContent='0 ataques');
+document.querySelectorAll('[data-highlight-donations-name]').forEach(el=>el.textContent=don?.name||'Sem dados');
+document.querySelectorAll('[data-highlight-donations-value]').forEach(el=>el.textContent=don?formatNumber(don.donations||0):'0');
+
+document.querySelectorAll('.highlight-grid article')[0]?.addEventListener('click',()=>location.href='classification.html#geral');
+document.querySelectorAll('.highlight-grid article')[2]?.addEventListener('click',()=>location.href='classification.html#doacoes');
+
+// Não remove última notificação ao expandir: apenas impede propagação destrutiva.
+document.querySelectorAll('.notification-row,.notification-item').forEach(row=>{
+ row.addEventListener('click', e=>{ row.classList.toggle('expanded'); e.stopImmediatePropagation(); }, true);
+});

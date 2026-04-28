@@ -45,7 +45,7 @@ function showClanResultSheet(type, data = {}){
     <div class="clan-result-sheet glass-panel ${isSuccess ? 'success' : 'error'}">
       <button type="button" class="sheet-close" id="closeClanSheet" aria-label="Fechar">×</button>
       <div class="sheet-clan-icon">
-        ${isSuccess ? `<img src="${data.badge || 'assets/icons/clan.svg'}" alt="" referrerpolicy="no-referrer" onerror="this.src='assets/icons/clan.svg'">` : `<img src="assets/icons/clan.svg" alt="">`}
+        ${isSuccess ? `<img src="${data.badge || 'assets/icons/clan.svg'}" alt="" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='assets/icons/clan.svg'">` : `<img src="assets/icons/clan.svg" alt="">`}
       </div>
       <div class="sheet-content">
         <p class="sheet-eyebrow">${isSuccess ? 'CLÃ ENCONTRADO' : 'CLÃ NÃO ENCONTRADO'}</p>
@@ -120,10 +120,10 @@ async function fetchClanMembersFromApi(tag){
 function mapApiClan(apiClan){
   const countryCode = apiClan.location?.countryCode || '';
   const badge =
-    apiClan.badgeUrls?.large ||
     apiClan.badgeUrls?.medium ||
+    apiClan.badgeUrls?.large ||
     apiClan.badgeUrls?.small ||
-    (apiClan.badgeId ? `https://cdn.royaleapi.com/static/img/badges/${apiClan.badgeId}.png` : 'assets/icons/clan.svg');
+    'assets/icons/clan.svg';
 
   return {
     name: apiClan.name || 'Clã encontrado',
@@ -599,7 +599,7 @@ function renderConfirm(){
 
     <div class="clan-confirm-card">
       <div class="clan-main">
-        <div class="clan-icon real-clan-badge"><img src="${clan.badge}" alt="" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.src='assets/icons/clan.svg'"></div>
+        <div class="clan-icon real-clan-badge"><img src="${clan.badge}" alt="" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='assets/icons/clan.svg'"></div>
         <div>
           <h2>${clan.name}</h2>
           <p>${clan.tag}</p>

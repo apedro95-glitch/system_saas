@@ -2546,3 +2546,31 @@ html, body{
 .clan-confirm-card .clan-stat strong{
   white-space:nowrap;
 }
+
+
+/* Ajuste país no onboarding: mesmo tamanho dos demais valores */
+.clan-confirm-card .clan-stat strong,
+.clan-country-label{
+  font-size:18px !important;
+  line-height:1.1 !important;
+  font-weight:900 !important;
+}
+.clan-country-label{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  max-width:100% !important;
+  white-space:nowrap !important;
+}
+.clan-confirm-card .clan-stats{
+  align-items:center !important;
+}
+.real-clan-badge img{
+  width:78% !important;
+  height:78% !important;
+  object-fit:contain !important;
+}
+.sheet-clan-icon img{
+  object-fit:contain !important;
+}

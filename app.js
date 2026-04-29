@@ -208,6 +208,7 @@ async function fetchClanFromApi(tag){
       receivedApiResponse = true;
 
       const foundClan =
+        (data?.ok === true && data?.clan) ? data.clan :
         data?.clan ||
         data?.data?.clan ||
         data?.data ||

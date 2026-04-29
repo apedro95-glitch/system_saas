@@ -1,5 +1,5 @@
 const app = document.querySelector('#app');
-const API_BASE_URL = localStorage.getItem('TOPBRS_API_URL') || 'https://consists-pubmed-lyric-sentences.trycloudflare.com';
+const API_BASE_URL = localStorage.getItem('TOPBRS_API_URL') || 'https://worm-dem-harold-oak.trycloudflare.com';
 const API_BASE_CANDIDATES = [
   API_BASE_URL,
   localStorage.getItem('TOPBRS_API_URL'),

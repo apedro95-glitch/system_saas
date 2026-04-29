@@ -20,7 +20,7 @@ let clan = null;
 let importedMembers = [];
 
 function normalizeClanTag(value){
-  const cleaned = String(value || '').trim().toUpperCase().replace(/\s+/g,'');
+  const cleaned = String(value || '').trim().toUpperCase().replace(/const API_BASE_URL = localStorage.getItem('TOPBRS_API_URL') || 'https://surf-gorgeous-archives-wrist.trycloudflare.com';s+/g,'');
   if(!cleaned) return '';
   return cleaned.startsWith('#') ? cleaned : `#${cleaned}`;
 }

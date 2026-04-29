@@ -1,29 +1,41 @@
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 const app = document.querySelector('#app');
 const API_FALLBACK_URL = 'https://worm-dem-harold-oak.trycloudflare.com';
 window.TOPBRS_APP_VERSION = 'firestore-api-url-1';
 
 async function getApiBaseUrl(){
   try{
-    const mod = await import('./api-config.js?v=firestore-api-url-1');
-    return await mod.getApiBaseUrl();
+    const snap = await getDoc(doc(db, "system", "config"));
+
+    if(snap.exists()){
+      return snap.data().apiUrl;
+    }
+
+    return API_FALLBACK_URL;
+
   }catch(error){
-    console.warn('Falha ao carregar URL da API pelo Firestore:', error);
-    return localStorage.getItem('TOPBRS_API_URL') || localStorage.getItem('topbrs_api_url') || API_FALLBACK_URL;
+    console.error("Erro ao buscar API no Firestore:", error);
+    return API_FALLBACK_URL;
   }
 }
 
 async function getApiBaseCandidates(){
+  const urls = [];
+
   try{
-    const mod = await import('./api-config.js?v=firestore-api-url-1');
-    return await mod.getApiBaseCandidates();
+    const snap = await getDoc(doc(db, "system", "config"));
+
+    if(snap.exists()){
+      urls.push(snap.data().apiUrl);
+    }
+
   }catch(error){
-    const urls = [
-      localStorage.getItem('TOPBRS_API_URL'),
-      localStorage.getItem('topbrs_api_url'),
-      API_FALLBACK_URL
-    ].filter(Boolean);
-    return [...new Set(urls)];
+    console.warn("Erro ao buscar API no Firestore:", error);
   }
+
+  urls.push(API_FALLBACK_URL);
+
+  return [...new Set(urls.filter(Boolean))];
 }
 
 const steps = {

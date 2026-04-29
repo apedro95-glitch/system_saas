@@ -1,4 +1,6 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { db } from "./firebase-config.js";
+
 const app = document.querySelector('#app');
 const API_FALLBACK_URL = 'https://worm-dem-harold-oak.trycloudflare.com';
 window.TOPBRS_APP_VERSION = 'firestore-api-url-1';

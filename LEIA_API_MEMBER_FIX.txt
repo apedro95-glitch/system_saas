@@ -1,0 +1,11 @@
+Correções:
+- api-config aceita apiUrl, apiURL, apiurl e api_url.
+- fallback antigo removido para não buscar URL velha.
+- app.js aceita formatos diferentes de resposta JSON da API.
+- validação de membro pré-cadastrado busca por clã com # e sem #, membro com # e sem #.
+- corrigido bug normalizedClanTag indefinido no cadastro.
+- app.js carregado como module.
+
+No Firestore use preferencialmente:
+system/config/apiUrl = "https://SEU-TUNNEL.trycloudflare.com"
+sem barra final.

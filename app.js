@@ -69,6 +69,7 @@ const steps = {
 let currentStep = steps.SEARCH;
 let clan = null;
 let importedMembers = [];
+let selectedOnboardingBadge = '';
 
 function normalizeClanTag(value){
   const cleaned = String(value || '').trim().toUpperCase().replace(/\s+/g,'');
@@ -303,6 +304,8 @@ function mapApiClan(apiClan){
     name: apiClan.name || 'Clã encontrado',
     tag: apiClan.tag || '#SEM_TAG',
     badge,
+    badgeSrc: badge,
+    badgeUrl: badge,
     badgeId: apiClan.badgeId || null,
     members: apiClan.members || apiClan.memberList?.length || 0,
     trophies: Number(apiClan.clanScore || apiClan.clanWarTrophies || 0).toLocaleString('pt-BR'),
@@ -439,6 +442,7 @@ function renderSearch(){
 
       const apiClan = await fetchClanFromApi(tag);
       clan = mapApiClan(apiClan);
+      selectedOnboardingBadge = clan.badge || 'assets/icons/clan.svg';
 
       localStorage.setItem('selectedClan', clan.tag);
       localStorage.setItem('topbrs_pending_clan', JSON.stringify(clan));
@@ -867,6 +871,40 @@ function renderCurrent(){
   if(currentStep === steps.SUCCESS) return renderSuccess();
 }
 
+
+function getClanBadgeOptions(){
+  return Array.from({length:80}, (_,i)=>`assets/badges/clanbadge${i+1}.webp`);
+}
+
+function clanBadgeOptionsMarkup(activeSrc){
+  return getClanBadgeOptions().map(src=>`
+    <button type="button" class="onboard-badge-choice ${src===activeSrc?'active':''}" data-src="${src}">
+      <img src="${src}" alt="" loading="lazy" onerror="this.closest('button').remove()">
+    </button>
+  `).join("");
+}
+
+function bindOnboardingBadgePicker(){
+  const preview = document.querySelector("#onboardClanBadgePreview");
+  const grid = document.querySelector("#onboardClanBadgeGrid");
+  if(!preview || !grid) return;
+
+  grid.querySelectorAll(".onboard-badge-choice").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      selectedOnboardingBadge = btn.dataset.src;
+      if(clan){
+        clan.badge = selectedOnboardingBadge;
+        clan.badgeSrc = selectedOnboardingBadge;
+        clan.badgeUrl = selectedOnboardingBadge;
+        localStorage.setItem("topbrs_pending_clan", JSON.stringify(clan));
+      }
+      preview.src = selectedOnboardingBadge;
+      grid.querySelectorAll(".onboard-badge-choice").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+}
+
 function renderConfirm(){
   onboardShell(2, `
     <div class="onboard-heading">
@@ -875,7 +913,10 @@ function renderConfirm(){
 
     <div class="clan-confirm-card">
       <div class="clan-main">
-        <div class="clan-icon real-clan-badge"><img src="${clan.badge}" alt="" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='assets/icons/clan.svg'"></div>
+        <div class="clan-icon real-clan-badge onboard-clan-badge-preview-wrap">
+          <img id="onboardClanBadgePreview" src="${selectedOnboardingBadge || clan.badge}" alt="" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='assets/icons/clan.svg'">
+          <span class="onboard-badge-edit-dot" aria-hidden="true">✎</span>
+        </div>
         <div>
           <h2>${clan.name}</h2>
           <p>${clan.tag}</p>
@@ -896,6 +937,7 @@ function renderConfirm(){
     <button class="gold-btn" id="confirmClan">Confirmar Clã</button>
     <button class="ghost-btn" id="otherClan">Buscar outro clã</button>
   `);
+  bindOnboardingBadgePicker();
   document.querySelector('#confirmClan')?.addEventListener('click', ()=>{currentStep = steps.IMPORT; renderImport();});
   document.querySelector('#otherClan')?.addEventListener('click', ()=>renderSearch());
 }

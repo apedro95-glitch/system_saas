@@ -4327,3 +4327,219 @@ body > button[onclick="logoutUser()"]{
   position:relative !important;
   z-index:2 !important;
 }
+
+
+/* ===== TOPBRS EMBLEMA POR CLÃ + ONBOARDING FIX ===== */
+
+/* Emblema cheio dentro do card */
+.dash-badge,
+.clan-badge-editable{
+  width:92px !important;
+  height:92px !important;
+  border-radius:20px !important;
+  position:relative !important;
+  overflow:visible !important;
+}
+.dash-badge > img:first-child,
+.dash-badge img[data-dashboard-clan-badge],
+.dash-badge img[data-clan-badge],
+.clan-badge-editable > img:first-child{
+  width:84px !important;
+  height:84px !important;
+  max-width:84px !important;
+  max-height:84px !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:auto !important;
+}
+.dash-badge-edit{
+  position:absolute !important;
+  right:6px !important;
+  bottom:6px !important;
+  width:30px !important;
+  height:30px !important;
+  border-radius:50% !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  background:linear-gradient(180deg,#f9cf54,#d99a25) !important;
+  color:#071327 !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  box-shadow:0 10px 22px rgba(248,200,79,.30), inset 0 1px 0 rgba(255,255,255,.35) !important;
+  z-index:10 !important;
+}
+.dash-badge-edit[hidden]{display:none !important}
+.dash-badge-edit svg{
+  width:17px !important;
+  height:17px !important;
+  color:#071327 !important;
+}
+.dash-badge-edit img{display:none !important}
+
+/* Popup de emblemas */
+.clan-badge-picker-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1200;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  background:rgba(2,8,18,.62);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease;
+}
+.clan-badge-picker-overlay.show{opacity:1;pointer-events:auto}
+.clan-badge-picker-modal{
+  width:min(100%,360px);
+  max-height:min(78vh,620px);
+  overflow:hidden;
+  position:relative;
+  border-radius:26px;
+  padding:22px 18px 18px;
+}
+.clan-badge-picker-grid{
+  max-height:420px;
+  overflow:auto;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:4px 2px 2px;
+}
+.clan-badge-choice{
+  aspect-ratio:1;
+  border-radius:18px;
+  border:1px solid rgba(176,199,255,.14);
+  background:rgba(255,255,255,.055);
+  display:grid;
+  place-items:center;
+  padding:9px;
+}
+.clan-badge-choice img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+/* Onboarding passo 2: escolha de emblema */
+.onboard-clan-badge-preview-wrap{
+  position:relative !important;
+  overflow:visible !important;
+}
+.onboard-clan-badge-preview-wrap img{
+  width:74px !important;
+  height:74px !important;
+  object-fit:contain !important;
+}
+.onboard-badge-edit-dot{
+  position:absolute;
+  right:-4px;
+  bottom:-4px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(180deg,#f9cf54,#d99a25);
+  color:#071327;
+  font-weight:950;
+  box-shadow:0 10px 22px rgba(248,200,79,.26);
+}
+.onboard-badge-selector{
+  border-radius:22px;
+  padding:14px;
+  margin:14px 0;
+}
+.onboard-badge-selector > span{
+  display:block;
+  color:#aebbd2;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.68rem;
+  font-weight:950;
+  margin-bottom:10px;
+}
+.onboard-badge-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  max-height:150px;
+  overflow:auto;
+}
+.onboard-badge-choice{
+  aspect-ratio:1;
+  border-radius:14px;
+  border:1px solid rgba(176,199,255,.14);
+  background:rgba(255,255,255,.055);
+  padding:6px;
+}
+.onboard-badge-choice.active{
+  border-color:rgba(248,200,79,.72);
+  box-shadow:0 0 0 2px rgba(248,200,79,.12), 0 0 20px rgba(248,200,79,.16);
+}
+.onboard-badge-choice img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+/* Guerra: retornar barra ao lugar e posicionar refresh acima do traço */
+.dashboard-war-block{
+  padding:18px !important;
+  padding-bottom:18px !important;
+}
+.dashboard-war-block .war-refresh-btn,
+.war-refresh-btn{
+  position:absolute !important;
+  right:18px !important;
+  bottom:54px !important;
+  margin:0 !important;
+  width:46px !important;
+  height:46px !important;
+}
+.war-block-progress,
+.dash-progress{
+  margin-top:14px !important;
+}
+
+/* Botão Dashboard: brilho centralizado no círculo */
+.nav-btn.nav-home,
+.bottom-nav .nav-home{
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  isolation:isolate !important;
+}
+.nav-btn.nav-home::before,
+.bottom-nav .nav-home::before{
+  left:50% !important;
+  top:50% !important;
+  width:74px !important;
+  height:74px !important;
+  transform:translate(-50%,-50%) !important;
+  border-radius:999px !important;
+  background:radial-gradient(circle,rgba(248,200,79,.50),rgba(248,200,79,.18) 48%,transparent 72%) !important;
+  filter:blur(7px) !important;
+}
+.nav-btn.nav-home::after,
+.bottom-nav .nav-home::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  width:64px !important;
+  height:64px !important;
+  transform:translate(-50%,-50%) !important;
+  border-radius:999px !important;
+  background:linear-gradient(180deg,#f9cf54,#c98f22) !important;
+  z-index:0 !important;
+}
+.nav-btn.nav-home svg,
+.nav-btn.nav-home span,
+.bottom-nav .nav-home svg,
+.bottom-nav .nav-home span{
+  position:relative !important;
+  z-index:2 !important;
+}

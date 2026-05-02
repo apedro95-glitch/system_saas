@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#050b16">
 <title>TopBRS — Painel SaaS Profissional</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="styles.css?v=saas-dashboard-refine-v4">
+<link rel="stylesheet" href="styles.css?v=saas-subscriptions-refine-v1">
 </head>
 <body class="saas-pro-body">
 <div class="saas-local-gate" id="saasLocalGate">
@@ -76,14 +76,14 @@
 
       <section class="saas-pro-filters glass-inset">
         <select id="saasFilterPlan" aria-label="Filtrar por plano">
-          <option value="all">Todos os planos</option>
+          <option value="all">Plano</option>
           <option value="trial">Trial</option>
           <option value="basic">Básico</option>
           <option value="plus">Plus</option>
           <option value="premium">Premium</option>
         </select>
         <select id="saasFilterStatus" aria-label="Filtrar por status">
-          <option value="all">Todos os status</option>
+          <option value="all">Status</option>
           <option value="pending">Pendente</option>
           <option value="active">Ativo</option>
           <option value="approved">Liberado</option>
@@ -91,10 +91,13 @@
           <option value="blocked">Revogado</option>
         </select>
         <select id="saasFilterType" aria-label="Filtrar por tipo">
-          <option value="all">Todos os tipos</option>
+          <option value="all">Tipo</option>
           <option value="subscription">Assinaturas</option>
           <option value="addon">Add-ons</option>
           <option value="support">Suporte/manual</option>
+        </select>
+        <select id="saasFilterClan" aria-label="Filtrar por clã">
+          <option value="all">Clã</option>
         </select>
       </section>
 
@@ -129,8 +132,8 @@
     <small id="saasFeedback" class="tag-feedback"></small>
   </form>
 </div>
-<script type="module" src="auth.js?v=saas-dashboard-refine-v4"></script>
-<script type="module" src="saas-admin.js?v=saas-dashboard-refine-v4"></script>
+<script type="module" src="auth.js?v=saas-subscriptions-refine-v1"></script>
+<script type="module" src="saas-admin.js?v=saas-subscriptions-refine-v1"></script>
 <script src="zoom-lock.js?v=tables-identity-fix-1"></script>
 </body>
 </html>

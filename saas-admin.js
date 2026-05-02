@@ -20,7 +20,7 @@ import {
 const OWNER_EMAILS = ["silva12.anderson@gmail.com"];
 const PAGE_TITLES = {
   dashboard:"Dashboard",
-  subscriptions:"Gestão de Assinaturas",
+  subscriptions:"Assinaturas",
   addons:"Gestão de Add-Ons",
   clans:"Página de Clãs",
   requests:"Central de Solicitações",
@@ -38,6 +38,7 @@ let searchTerm = "";
 let planFilter = "all";
 let statusFilter = "all";
 let typeFilter = "all";
+let clanFilter = "all";
 let chartPeriod = 30;
 
 function normalizeEmail(value){ return String(value || "").trim().toLowerCase(); }
@@ -118,11 +119,15 @@ function passesFilters(item, kind=""){
   const s = String(item.status || item.subscriptionStatus || "pending").toLowerCase();
   if(statusFilter !== "all" && !s.includes(statusFilter)) return false;
   if(typeFilter !== "all" && kind && kind !== typeFilter) return false;
+  const itemClan = normalizeTag(item.clanTag || item.id || item.tag || "");
+  if(clanFilter !== "all" && itemClan !== clanFilter) return false;
   return true;
 }
 function displayNameForAccess(item){ return escapeHtml(item.clanName || item.name || item.clanTag || item.id || "Clã"); }
 function displayTagForAccess(item){ return escapeHtml(normalizeTag(item.clanTag || item.id || "")); }
 function buyerName(item){ return escapeHtml(item.buyerName || item.ownerName || item.buyerEmail || item.email || "Comprador não informado"); }
+function rawBuyerName(item){ return String(item.buyerName || item.ownerName || item.buyerEmail || item.email || "Comprador não informado"); }
+function contactText(item){ return String(item.buyerPhone || item.phone || item.whatsapp || item.buyerEmail || item.email || "—"); }
 function planBadge(plan){ return `<span class="saas-pro-badge plan-${planKey(plan)}">${planLabel(plan)}</span>`; }
 function statusBadge(status, label){
   const s = String(status || "pending").toLowerCase();
@@ -385,6 +390,15 @@ window.toggleSaasSection = button => {
   card.classList.toggle("collapsed");
   button.setAttribute("aria-expanded", String(!card.classList.contains("collapsed")));
 };
+window.toggleSubscriptionDetails = button => {
+  const card = button?.closest?.(".saas-sub-card");
+  const details = card?.querySelector?.(".saas-sub-details");
+  if(!card || !details) return;
+  const open = details.hasAttribute("hidden");
+  if(open) details.removeAttribute("hidden"); else details.setAttribute("hidden","");
+  card.classList.toggle("expanded", open);
+  button.textContent = open ? "Recolher" : "Detalhes";
+};
 
 window.showSaasPage = page => {
   activePage = page;
@@ -456,9 +470,25 @@ async function loadAddonRequests(){
     }));
   }catch(error){ console.warn("Solicitações de Add-On indisponíveis:", error); addonRequestsCache = []; }
 }
+function refreshClanFilterOptions(){
+  const select = document.querySelector("#saasFilterClan");
+  if(!select) return;
+  const current = select.value || "all";
+  const seen = new Set();
+  const options = accessCache.map(item=>{
+    const tag = normalizeTag(item.clanTag || item.id || item.tag || "");
+    if(!tag || seen.has(tag)) return "";
+    seen.add(tag);
+    const label = `${item.clanName || item.name || tag} ${tag}`;
+    return `<option value="${escapeHtml(tag)}">${escapeHtml(label)}</option>`;
+  }).filter(Boolean).join("");
+  select.innerHTML = `<option value="all">Clã</option>${options}`;
+  select.value = seen.has(current) ? current : "all";
+}
 async function loadAll(){
   await Promise.all([loadRequests(), loadAccess()]);
   await loadAddonRequests();
+  refreshClanFilterOptions();
   renderAll();
 }
 
@@ -481,7 +511,7 @@ function metricCard(label,value,icon,kind="blue",trend="vs. últimos 30 dias"){
   return `<article class="saas-kpi ${kind}"><span>${icon}</span><div><small>${label}</small><strong>${value}</strong><em>${trend}</em></div></article>`;
 }
 function section(title, content, opts=""){
-  const collapsibleTitles = ["Gestão de Add-Ons","Add-Ons por clã e membro","Página de Clãs","Página de Clã","Central de Solicitações","Solicitações recebidas","Financeiro Manual","Registros financeiros manuais","Histórico de alterações"];
+  const collapsibleTitles = ["Resumo de Assinaturas","Lista de Assinaturas","Funil de Assinaturas","Próximos vencimentos","Gestão de Add-Ons","Add-Ons por clã e membro","Página de Clãs","Página de Clã","Central de Solicitações","Solicitações recebidas","Financeiro Manual","Registros financeiros manuais","Histórico de alterações"];
   const canCollapse = collapsibleTitles.some(t=>String(title).toLowerCase()===t.toLowerCase());
   const collapseBtn = canCollapse ? `<button type="button" class="saas-collapse-btn" aria-label="Expandir ou recolher ${escapeHtml(title)}" onclick="toggleSaasSection(this)">⌄</button>` : "";
   return `<section class="saas-pro-card ${opts} ${canCollapse ? 'is-collapsible' : ''}"><div class="saas-section-head"><h2>${title}</h2>${collapseBtn}</div><div class="saas-section-body">${content}</div></section>`;
@@ -535,18 +565,51 @@ function getFilteredAddons(){ return addonRequestsCache.filter(i=>passesFilters(
 function subscriptionRows(items, limit=8){
   const filtered = items.slice(0,limit);
   if(!filtered.length) return emptyState("Nenhuma assinatura encontrada.");
-  return `<div class="saas-pro-table subscriptions">
+  return `<div class="saas-pro-table subscriptions refined-subscriptions">
     ${filtered.map((item,idx)=>{
       const tag = normalizeTag(item.clanTag || item.id || `#CLAN${idx}`);
+      const safeTag = escapeHtml(tag);
       const id = `subPlan${idx}`;
       const d = daysUntil(item.planExpiresAt);
-      return `<article class="saas-pro-row">
-        ${emblem(item,item.plan)}
-        <div class="main"><strong>${displayNameForAccess(item)}</strong><span>${tag} • ${buyerName(item)}</span></div>
-        <div>${planBadge(item.plan)}</div>
-        <div>${statusBadge(item.status || statusBucket(item), translateStatus(item.status || statusBucket(item)))}</div>
-        <div class="muted">${formatDate(item.planExpiresAt)}<small>${d === null ? "sem vencimento" : d < 0 ? `há ${Math.abs(d)} dias` : `em ${d} dias`}</small></div>
-        <div class="saas-inline-actions"><select id="${id}"><option value="trial">Trial</option><option value="basic">Básico</option><option value="plus">Plus</option><option value="premium">Premium</option></select><button onclick="extendSaasPlan('${tag}','${id}')">Renovar</button><button class="danger" onclick="revokeSaasAccess('${tag}')">Revogar</button></div>
+      const status = item.status || statusBucket(item);
+      const buyerRaw = rawBuyerName(item);
+      const contactRaw = contactText(item);
+      const value = planKey(item.plan)==="premium" ? "R$ 89,90" : planKey(item.plan)==="plus" ? "R$ 59,90" : planKey(item.plan)==="basic" ? "R$ 39,90" : "R$ 0,00";
+      return `<article class="saas-sub-card">
+        <div class="saas-sub-main">
+          ${emblem(item,item.plan)}
+          <div class="main">
+            <strong>${displayNameForAccess(item)}</strong>
+            <span>${safeTag}</span>
+            <span class="truncate-line">${escapeHtml(buyerRaw)}</span>
+          </div>
+          <div class="saas-sub-badges">${planBadge(item.plan)}${statusBadge(status, translateStatus(status))}</div>
+        </div>
+        <div class="saas-sub-meta">
+          <span><small>Vencimento</small><b>${formatDate(item.planExpiresAt)}</b><em>${d === null ? "sem vencimento" : d < 0 ? `há ${Math.abs(d)} dias` : `em ${d} dias`}</em></span>
+          <span><small>Comprador</small><b class="truncate-line">${escapeHtml(buyerRaw)}</b></span>
+          <span><small>Contato</small><b class="truncate-line">${escapeHtml(contactRaw)}</b></span>
+        </div>
+        <div class="saas-sub-change">
+          <label for="${id}">Alterar para</label>
+          <select id="${id}">
+            <option value="trial" ${planKey(item.plan)==="trial"?"selected":""}>Trial</option>
+            <option value="basic" ${planKey(item.plan)==="basic"?"selected":""}>Básico</option>
+            <option value="plus" ${planKey(item.plan)==="plus"?"selected":""}>Plus</option>
+            <option value="premium" ${planKey(item.plan)==="premium"?"selected":""}>Premium</option>
+          </select>
+        </div>
+        <div class="saas-sub-details" hidden>
+          <div><small>Data de liberação</small><b>${formatDate(item.releasedAt || item.createdAt || item.updatedAt)}</b></div>
+          <div><small>Valor manual</small><b>${value}</b></div>
+          <div><small>Observação</small><b class="truncate-line">${escapeHtml(item.manualNote || item.note || "Sem observação manual.")}</b></div>
+          <div><small>Histórico curto</small><b>Última alteração: ${formatDate(item.updatedAt || item.createdAt)}</b></div>
+        </div>
+        <div class="saas-inline-actions saas-sub-actions">
+          <button onclick="extendSaasPlan('${tag}','${id}')">Renovar</button>
+          <button class="secondary" onclick="toggleSubscriptionDetails(this)">Detalhes</button>
+          <button class="danger" onclick="revokeSaasAccess('${tag}')">Revogar</button>
+        </div>
       </article>`;
     }).join("")}
   </div>`;
@@ -627,16 +690,17 @@ function renderDashboard(){
 }
 function renderSubscriptions(){
   const m = metrics();
-  document.querySelector("#saasPageSubscriptions").innerHTML = `
-    <div class="saas-kpi-grid compact">
+  const resumo = `<div class="saas-kpi-grid compact subscriptions-summary">
       ${metricCard("Vendas", requestsCache.length, "🛒", "blue", "solicitações")}
       ${metricCard("Trial", m.trials.length, "⌛", "purple", "clãs")}
       ${metricCard("Ativos", m.active.length, "👥", "green", "em vigor")}
       ${metricCard("Expirados", m.expired.length, "◷", "red", "atenção")}
       ${metricCard("Revogados", accessCache.filter(i=>String(i.status||"").toLowerCase()==="blocked").length, "⊗", "gold", "bloqueados")}
       ${metricCard("Renovações", m.expiring.length, "↻", "teal", "próximos 7 dias")}
-      ${metricCard("Upgrades / Downgrades", requestsCache.filter(i=>i.requestType === "planUpgrade").length, "↕", "purple", "pedidos")}
-    </div>
+      ${metricCard("Upgrades / Downgrades", requestsCache.filter(i=>i.requestType === "planUpgrade").length, "↕", "purple wide", "pedidos")}
+    </div>`;
+  document.querySelector("#saasPageSubscriptions").innerHTML = `
+    ${section("Resumo de Assinaturas", resumo)}
     ${section("Lista de Assinaturas", subscriptionRows(getFilteredAccess(),10))}
     <div class="saas-two-col">
       ${section("Funil de Assinaturas", `<div class="saas-funnel"><span style="--w:95%">Visitantes <b>1.245</b></span><span style="--w:68%">Trials iniciados <b>${m.trials.length}</b></span><span style="--w:52%">Conversões <b>${m.active.length}</b></span><span style="--w:38%">Assinaturas ativas <b>${m.active.length}</b></span></div>`)}
@@ -780,7 +844,10 @@ function renderActivePage(){
   const title = document.querySelector("#saasPageTitle");
   if(title) title.textContent = PAGE_TITLES[activePage] || "Painel SaaS";
   const filters = document.querySelector(".saas-pro-filters");
-  if(filters) filters.hidden = activePage === "dashboard";
+  if(filters){
+    filters.hidden = activePage === "dashboard";
+    filters.classList.toggle("subscription-filters", activePage === "subscriptions");
+  }
   const command = document.querySelector(".saas-pro-command");
   if(command) command.classList.toggle("dashboard-command", activePage === "dashboard");
   requestAnimationFrame(()=>document.querySelector(".saas-pro-app")?.scrollTo({top:0,behavior:"smooth"}));
@@ -855,6 +922,7 @@ function bindEvents(){
   document.querySelector("#saasFilterPlan")?.addEventListener("change",event=>{ planFilter = event.target.value; renderAll(); });
   document.querySelector("#saasFilterStatus")?.addEventListener("change",event=>{ statusFilter = event.target.value; renderAll(); });
   document.querySelector("#saasFilterType")?.addEventListener("change",event=>{ typeFilter = event.target.value; renderAll(); });
+  document.querySelector("#saasFilterClan")?.addEventListener("change",event=>{ clanFilter = event.target.value; renderAll(); });
   document.addEventListener("change",event=>{
     if(event.target?.id === "saasChartPeriod"){
       chartPeriod = Number(event.target.value) || 30;

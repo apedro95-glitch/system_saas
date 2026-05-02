@@ -32,6 +32,8 @@ let activePage = "dashboard";
 let requestsCache = [];
 let accessCache = [];
 let addonRequestsCache = [];
+let clanDetailsCache = {};
+let memberProfileCache = {};
 let searchTerm = "";
 let planFilter = "all";
 let statusFilter = "all";
@@ -143,8 +145,37 @@ function initials(value){
   const text = String(value || "TB").replace(/[#_\-]/g," ").trim();
   return text.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase() || "TB";
 }
-function emblem(text, plan="plus"){
-  return `<span class="saas-pro-emblem plan-${planKey(plan)}">${escapeHtml(initials(text))}</span>`;
+function firstValue(obj, keys){
+  for(const key of keys){
+    const value = obj?.[key];
+    if(typeof value === "string" && value.trim()) return value.trim();
+  }
+  return "";
+}
+function clanBadgeSrc(source){
+  const obj = typeof source === "object" && source ? source : {};
+  return firstValue(obj,["badge","badgeSrc","badgeUrl","clanBadge","clanBadgeSrc","clanBadgeUrl","emblem","emblemSrc","emblemUrl","logo","logoUrl"]);
+}
+function avatarSrc(source){
+  const obj = typeof source === "object" && source ? source : {};
+  return firstValue(obj,["avatar","avatarSrc","avatarUrl","photoURL","photoUrl","profilePicture","profilePictureUrl","picture","image","memberAvatar","playerAvatar","buyerAvatar"]);
+}
+function safeImg(src, fallback="assets/icons/clan.svg"){
+  const url = escapeHtml(src || fallback);
+  const fb = escapeHtml(fallback);
+  return `<img src="${url}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${fb}'">`;
+}
+function emblem(source, plan="plus"){
+  const obj = typeof source === "object" && source ? source : {};
+  const text = typeof source === "object" ? (obj.clanName || obj.name || obj.clanTag || obj.tag || obj.id || "TB") : source;
+  const src = clanBadgeSrc(obj);
+  return `<span class="saas-pro-emblem plan-${planKey(plan)} ${src ? 'has-img' : ''}">${src ? safeImg(src) : escapeHtml(initials(text))}</span>`;
+}
+function profileAvatar(source, plan="plus"){
+  const obj = typeof source === "object" && source ? source : {};
+  const text = obj.playerName || obj.memberName || obj.name || obj.buyerName || obj.playerTag || obj.clanName || "M";
+  const src = avatarSrc(obj);
+  return `<span class="saas-pro-emblem saas-profile-avatar plan-${planKey(plan)} ${src ? 'has-img' : ''}">${src ? safeImg(src,"assets/icons/profile-user.svg") : escapeHtml(initials(text))}</span>`;
 }
 function setPanelVisible(visible){
   document.querySelector("#saasAccessDenied")?.setAttribute("hidden","");
@@ -348,6 +379,13 @@ window.archiveAddonRequest = async requestId => {
   await addHistory("Add-On recusado/arquivado", requestId);
   await loadAll();
 };
+window.toggleSaasSection = button => {
+  const card = button?.closest?.(".saas-pro-card");
+  if(!card) return;
+  card.classList.toggle("collapsed");
+  button.setAttribute("aria-expanded", String(!card.classList.contains("collapsed")));
+};
+
 window.showSaasPage = page => {
   activePage = page;
   renderActivePage();
@@ -361,18 +399,66 @@ async function loadRequests(){
 }
 async function loadAccess(){
   try{
-    const snap = await getDocs(query(collection(db,"saasAccess"),orderBy("updatedAt","desc")));
-    accessCache = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const [accessSnap, clansSnap] = await Promise.all([
+      getDocs(query(collection(db,"saasAccess"),orderBy("updatedAt","desc"))),
+      getDocs(collection(db,"clans")).catch(()=>({docs:[]}))
+    ]);
+    clanDetailsCache = {};
+    clansSnap.docs.forEach(d=>{
+      const data = {id:d.id,...d.data()};
+      const keys = [normalizeTag(d.id), normalizeTag(data.clanTag), normalizeTag(data.tag)].filter(Boolean);
+      keys.forEach(k=>{ clanDetailsCache[k] = data; });
+    });
+    accessCache = accessSnap.docs.map(d=>{
+      const access = {id:d.id,...d.data()};
+      const clan = clanDetailsCache[normalizeTag(access.clanTag || d.id)] || {};
+      return {
+        ...clan,
+        ...access,
+        clanName: access.clanName || access.name || clan.name || clan.clanName || access.clanTag || d.id,
+        badge: clanBadgeSrc(access) || clanBadgeSrc(clan),
+        badgeSrc: access.badgeSrc || clan.badgeSrc || clan.badge || clan.badgeUrl || "",
+        membersCount: access.membersCount || access.memberCount || clan.membersCount || clan.memberCount || clan.members?.length || ""
+      };
+    });
   }catch(error){ console.warn("Acessos indisponíveis:", error); accessCache = []; }
 }
 async function loadAddonRequests(){
   try{
     const snap = await getDocs(query(collection(db,"addonRequests"),orderBy("createdAt","desc")));
-    addonRequestsCache = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const base = snap.docs.map(d=>({id:d.id,...d.data()}));
+    addonRequestsCache = await Promise.all(base.map(async item=>{
+      const clanTag = normalizeTag(item.clanTag);
+      const clan = clanDetailsCache[clanTag] || {};
+      const memberKey = item.playerDocId || cleanTag(item.playerTag || item.memberTag || item.id);
+      let member = {};
+      if(clanTag && memberKey){
+        const cacheKey = `${clanTag}/${memberKey}`;
+        if(memberProfileCache[cacheKey]) member = memberProfileCache[cacheKey];
+        else{
+          try{
+            const memberSnap = await getDoc(doc(db,"clans",clanTag,"members",memberKey));
+            member = memberSnap.exists() ? memberSnap.data() : {};
+            memberProfileCache[cacheKey] = member;
+          }catch{}
+        }
+      }
+      return {
+        ...clan,
+        ...member,
+        ...item,
+        clanName: item.clanName || clan.clanName || clan.name || item.clanTag,
+        badge: clanBadgeSrc(item) || clanBadgeSrc(clan),
+        avatar: avatarSrc(item) || avatarSrc(member),
+        avatarSrc: item.avatarSrc || member.avatarSrc || member.avatar || "",
+        playerName: item.playerName || member.name || member.nick || item.memberName || "Membro"
+      };
+    }));
   }catch(error){ console.warn("Solicitações de Add-On indisponíveis:", error); addonRequestsCache = []; }
 }
 async function loadAll(){
-  await Promise.all([loadRequests(), loadAccess(), loadAddonRequests()]);
+  await Promise.all([loadRequests(), loadAccess()]);
+  await loadAddonRequests();
   renderAll();
 }
 
@@ -395,7 +481,10 @@ function metricCard(label,value,icon,kind="blue",trend="vs. últimos 30 dias"){
   return `<article class="saas-kpi ${kind}"><span>${icon}</span><div><small>${label}</small><strong>${value}</strong><em>${trend}</em></div></article>`;
 }
 function section(title, content, opts=""){
-  return `<section class="saas-pro-card ${opts}"><div class="saas-section-head"><h2>${title}</h2></div>${content}</section>`;
+  const collapsibleTitles = ["Gestão de Add-Ons","Add-Ons por clã e membro","Página de Clãs","Página de Clã","Central de Solicitações","Solicitações recebidas","Financeiro Manual","Registros financeiros manuais","Histórico de alterações"];
+  const canCollapse = collapsibleTitles.some(t=>String(title).toLowerCase()===t.toLowerCase());
+  const collapseBtn = canCollapse ? `<button type="button" class="saas-collapse-btn" aria-label="Expandir ou recolher ${escapeHtml(title)}" onclick="toggleSaasSection(this)">⌄</button>` : "";
+  return `<section class="saas-pro-card ${opts} ${canCollapse ? 'is-collapsible' : ''}"><div class="saas-section-head"><h2>${title}</h2>${collapseBtn}</div><div class="saas-section-body">${content}</div></section>`;
 }
 function emptyState(text){ return `<div class="saas-pro-empty">${escapeHtml(text)}</div>`; }
 function renderChart(){
@@ -452,7 +541,7 @@ function subscriptionRows(items, limit=8){
       const id = `subPlan${idx}`;
       const d = daysUntil(item.planExpiresAt);
       return `<article class="saas-pro-row">
-        ${emblem(item.clanName || tag,item.plan)}
+        ${emblem(item,item.plan)}
         <div class="main"><strong>${displayNameForAccess(item)}</strong><span>${tag} • ${buyerName(item)}</span></div>
         <div>${planBadge(item.plan)}</div>
         <div>${statusBadge(item.status || statusBucket(item), translateStatus(item.status || statusBucket(item)))}</div>
@@ -469,7 +558,7 @@ function addonRows(items, limit=6){
     ${filtered.map(item=>{
       const pending = String(item.status||"pending").toLowerCase()==="pending";
       return `<article class="saas-pro-row addon">
-        ${emblem(item.clanName || item.clanTag,item.addonPlan)}
+        ${profileAvatar(item,item.addonPlan)}
         <div class="main"><strong>${escapeHtml(item.clanName || item.clanTag || "Clã")}</strong><span>${escapeHtml(item.playerName || "Membro")} • ${escapeHtml(item.playerTag || "sem tag")}</span></div>
         <div><small>Solicitado</small>${planBadge(item.addonPlan)}</div>
         <div><small>Ativo</small><span class="muted">${escapeHtml(item.activeAddon || item.currentAddon || "—")}</span></div>
@@ -488,7 +577,7 @@ function requestRows(items, limit=8){
     const type = item.requestType === "planUpgrade" ? "Upgrade/Renovação" : "Nova assinatura";
     const action = item.requestType === "planUpgrade" ? `approveSubscriptionRequest('${item.id}')` : `fillSaasReleaseFromRequest('${encoded}')`;
     return `<article class="saas-request-item">
-      ${emblem(item.clanName || item.clanTag, plan)}
+      ${emblem(item, plan)}
       <div class="main"><strong>${escapeHtml(item.clanName || item.name || item.clanTag || "Solicitação")}</strong><span>${type} • ${planLabel(plan)}</span></div>
       ${statusBadge(item.status || "pending")}
       <button onclick="${action}">Liberar</button>
@@ -503,7 +592,7 @@ function clanCards(items, limit=4){
     const tag = normalizeTag(item.clanTag || item.id || `#CLAN${idx}`);
     const d = daysUntil(item.planExpiresAt);
     return `<article class="saas-clan-card">
-      <div class="saas-clan-main">${emblem(item.clanName || tag,item.plan)}<div><strong>${displayNameForAccess(item)}</strong><span>${tag}</span>${planBadge(item.plan)}</div>${statusBadge(item.status || "active","Ativo")}</div>
+      <div class="saas-clan-main">${emblem(item,item.plan)}<div><strong>${displayNameForAccess(item)}</strong><span>${tag}</span>${planBadge(item.plan)}</div>${statusBadge(item.status || "active","Ativo")}</div>
       <div class="saas-clan-meta"><span>Membros <b>${item.membersCount || item.memberCount || "—"}</b></span><span>Dono <b>${buyerName(item)}</b></span><span>Contato <b>${escapeHtml(item.buyerPhone || item.phone || item.buyerEmail || "—")}</b></span><span>Expiração <b>${formatDate(item.planExpiresAt)}</b>${d !== null ? `<small>${d < 0 ? `há ${Math.abs(d)} dias` : `em ${d} dias`}</small>` : ""}</span></div>
       <div class="saas-clan-actions"><button onclick="showSaasPage('subscriptions')">Assinatura</button><button onclick="showSaasPage('addons')">Add-ons</button><button onclick="showSaasPage('requests')">Solicitações</button></div>
     </article>`;
@@ -524,7 +613,6 @@ function renderDashboard(){
       ${metricCard("Clãs ativos", m.active.length + m.trials.length, "⬟", "teal wide", "total operacional")}
     </div>
     ${renderChart()}
-    ${section("Gestão de Assinaturas", `<div class="saas-mini-pills refined"><span><i>🛒</i>Vendas <b>${requestsCache.length}</b></span><span><i>⌛</i>Trial <b>${m.trials.length}</b></span><span><i>✓</i>Ativos <b>${m.active.length}</b></span><span><i>!</i>Expirados <b>${m.expired.length}</b></span><span><i>⊘</i>Revogados <b>${accessCache.filter(i=>String(i.status||"").toLowerCase()==="blocked").length}</b></span><span><i>↻</i>Renovações <b>${m.active.length}</b></span><span><i>↕</i>Upgrades/Downgrades <b>${requestsCache.filter(i=>i.requestType === "planUpgrade").length}</b></span></div>`)}
     ${section("Gestão de Add-Ons", addonRows(getFilteredAddons(),3))}
     ${section("Página de Clãs", clanCards(getFilteredAccess(),2))}
     <div class="saas-two-col">
@@ -576,7 +664,7 @@ function renderAddonSelected(){
   const selected = getFilteredAddons()[0];
   if(!selected) return emptyState("Selecione ou aguarde uma solicitação de Add-On.");
   return `<div class="saas-selected-panel">
-    ${emblem(selected.clanName || selected.clanTag, selected.addonPlan)}
+    ${profileAvatar(selected, selected.addonPlan)}
     <div class="main"><strong>${escapeHtml(selected.playerName || "Membro")}</strong><span>${escapeHtml(selected.playerTag || "sem tag")} • ${escapeHtml(selected.clanName || selected.clanTag || "clã")}</span></div>
     <div><small>Add-on solicitado</small>${planBadge(selected.addonPlan)}</div>
     <div><small>Expiração</small><b>${formatDate(selected.expiresAt)}</b></div>
@@ -605,7 +693,7 @@ function renderClanSelected(item){
   if(!item) return emptyState("Nenhum clã selecionado.");
   const d = daysUntil(item.planExpiresAt);
   return `<div class="saas-clan-selected">
-    <div class="saas-clan-main">${emblem(item.clanName || item.clanTag,item.plan)}<div><strong>${displayNameForAccess(item)}</strong><span>${displayTagForAccess(item)} • ${translateStatus(item.status || "active")}</span>${planBadge(item.plan)}</div><b>${d === null ? "Sem vencimento" : d < 0 ? `Vencido há ${Math.abs(d)} dias` : `Expira em ${d} dias`}</b></div>
+    <div class="saas-clan-main">${emblem(item,item.plan)}<div><strong>${displayNameForAccess(item)}</strong><span>${displayTagForAccess(item)} • ${translateStatus(item.status || "active")}</span>${planBadge(item.plan)}</div><b>${d === null ? "Sem vencimento" : d < 0 ? `Vencido há ${Math.abs(d)} dias` : `Expira em ${d} dias`}</b></div>
     <div class="saas-kpi-grid tiny">${metricCard("Membros ativos", item.membersCount || "—", "👥", "green", "registrados")}${metricCard("Receita manual", money(planKey(item.plan)==="premium"?89.9:59.9), "R$", "blue", "estimada")}${metricCard("Pendências", requestsCache.filter(r=>normalizeTag(r.clanTag)===normalizeTag(item.clanTag)).length, "⚠", "red", "solicitações")}${metricCard("Add-ons ativos", addonRequestsCache.filter(r=>normalizeTag(r.clanTag)===normalizeTag(item.clanTag)).length, "✚", "purple", "membros")}</div>
     <div class="saas-quick-actions"><button onclick="showSaasPage('subscriptions')">Gerenciar</button><button onclick="showSaasPage('addons')">Add-ons</button><button onclick="showSaasPage('requests')">Solicitações</button><button onclick="showSaasPage('finance')">Financeiro</button></div>
   </div>`;
@@ -629,17 +717,17 @@ function renderRequestsPage(){
 }
 function renderMixedRequest(item){
   if(item._kind === "addon"){
-    return `<article class="saas-request-item">${emblem(item.clanName || item.clanTag,item.addonPlan)}<div class="main"><strong>${escapeHtml(item.clanName || item.clanTag || "Clã")}</strong><span>Add-on de membro • ${escapeHtml(item.playerName || "Membro")}</span></div>${statusBadge(item.status || "pending")}<button onclick="approveAddonRequest('${item.id}')">Liberar</button><button class="danger" onclick="archiveAddonRequest('${item.id}')">Recusar</button></article>`;
+    return `<article class="saas-request-item">${profileAvatar(item,item.addonPlan)}<div class="main"><strong>${escapeHtml(item.clanName || item.clanTag || "Clã")}</strong><span>Add-on de membro • ${escapeHtml(item.playerName || "Membro")}</span></div>${statusBadge(item.status || "pending")}<button onclick="approveAddonRequest('${item.id}')">Liberar</button><button class="danger" onclick="archiveAddonRequest('${item.id}')">Recusar</button></article>`;
   }
   const encoded = encodeURIComponent(JSON.stringify(item));
   const plan = planKey(item.plan || "premium");
-  return `<article class="saas-request-item">${emblem(item.clanName || item.clanTag,plan)}<div class="main"><strong>${escapeHtml(item.clanName || item.clanTag || "Solicitação")}</strong><span>${item.requestType === "planUpgrade" ? "Upgrade de plano" : "Nova assinatura"} • ${planLabel(plan)}</span></div>${statusBadge(item.status || "pending")}<button onclick="${item.requestType === "planUpgrade" ? `approveSubscriptionRequest('${item.id}')` : `fillSaasReleaseFromRequest('${encoded}')`}">Liberar</button><button class="danger" onclick="deleteSaasRequest('${item.id}')">Excluir</button></article>`;
+  return `<article class="saas-request-item">${emblem(item,plan)}<div class="main"><strong>${escapeHtml(item.clanName || item.clanTag || "Solicitação")}</strong><span>${item.requestType === "planUpgrade" ? "Upgrade de plano" : "Nova assinatura"} • ${planLabel(plan)}</span></div>${statusBadge(item.status || "pending")}<button onclick="${item.requestType === "planUpgrade" ? `approveSubscriptionRequest('${item.id}')` : `fillSaasReleaseFromRequest('${encoded}')`}">Liberar</button><button class="danger" onclick="deleteSaasRequest('${item.id}')">Excluir</button></article>`;
 }
 function renderSelectedRequest(item){
   if(!item) return emptyState("Sem solicitação selecionada.");
   const isAddon = item._kind === "addon";
   return `<div class="saas-selected-panel large">
-    ${emblem(item.clanName || item.clanTag, isAddon ? item.addonPlan : item.plan)}
+    ${isAddon ? profileAvatar(item,item.addonPlan) : emblem(item,item.plan)}
     <div class="main"><strong>${escapeHtml(item.clanName || item.clanTag || "Solicitação")}</strong><span>${isAddon ? `Membro: ${escapeHtml(item.playerName || "Membro")}` : `Comprador: ${buyerName(item)}`}</span></div>
     <div><small>Tipo</small><b>${isAddon ? "Add-on de membro" : (item.requestType === "planUpgrade" ? "Upgrade/Renovação" : "Nova assinatura")}</b></div>
     <div><small>Status</small>${statusBadge(item.status || "pending")}</div>
@@ -682,7 +770,13 @@ function renderActivePage(){
   document.querySelectorAll(".saas-pro-view").forEach(view=>view.hidden = true);
   const view = document.querySelector(`#saasPage${activePage[0].toUpperCase()+activePage.slice(1)}`);
   if(view) view.hidden = false;
-  document.querySelectorAll(".saas-pro-tab").forEach(btn=>btn.classList.toggle("active", btn.dataset.saasPage === activePage));
+  let activeTabBtn = null;
+  document.querySelectorAll(".saas-pro-tab").forEach(btn=>{
+    const isActive = btn.dataset.saasPage === activePage;
+    btn.classList.toggle("active", isActive);
+    if(isActive) activeTabBtn = btn;
+  });
+  activeTabBtn?.scrollIntoView?.({behavior:"smooth", inline:"center", block:"nearest"});
   const title = document.querySelector("#saasPageTitle");
   if(title) title.textContent = PAGE_TITLES[activePage] || "Painel SaaS";
   const filters = document.querySelector(".saas-pro-filters");

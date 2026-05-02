@@ -36,6 +36,7 @@ let searchTerm = "";
 let planFilter = "all";
 let statusFilter = "all";
 let typeFilter = "all";
+let chartPeriod = 30;
 
 function normalizeEmail(value){ return String(value || "").trim().toLowerCase(); }
 function normalizeTag(value){
@@ -398,19 +399,45 @@ function section(title, content, opts=""){
 }
 function emptyState(text){ return `<div class="saas-pro-empty">${escapeHtml(text)}</div>`; }
 function renderChart(){
-  const points = [16,24,22,31,46,25,28,19,36,42,18,25,33,49,44,57,52,63];
-  const points2 = [8,12,18,15,30,17,14,9,20,26,11,19,22,29,27,35,32,39];
-  const max = 65;
-  const mapLine = arr => arr.map((v,i)=>`${(i/(arr.length-1)*100).toFixed(1)},${(100-v/max*86).toFixed(1)}`).join(" ");
+  const configs = {
+    30: {
+      revenue:[1.2,1.8,1.6,3.1,5.0,2.2,2.6,1.0,3.4,4.1,1.1,2.2,3.3,5.8,4.7,7.4,6.2,9.6],
+      releases:[0.4,0.8,1.3,0.9,2.7,1.2,1.0,0.5,1.6,2.4,0.6,1.2,1.7,2.8,2.3,3.6,3.2,4.2],
+      total:"R$ 28,9k", qty:"742", ticket:"R$ 65,49"
+    },
+    60: {
+      revenue:[0.9,1.2,1.6,2.2,2.9,2.1,3.2,3.8,2.7,4.1,4.7,3.3,5.2,4.6,6.1,5.0,6.8,7.3,5.9,8.1,7.4,9.2],
+      releases:[0.3,0.6,0.8,1.1,1.4,1.0,1.8,2.0,1.6,2.3,2.1,1.7,2.8,2.4,3.0,2.7,3.4,3.9,3.2,4.3,3.8,4.8],
+      total:"R$ 54,7k", qty:"1.284", ticket:"R$ 68,10"
+    },
+    90: {
+      revenue:[0.7,1.0,1.4,1.8,2.5,2.0,3.4,2.8,4.2,3.7,5.4,4.9,6.2,5.6,7.1,6.0,8.8,7.6,9.8,8.9,10.8,9.5,11.7,10.9],
+      releases:[0.2,0.5,0.7,0.9,1.2,1.0,1.7,1.5,2.1,1.9,2.6,2.4,3.0,2.7,3.6,3.2,4.4,3.9,5.1,4.6,5.8,5.2,6.4,5.9],
+      total:"R$ 82,3k", qty:"1.956", ticket:"R$ 70,42"
+    }
+  };
+  const cfg = configs[chartPeriod] || configs[30];
+  const max = 12;
+  const left = 13, top = 6, height = 36, width = 85;
+  const mapLine = arr => arr.map((v,i)=>`${(left + (i/(arr.length-1)*width)).toFixed(1)},${(top + (1-Math.min(v,max)/max)*height).toFixed(1)}`).join(" ");
   return `<div class="saas-chart saas-chart-refined">
-    <div class="saas-chart-top"><strong>Receita / Liberações</strong><span>Últimos 30 dias</span></div>
+    <div class="saas-chart-top">
+      <strong>Receita / Liberações</strong>
+      <label class="saas-chart-period"><span class="sr-only">Período do gráfico</span><select id="saasChartPeriod" aria-label="Período do gráfico"><option value="30" ${chartPeriod===30?"selected":""}>Últimos 30 dias</option><option value="60" ${chartPeriod===60?"selected":""}>Últimos 60 dias</option><option value="90" ${chartPeriod===90?"selected":""}>Últimos 90 dias</option></select></label>
+    </div>
     <div class="saas-chart-legend"><span class="dot revenue"></span> Receita (R$)<span class="dot releases"></span> Liberações</div>
-    <svg viewBox="0 0 100 48" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 41 H100 M0 30 H100 M0 19 H100 M0 8 H100" class="grid"/>
-      <polyline points="${mapLine(points)}" class="line revenue"/>
-      <polyline points="${mapLine(points2)}" class="line releases"/>
-    </svg>
-    <div class="saas-chart-metrics"><span>Receita total <b>R$ 28,9k</b></span><span>Liberações <b>742</b></span><span>Ticket médio <b>R$ 65,49</b></span></div>
+    <div class="saas-chart-plot">
+      <div class="saas-chart-yaxis" aria-hidden="true"><span>+10k</span><span>5k</span><span>3k</span><span>1k</span></div>
+      <svg viewBox="0 0 100 52" preserveAspectRatio="none" aria-hidden="true">
+        <defs><clipPath id="saasChartClip"><rect x="13" y="4" width="86" height="40" rx="1"/></clipPath></defs>
+        <path d="M13 8 H99 M13 20 H99 M13 31 H99 M13 42 H99" class="grid"/>
+        <g clip-path="url(#saasChartClip)">
+          <polyline points="${mapLine(cfg.revenue)}" class="line revenue"/>
+          <polyline points="${mapLine(cfg.releases)}" class="line releases"/>
+        </g>
+      </svg>
+    </div>
+    <div class="saas-chart-metrics"><span>Receita total <b>${cfg.total}</b></span><span>Liberações <b>${cfg.qty}</b></span><span>Ticket médio <b>${cfg.ticket}</b></span></div>
   </div>`;
 }
 function getFilteredAccess(){ return accessCache.filter(i=>passesFilters(i,"subscription")); }
@@ -731,10 +758,15 @@ function bindEvents(){
     renderActivePage();
   }));
   document.querySelector("#saasGlobalSearch")?.addEventListener("input",event=>{ searchTerm = event.target.value.trim(); renderAll(); });
-  document.querySelector("#saasSearchFocus")?.addEventListener("click",()=>document.querySelector("#saasGlobalSearch")?.focus());
   document.querySelector("#saasFilterPlan")?.addEventListener("change",event=>{ planFilter = event.target.value; renderAll(); });
   document.querySelector("#saasFilterStatus")?.addEventListener("change",event=>{ statusFilter = event.target.value; renderAll(); });
   document.querySelector("#saasFilterType")?.addEventListener("change",event=>{ typeFilter = event.target.value; renderAll(); });
+  document.addEventListener("change",event=>{
+    if(event.target?.id === "saasChartPeriod"){
+      chartPeriod = Number(event.target.value) || 30;
+      renderDashboard();
+    }
+  });
 }
 
 bindEvents();

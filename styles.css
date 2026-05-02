@@ -5598,3 +5598,26 @@ body.saas-pro-body::after{
   .saas-pro-primary{width:100%!important}
   .saas-chart-metrics{grid-template-columns:1fr!important}
 }
+
+/* ===== SaaS Dashboard Ajuste fino v3 ===== */
+.saas-pro-head-actions{margin-left:auto!important}
+.saas-pro-header{grid-template-columns:auto minmax(0,1fr) auto!important}
+.saas-chart-top{align-items:flex-start!important}
+.saas-chart-period{display:block;position:relative;min-width:112px;flex:0 0 auto}
+.saas-chart-period select{
+  appearance:none;-webkit-appearance:none;width:100%;height:34px;border-radius:999px;
+  border:1px solid rgba(143,191,255,.16);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));
+  color:#c9d8ec;font-weight:950;font-size:.68rem;padding:0 24px 0 10px;outline:0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.saas-chart-period::after{content:"⌄";position:absolute;right:9px;top:7px;color:#8ca6c4;font-size:.78rem;pointer-events:none}
+.saas-chart-plot{position:relative;margin-top:2px;overflow:hidden;border-radius:14px;background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(255,255,255,.012))}
+.saas-chart-yaxis{position:absolute;left:0;top:7px;bottom:9px;width:38px;display:flex;flex-direction:column;justify-content:space-between;z-index:2;pointer-events:none}
+.saas-chart-yaxis span{font-size:.54rem;font-weight:950;color:#7f96b3;text-align:left;letter-spacing:-.02em;text-shadow:0 1px 2px rgba(0,0,0,.8)}
+.saas-chart-refined svg{height:134px!important;margin-top:0!important;display:block!important}
+.saas-chart-refined .grid{stroke:rgba(174,206,255,.095)!important;stroke-width:.28!important}
+.saas-chart-refined .line{stroke-width:1.25!important;stroke-linejoin:round;stroke-linecap:round}
+.saas-chart-metrics{position:relative;z-index:3;margin-top:7px!important}
+.saas-chart-metrics span{backdrop-filter:blur(10px);background:rgba(13,25,48,.72)!important}
+@media (max-width:370px){.saas-chart-period{min-width:104px}.saas-chart-period select{font-size:.62rem;padding-left:8px}.saas-chart-yaxis{width:34px}.saas-chart-yaxis span{font-size:.5rem}}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}

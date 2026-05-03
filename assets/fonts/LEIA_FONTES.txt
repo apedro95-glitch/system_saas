@@ -1,0 +1,13 @@
+Coloque aqui as fontes baixadas, com estes nomes exatos:
+
+1) topbrs-premium.ttf
+   Fonte enviada: Sephora & Hayden.ttf
+
+2) topbrs-plus.otf
+   Fonte enviada: Hackensack-SemiBold.otf
+
+3) topbrs-basic.ttf
+   Fonte enviada: ThisAppeal-FreeDemo.ttf
+
+Observação: este pacote contém a configuração do sistema para carregar as fontes locais,
+mas os arquivos de fonte precisam ser adicionados nesta pasta antes de publicar no GitHub/VPS.

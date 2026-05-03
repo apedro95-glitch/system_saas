@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050b16">
+<title>TopBRS — Assine agora</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css?v=checkout-steps-v2">
+</head>
+<body>
+<main class="auth-shell subscribe-shell checkout-shell">
+  <section class="auth-card glass-panel subscribe-card checkout-card">
+    <div class="brand-block checkout-brand">
+      <div class="brand-shield" aria-hidden="true">
+        <svg viewBox="0 0 120 140"><path d="M60 6 108 25v38c0 34-19 58-48 71C31 121 12 97 12 63V25L60 6Z" fill="#102955" stroke="#f2b935" stroke-width="6"/><path d="M34 72h52l-9 27H43l-9-27Z" fill="#f2b935"/><path d="M45 72 60 42l15 30H45Z" fill="#ffe69d"/></svg>
+      </div>
+      <p class="brand-kicker">TOPBRS</p>
+      <p class="brand-sub">MULTI-CLÃ</p>
+    </div>
+
+    <div class="auth-copy checkout-copy">
+      <span class="checkout-eyebrow">ASSINE AGORA</span>
+      <h1>Escolha seu plano</h1>
+      <p>Selecione o plano, escolha o período, preencha os dados do comprador e deixe o pedido pronto para o fluxo de pagamento automático.</p>
+    </div>
+
+    <form class="subscribe-form checkout-form" id="subscribeForm">
+      <section class="checkout-section checkout-step is-active" data-step="plan">
+        <div class="checkout-section-head">
+          <span>01</span>
+          <div>
+            <strong>Plano do clã</strong>
+            <small id="planStepHint">Escolha Básico, Plus ou Premium para avançar.</small>
+          </div>
+          <b class="checkout-step-pill" id="planStepPill">Escolher</b>
+        </div>
+
+        <div class="checkout-step-body">
+        <div class="checkout-plan-grid" role="radiogroup" aria-label="Planos disponíveis">
+          <button class="checkout-plan-card plan-basic active" type="button" data-plan="basic">
+            <span class="plan-tag">Entrada</span>
+            <strong>Básico</strong>
+            <em data-price-label="basic">R$ 19,90</em>
+            <small>Plano básico que cabe no bolso!</small>
+            <ul>
+              <li>Gestão de clã</li>
+              <li>Personalização limitada</li>
+              <li>Suporte 24hrs</li>
+            </ul>
+          </button>
+
+          <button class="checkout-plan-card plan-plus" type="button" data-plan="plus">
+            <span class="plan-tag">Mais escolhido</span>
+            <strong>Plus</strong>
+            <em data-price-label="plus">R$ 39,90</em>
+            <small>Selo exclusivos de Plus e + personalizações</small>
+            <ul>
+              <li>Gestão de clã</li>
+              <li>Mais avatares e fundos</li>
+              <li>Suporte 24hrs</li>
+            </ul>
+          </button>
+
+          <button class="checkout-plan-card plan-premium" type="button" data-plan="premium">
+            <span class="plan-tag">Elite</span>
+            <strong>Premium</strong>
+            <em data-price-label="premium">R$ 69,90</em>
+            <small>Experiência PREMIUM completa 🔥</small>
+            <ul>
+              <li>Gestão de clã</li>
+              <li>Selo exclusivo e Tudo liberado para todos os membros</li>
+              <li>Suporte 24hrs</li>
+            </ul>
+          </button>
+        </div>
+        </div>
+      </section>
+
+      <section class="checkout-section checkout-step is-hidden" data-step="cycle">
+        <div class="checkout-section-head">
+          <span>02</span>
+          <div>
+            <strong>Período de pagamento</strong>
+            <small id="cycleStepHint">Escolha mensal, semestral ou anual.</small>
+          </div>
+          <b class="checkout-step-pill" id="cycleStepPill">Aguardando plano</b>
+        </div>
+
+        <div class="checkout-step-body">
+        <div class="checkout-cycle-grid" role="radiogroup" aria-label="Período de pagamento">
+          <button class="checkout-cycle active" type="button" data-cycle="monthly"><span>Mensal</span><b id="cycleMonthlyPrice">R$ 19,90</b></button>
+          <button class="checkout-cycle" type="button" data-cycle="semiannual"><span>Semestral</span><b id="cycleSemiannualPrice">R$ 29,90</b></button>
+          <button class="checkout-cycle" type="button" data-cycle="annual"><span>Anual</span><b id="cycleAnnualPrice">R$ 49,90</b></button>
+        </div>
+        </div>
+      </section>
+
+      <section class="checkout-section checkout-step checkout-data-section is-hidden" data-step="data">
+        <div class="checkout-section-head">
+          <span>03</span>
+          <div>
+            <strong>Dados do comprador e do clã</strong>
+            <small id="dataStepHint">Preencha os dados para criar o pedido.</small>
+          </div>
+          <b class="checkout-step-pill" id="dataStepPill">Aguardando período</b>
+        </div>
+
+        <div class="checkout-step-body">
+        <div class="checkout-fields-grid setup-box glass-inset">
+          <label class="field">
+            <span>Nome do comprador</span>
+            <input id="subName" type="text" placeholder="Seu nome">
+          </label>
+
+          <label class="field">
+            <span>Email</span>
+            <input id="subEmail" type="email" placeholder="seu@email.com">
+          </label>
+
+          <label class="field">
+            <span>WhatsApp</span>
+            <input id="subPhone" type="text" placeholder="+55...">
+          </label>
+
+          <label class="field">
+            <span>Nome do clã</span>
+            <input id="subClanName" type="text" placeholder="Nome do clã">
+          </label>
+
+          <label class="field">
+            <span>Tag do clã</span>
+            <input id="subClanTag" type="text" placeholder="#ABC123">
+          </label>
+
+          <label class="field field-wide">
+            <span>Observação opcional</span>
+            <input id="subMessage" type="text" placeholder="Mensagem para o suporte / SaaS">
+          </label>
+        </div>
+        </div>
+      </section>
+
+      <section class="checkout-summary checkout-final-panel glass-inset" aria-live="polite" hidden>
+        <div>
+          <span>Resumo do pedido</span>
+          <strong id="summaryPlan">Básico • Mensal</strong>
+          <small id="summaryHint">Pedido será criado como pendente para integração Mercado Pago.</small>
+        </div>
+        <b id="summaryAmount">R$ 19,90</b>
+      </section>
+
+      <section class="checkout-status-panel" id="checkoutStatusPanel" hidden>
+        <div class="checkout-status-icon" id="checkoutStatusIcon">◷</div>
+        <div>
+          <strong id="checkoutStatusTitle">Pedido pendente</strong>
+          <p id="checkoutStatusText">Aguardando conexão com o pagamento Mercado Pago.</p>
+        </div>
+      </section>
+
+      <input type="hidden" id="subPlan" value="basic">
+      <input type="hidden" id="subBillingCycle" value="monthly">
+      <input type="hidden" id="subAmount" value="19.90">
+
+      <button class="gold-btn checkout-pay-btn checkout-final-action" type="submit" hidden>Criar pedido pendente</button>
+      <small id="subscribeFeedback" class="tag-feedback"></small>
+      <button class="link-btn subscribe-back-btn" type="button" onclick="window.location.href='index.html'"><b>Voltar</b></button>
+    </form>
+  </section>
+</main>
+
+<script type="module" src="subscribe.js?v=checkout-steps-v2"></script>
+<script src="zoom-lock.js?v=tables-identity-fix-1"></script>
+</body>
+</html>

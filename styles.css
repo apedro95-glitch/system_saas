@@ -7421,3 +7421,127 @@ body.saas-pro-body::after{
   z-index:10!important;
 }
 
+
+/* ===== Stage 3 feedback consolidation: auth, flip and nav fitting ===== */
+#clanForm{
+  width:100%!important;
+  box-sizing:border-box!important;
+}
+#clanForm > .primary-btn{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:64px!important;
+}
+#clanForm .member-access{
+  width:100%!important;
+  justify-content:center!important;
+  text-align:center!important;
+  margin-top:4px!important;
+}
+#clanForm .sign-link{
+  width:100%!important;
+  display:block!important;
+  text-align:center!important;
+  margin-top:4px!important;
+}
+.flip-wrap{
+  width:100%!important;
+  max-width:100%!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+  min-width:0!important;
+}
+.flip-card-inner{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+.flip-face{
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  left:0!important;
+  right:0!important;
+}
+.flip-back{
+  inset:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  max-height:min(560px, calc(100svh - 230px))!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:22px 18px 18px!important;
+}
+.flip-back .field,
+.flip-back .input-with-btn,
+.flip-back input,
+.flip-back .primary-btn{
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+.flip-back .primary-btn{
+  width:100%!important;
+}
+.auth-card{
+  overflow:visible!important;
+}
+@media (max-width:390px){
+  .flip-back{padding-left:14px!important;padding-right:14px!important;}
+  #clanForm > .primary-btn{min-height:60px!important;}
+}
+
+/* Bottom nav: labels per language must fit without overlap */
+.bottom-nav{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 82px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
+  gap:1px!important;
+  padding-left:6px!important;
+  padding-right:6px!important;
+  overflow:visible!important;
+}
+.bottom-nav .nav-btn{
+  min-width:0!important;
+  overflow:visible!important;
+  padding:0 1px!important;
+}
+.bottom-nav .nav-btn span{
+  display:block!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:clip!important;
+  font-size:clamp(.43rem, 1.55vw, .56rem)!important;
+  letter-spacing:-.045em!important;
+  line-height:1.05!important;
+  text-align:center!important;
+}
+.bottom-nav .nav-home span{font-size:clamp(.43rem, 1.45vw, .54rem)!important;}
+@media (max-width:370px){
+  .bottom-nav{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 76px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;}
+  .bottom-nav .nav-btn span{font-size:.43rem!important;}
+}
+
+/* Classification tabs: keep translated labels inside the tab */
+.ranking-tabs button,
+.ranking-tab,
+.classification-tabs button{
+  min-width:0!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-overflow:clip!important;
+  font-size:clamp(.76rem, 3vw, .98rem)!important;
+  padding-left:10px!important;
+  padding-right:10px!important;
+}
+
+/* Status pill long translations */
+.war-state-pill b,
+.dash-card-head b{
+  white-space:nowrap!important;
+  max-width:100%!important;
+  font-size:clamp(.58rem, 2.2vw, .72rem)!important;
+  letter-spacing:.08em!important;
+}
+

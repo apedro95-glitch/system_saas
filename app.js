@@ -1,6 +1,6 @@
 const app = document.querySelector('#app');
 const API_FALLBACK_URL = '';
-window.TOPBRS_APP_VERSION = 'i18n-stage2-login-fix-v3';
+window.TOPBRS_APP_VERSION = 'i18n-stage3-final';
 function i18nT(key, values = {}){ return window.TopBRSI18n?.t ? window.TopBRSI18n.t(key, values) : key; }
 function languageSwitchMarkup(){ return `<div class="language-switch auth-language-switch" aria-label="Idioma"><button type="button" data-language-option="pt-BR">PT</button><button type="button" data-language-option="en-US">EN</button><button type="button" data-language-option="es-ES">ES</button></div>`; }
 function applyI18nNow(){ setTimeout(()=>window.TopBRSI18n?.apply?.(),0); }

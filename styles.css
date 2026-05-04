@@ -7389,37 +7389,35 @@ body.saas-pro-body::after{
 .member-access .inline-link{position:relative!important;z-index:8!important;touch-action:manipulation!important;}
 .auth-language-switch{z-index:25!important;}
 
-/* ===== Correção definitiva login/cadastro i18n Stage 2 v2 =====
-   Evita falha do flip 3D no Safari/iOS após re-render por idioma. */
+/* ===== Stage 3: flip 3D restaurado com fallback JS ===== */
 #authFlip .flip-card-inner{
-  transform:none!important;
-  transition:none!important;
-  transform-style:flat!important;
+  transform-style:preserve-3d!important;
+  transition:transform .62s cubic-bezier(.2,.8,.2,1)!important;
 }
+#authFlip.is-flipped .flip-card-inner{transform:rotateY(180deg)!important;}
 #authFlip .flip-face{
-  backface-visibility:visible!important;
-  -webkit-backface-visibility:visible!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
 }
 #authFlip .flip-back{
-  display:none!important;
-  position:relative!important;
-  inset:auto!important;
-  transform:none!important;
-  max-height:none!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  transform:rotateY(180deg)!important;
+  max-height:520px!important;
   min-height:392px!important;
   overflow-y:auto!important;
 }
-#authFlip.is-flipped .flip-front{
-  display:none!important;
-}
-#authFlip.is-flipped .flip-back{
-  display:grid!important;
-}
+#authFlip .flip-front{display:block!important;}
+#authFlip.auth-no-3d .flip-card-inner{transform:none!important;transition:none!important;transform-style:flat!important;}
+#authFlip.auth-no-3d .flip-face{backface-visibility:visible!important;-webkit-backface-visibility:visible!important;}
+#authFlip.auth-no-3d .flip-back{display:none!important;position:relative!important;inset:auto!important;transform:none!important;max-height:none!important;}
+#authFlip.auth-no-3d.is-flipped .flip-front{display:none!important;}
+#authFlip.auth-no-3d.is-flipped .flip-back{display:grid!important;}
 #openLogin,#openSignup,[data-auth-open="login"],[data-auth-open="signup"]{
   pointer-events:auto!important;
   touch-action:manipulation!important;
-  cursor:pointer!important;
   position:relative!important;
-  z-index:40!important;
+  z-index:10!important;
 }
-.auth-card,.setup-box,.member-access{pointer-events:auto!important;}
+

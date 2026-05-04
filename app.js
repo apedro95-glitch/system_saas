@@ -1,6 +1,6 @@
 const app = document.querySelector('#app');
 const API_FALLBACK_URL = '';
-window.TOPBRS_APP_VERSION = 'i18n-stage2-login-fix-1';
+window.TOPBRS_APP_VERSION = 'i18n-stage2-login-fix-v3';
 function i18nT(key, values = {}){ return window.TopBRSI18n?.t ? window.TopBRSI18n.t(key, values) : key; }
 function languageSwitchMarkup(){ return `<div class="language-switch auth-language-switch" aria-label="Idioma"><button type="button" data-language-option="pt-BR">PT</button><button type="button" data-language-option="en-US">EN</button><button type="button" data-language-option="es-ES">ES</button></div>`; }
 function applyI18nNow(){ setTimeout(()=>window.TopBRSI18n?.apply?.(),0); }
@@ -516,6 +516,14 @@ function renderSearch(){
   document.querySelector('#backToClan')?.addEventListener('click', hideAuthFace);
 }
 
+
+function eyeSvg(){
+  return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+function eyeOffSvg(){
+  return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.24A10.58 10.58 0 0 1 12 4c6.5 0 10 8 10 8a18.2 18.2 0 0 1-2.3 3.55"/><path d="M6.6 6.6C3.7 8.55 2 12 2 12s3.5 8 10 8a10.7 10.7 0 0 0 5.4-1.5"/></svg>`;
+}
+
 function togglePassword(inputId, button){
   const input = document.getElementById(inputId);
   if(!input) return;
@@ -527,6 +535,12 @@ function togglePassword(inputId, button){
 
 function showLoginFace(){
   const content = document.querySelector('#authBackContent');
+  const flip = document.querySelector('#authFlip');
+  if(!content || !flip){
+    console.warn('Auth back container ausente. Recriando tela inicial.');
+    renderSearch();
+    return setTimeout(()=>showLoginFace(), 30);
+  }
   content.innerHTML = `
     <h2 data-i18n="auth.loginTitle">Acessar sistema</h2>
     <p class="auth-mode-copy" data-i18n="auth.loginText">Entre com seu email e senha para continuar.</p>
@@ -555,7 +569,7 @@ function showLoginFace(){
     </div>
   `;
 
-  document.querySelector('#authFlip')?.classList.add('is-flipped');
+  flip.classList.add('is-flipped');
   applyI18nNow();
 
   document.querySelector('#loginBtn')?.addEventListener('click', async ()=>{
@@ -598,6 +612,12 @@ function showLoginFace(){
 
 function showSignupFace(){
   const content = document.querySelector('#authBackContent');
+  const flip = document.querySelector('#authFlip');
+  if(!content || !flip){
+    console.warn('Auth back container ausente. Recriando tela inicial.');
+    renderSearch();
+    return setTimeout(()=>showSignupFace(), 30);
+  }
   content.innerHTML = `
     <h2 data-i18n="auth.signupTitle">Criar cadastro</h2>
     <p class="auth-mode-copy" data-i18n="auth.signupText">Valide sua tag para vincular seu perfil ao clã.</p>
@@ -647,7 +667,7 @@ function showSignupFace(){
     </div>
   `;
 
-  document.querySelector('#authFlip')?.classList.add('is-flipped');
+  flip.classList.add('is-flipped');
   applyI18nNow();
 
   const savedClanTag = localStorage.getItem('selectedClan') || localStorage.getItem('topbrs_clan_tag') || '';
@@ -1144,6 +1164,13 @@ window.sendRecoveryMock = sendRecoveryMock;
 
 window.addEventListener('topbrs:languagechange', ()=>{ applyI18nNow(); });
 bindAuthFlipDelegates();
+window.togglePassword = togglePassword;
+window.showSignupFace = showSignupFace;
+window.showLoginFace = showLoginFace;
+window.hideAuthFace = hideAuthFace;
+window.openForgotPasswordPopup = openForgotPasswordPopup;
+window.closeForgotPasswordPopup = closeForgotPasswordPopup;
+window.sendRecoveryMock = sendRecoveryMock;
 renderSearch();
 
 function showPlanExpiredPopupOnIndex(){

@@ -1166,3 +1166,31 @@ function showPlanExpiredPopupOnIndex(){
   overlay.querySelector("#renewPlanBtn")?.addEventListener("click",()=>{location.href="subscribe.html";});
 }
 showPlanExpiredPopupOnIndex();
+
+
+/* ===== Stage 2 login/cadastro robust fix v2 ===== */
+function topbrsAuthClickHandler(event){
+  const login = event.target.closest?.('#openLogin,[data-auth-open="login"]');
+  const signup = event.target.closest?.('#openSignup,[data-auth-open="signup"]');
+  const back = event.target.closest?.('#backToClan,[data-auth-back="clan"]');
+  if(!login && !signup && !back) return;
+  event.preventDefault();
+  event.stopPropagation();
+  if(login) return showLoginFace();
+  if(signup) return showSignupFace();
+  return hideAuthFace();
+}
+['click','pointerup','touchend'].forEach(type=>{
+  document.addEventListener(type, topbrsAuthClickHandler, {capture:true, passive:false});
+});
+function forceBindAuthButtons(){
+  const login = document.querySelector('#openLogin,[data-auth-open="login"]');
+  const signup = document.querySelector('#openSignup,[data-auth-open="signup"]');
+  const back = document.querySelector('#backToClan,[data-auth-back="clan"]');
+  if(login) login.onclick = event => { event?.preventDefault?.(); showLoginFace(); };
+  if(signup) signup.onclick = event => { event?.preventDefault?.(); showSignupFace(); };
+  if(back) back.onclick = event => { event?.preventDefault?.(); hideAuthFace(); };
+}
+const authButtonObserver = new MutationObserver(()=>forceBindAuthButtons());
+authButtonObserver.observe(document.body, {childList:true, subtree:true});
+forceBindAuthButtons();

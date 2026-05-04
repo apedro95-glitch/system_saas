@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050b16">
+<title>TopBRS Multi-Clã — Guerra</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css?v=i18n-stage4-final">
+</head>
+<body>
+<main class="dashboard-shell war-shell">
+<section class="dashboard-phone war-phone glass-panel">
+<header class="war-header war-header-refined">
+<div class="war-title-icon war-title-stack">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+    <circle cx="6" cy="6" r="2.15" fill="currentColor"/>
+    <circle cx="18" cy="6" r="2.15" fill="currentColor"/>
+  </svg>
+  <div class="menu-period" id="warPeriodLabel"><strong>Abril</strong><span>Semana 4</span></div>
+</div>
+<div class="war-heading-text">
+  <p class="war-kicker">Guerra</p>
+  <p class="war-subtitle">Acompanhe o desempenho do clã na guerra semanal</p>
+</div>
+<button class="calendar-btn" id="openWarCalendar" aria-label="Calendário">
+<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3" fill="currentColor" opacity=".18"/><path d="M8 3v4M16 3v4M4 9h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="7" y="12" width="3" height="3" rx=".7" fill="currentColor"/><rect x="12" y="12" width="3" height="3" rx=".7" fill="currentColor" opacity=".75"/></svg>
+</button>
+</header>
+<section class="dashboard-war-block dash-card glass-inset war-dashboard-copy">
+  <div class="dash-card-head">
+    <div>
+      <div class="dash-section-label">GUERRA ATUAL</div>
+      <h2 id="warBlockPeriod">Carregando...</h2>
+      <p class="war-block-day" id="warBlockDay" hidden>Quinta-feira</p>
+    </div>
+
+    <span class="war-state-pill state-current" id="warStatusPill">
+      <i></i>
+      <b><span data-war-status>Fora da janela</span></b>
+    </span>
+  </div>
+
+  <div class="dash-war-stats">
+    <div>
+      <span>Ataques usados</span>
+      <strong id="warAttacksUsed">0 / 0</strong>
+    </div>
+    <div>
+      <span>Fame</span>
+      <strong class="dash-fame war-block-fame" id="warBlockFame"><span data-war-fame>0</span></strong>
+    </div>
+  </div>
+
+  <div class="dash-progress war-block-progress">
+    <span id="warBlockProgressBar" style="width:10%"></span>
+  </div>
+</section>
+
+<div class="war-tabs glass-inset">
+<button class="war-tab active" data-tab="members">Semana</button>
+<button class="war-tab" data-tab="attacks">Dia</button>
+</div>
+
+<section class="war-table-card glass-inset">
+<div class="war-table-head" id="warTableHead"><span>Membro</span><span>Fame</span><span>Ataques</span></div>
+<div class="war-list" id="warList"></div>
+</section>
+</section>
+
+<div class="war-calendar-overlay" id="warCalendarOverlay">
+<div class="war-calendar-modal glass-panel">
+<button class="modal-close" id="closeWarCalendar" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg></button>
+<div class="modal-eyebrow">Calendário</div>
+<h2>Carregando...</h2>
+<p id="calendarSubtitle">Mês e semana ativa da guerra</p>
+<div class="calendar-mini">
+<div class="calendar-months months-scroll"><button data-value="Jan">Jan</button><button data-value="Fev">Fev</button><button data-value="Mar">Mar</button><button data-value="Abr" class="active">Abr</button><button data-value="Mai">Mai</button><button data-value="Jun">Jun</button><button data-value="Jul">Jul</button><button data-value="Ago">Ago</button><button data-value="Set">Set</button><button data-value="Out">Out</button><button data-value="Nov">Nov</button><button data-value="Dez">Dez</button></div>
+<div class="calendar-weeks"><button>S1</button><button>S2</button><button>S3</button><button class="active">S4</button></div>
+<div class="calendar-days hidden" id="calendarDays"><button class="active">Qui</button><button>Sex</button><button>Sáb</button><button>Dom</button></div>
+</div>
+</div>
+</div>
+</main>
+
+<script id="topbrs-nav-router">
+(function(){
+  const routes = {
+    'Guerra': 'war.html',
+    'Class.': 'classification.html',
+    'Classificação': 'classification.html',
+    'Início': 'dashboard.html',
+    'Membros': 'members.html'
+  };
+
+  const current = location.pathname.split('/').pop() || 'index.html';
+
+  document.querySelectorAll('.bottom-nav .nav-btn').forEach((btn)=>{
+    const label = (btn.querySelector('span')?.textContent || '').trim();
+    const target = routes[label];
+
+    if(target){
+      btn.onclick = (event)=>{
+        event.preventDefault();
+
+        if(navigator.vibrate){
+          navigator.vibrate(12);
+        }
+
+        if(current !== target){
+          window.location.href = target;
+        }
+      };
+    }
+
+    btn.classList.remove('active');
+
+    if(
+      (current === 'war.html' && label === 'Guerra') ||
+      (current === 'classification.html' && (label === 'Class.' || label === 'Classificação')) ||
+      ((current === 'dashboard.html' || current === 'index.html') && label === 'Início') ||
+      (current === 'members.html' && label === 'Membros')
+    ){
+      btn.classList.add('active');
+    }
+  });
+})();
+</script>
+
+
+
+<nav class="bottom-nav" aria-label="Menu principal">
+  <button class="nav-btn active" onclick="window.location.href='war.html'"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/><circle cx="6" cy="6" r="2.15" fill="currentColor"/><circle cx="18" cy="6" r="2.15" fill="currentColor"/></svg><span>Guerra</span></button>
+  <button class="nav-btn" onclick="window.location.href='classification.html'"><svg class="nav-svg" viewBox="0 0 24 24"><rect x="3" y="12" width="5" height="8" rx="1.6" fill="currentColor" opacity=".72"/><rect x="10" y="7" width="5" height="13" rx="1.6" fill="currentColor"/><rect x="17" y="10" width="4" height="10" rx="1.6" fill="currentColor" opacity=".82"/></svg><span>Class.</span></button>
+  <button class="nav-btn" onclick="window.location.href='members.html'"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.1" fill="currentColor"/><circle cx="17" cy="10" r="2.6" fill="currentColor" opacity=".72"/><path d="M3.8 20c.4-3.4 2.8-5.3 5.2-5.3s4.8 1.9 5.2 5.3H3.8Z" fill="currentColor"/></svg><span>Membros</span></button>
+  <button class="nav-btn nav-home" onclick="window.location.href='dashboard.html'"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M3.8 11.1 12 4.8l8.2 6.3v7.6a2 2 0 0 1-2 2h-4.1v-5.4H9.9v5.4H5.8a2 2 0 0 1-2-2v-7.6Z" fill="currentColor"/></svg><span>Início</span></button>
+  <button class="nav-btn" type="button" data-construction="true"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M8 4h8v3.2a4 4 0 0 1-8 0V4Z" fill="currentColor"/><path d="M6 4h2v2.2A2.8 2.8 0 0 1 5.2 9H4V6a2 2 0 0 1 2-2Z" fill="currentColor" opacity=".72"/><path d="M18 4h-2v2.2A2.8 2.8 0 0 0 18.8 9H20V6a2 2 0 0 0-2-2Z" fill="currentColor" opacity=".72"/><rect x="10.2" y="13" width="3.6" height="3.2" rx=".7" fill="currentColor"/><rect x="7.4" y="16" width="9.2" height="2.2" rx="1" fill="currentColor"/></svg><span>Torneio</span></button>
+  <button class="nav-btn" type="button" data-construction="true"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M3.5 10.2 7.2 6l4.8 5.2L16.8 6l3.7 4.2v8.3a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5v-8.3Z" fill="currentColor"/></svg><span>Liderança</span></button>
+  <button class="nav-btn" onclick="window.location.href='settings.html'"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.7" fill="currentColor"/><path d="M12 2.8v3M12 18.2v3M4.9 4.9 7 7M17 17l2.1 2.1M2.8 12h3M18.2 12h3M4.9 19.1 7 17M17 7l2.1-2.1" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round"/></svg><span>Config.</span></button>
+</nav>
+
+<div class="construction-overlay" id="constructionOverlay">
+  <div class="construction-modal glass-panel">
+    <button class="modal-close" id="closeConstruction" aria-label="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-eyebrow">Aviso</div>
+    <h2>Menu em construção…🚧</h2>
+    <p>Essa área será liberada nas próximas etapas.</p>
+  </div>
+</div>
+<script id="construction-popup-js">
+function openConstructionMenu(){
+  document.body.classList.add('modal-open');
+  document.documentElement.classList.add('modal-open');
+  document.querySelector('#constructionOverlay')?.classList.add('show');
+}
+function closeConstructionMenu(){
+  document.querySelector('#constructionOverlay')?.classList.remove('show');
+  document.body.classList.remove('modal-open');
+  document.documentElement.classList.remove('modal-open');
+}
+document.querySelector('#closeConstruction')?.addEventListener('click', closeConstructionMenu);
+document.querySelector('#constructionOverlay')?.addEventListener('click', (event)=>{
+  if(event.target.id === 'constructionOverlay') closeConstructionMenu();
+});
+document.querySelectorAll('[data-construction="true"]').forEach(btn=>{
+  btn.addEventListener('click', (event)=>{
+    event.preventDefault();
+    openConstructionMenu();
+  });
+});
+</script>
+
+<script type="module" src="i18n.js?v=i18n-stage4-final"></script>
+<script type="module" src="internal-i18n.js?v=i18n-stage4-final"></script>
+<script type="module" src="auth-guard.js?v=i18n-stage2-onboarding"></script>
+  <script type="module" src="war-real.js?v=war-fame-fix-1"></script>
+<script type="module" src="war.js?v=war-period-isolation-fix-v3"></script>
+<script type="module" src="auto-sync.js?v=war-fame-fix-1"></script>
+<script src="zoom-lock.js?v=tables-identity-fix-1"></script>
+</body>
+</html>

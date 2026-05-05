@@ -7849,3 +7849,121 @@ body.settings-scroll-locked .settings-popup-overlay.show{pointer-events:auto!imp
 .members-header p::after{content:none!important;}
 .members-header h1{display:block!important;visibility:visible!important;}
 .members-header p{display:block!important;visibility:visible!important;opacity:1!important;}
+
+
+/* ===== Stage 4 pre-opt UI fix: Dashboard instant/notifications/members ===== */
+.dashboard-phone{
+  overflow:visible!important;
+  contain:none!important;
+  transform:none!important;
+}
+.dash-header,
+.dash-title-card,
+.go-war-card,
+.highlight-grid,
+.notifications-card{
+  transform:translateZ(0);
+  backface-visibility:hidden;
+}
+.notifications-card{
+  min-height:360px!important;
+  max-height:360px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+.notifications-card [data-notification-list]{
+  min-height:0!important;
+  flex:1 1 auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+.dash-notification-head{
+  flex:0 0 auto!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:3!important;
+  padding-bottom:10px!important;
+  margin-bottom:4px!important;
+  background:linear-gradient(180deg,rgba(9,18,34,.98),rgba(9,18,34,.88))!important;
+}
+.dashboard-notification-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  padding:4px 4px 10px 0!important;
+}
+.notification-item.compact{
+  display:flex!important;
+  align-items:flex-start!important;
+  gap:9px!important;
+  padding:10px 0!important;
+  border-bottom:1px solid rgba(255,255,255,.075)!important;
+}
+.notification-item.compact .notification-copy{
+  min-width:0!important;
+  gap:1px!important;
+}
+.notification-item.compact .notification-copy strong{
+  font-size:.86rem!important;
+  line-height:1.15!important;
+  letter-spacing:.01em!important;
+  color:#fff!important;
+}
+.notification-item.compact .notification-copy span{
+  font-size:.72rem!important;
+  line-height:1.15!important;
+  color:rgba(226,232,240,.62)!important;
+  margin-top:2px!important;
+}
+.notification-item.compact .notification-message{
+  font-size:.78rem!important;
+  line-height:1.32!important;
+  color:rgba(226,232,240,.70)!important;
+  margin-top:7px!important;
+}
+.notification-item.compact .notification-dot{
+  width:9px!important;
+  height:9px!important;
+  margin-top:7px!important;
+  flex:0 0 9px!important;
+}
+.notification-item.compact:not(.is-unread) .notification-dot,
+.notification-item.compact.is-open .notification-dot{
+  opacity:0!important;
+  box-shadow:none!important;
+}
+.notification-toggle{
+  width:24px!important;
+  height:24px!important;
+  border:1px solid rgba(176,199,255,.12)!important;
+  border-radius:9px!important;
+  background:rgba(255,255,255,.04)!important;
+  color:#dbe7ff!important;
+  display:grid!important;
+  place-items:center!important;
+  flex:0 0 24px!important;
+  margin-top:1px!important;
+}
+.notification-toggle svg{
+  width:13px!important;
+  height:13px!important;
+  transition:transform .2s ease!important;
+}
+.notification-item.is-open .notification-toggle svg{transform:rotate(180deg)!important;}
+.empty-notifications{
+  min-height:230px!important;
+  display:grid!important;
+  place-items:center!important;
+  font-size:.82rem!important;
+}
+.members-header h1{display:block!important;visibility:visible!important;opacity:1!important;}
+.members-header p{display:block!important;visibility:visible!important;opacity:1!important;max-height:none!important;}
+.members-header #membersCount{display:block!important;}
+@media(max-width:390px){
+  .notifications-card{min-height:350px!important;max-height:350px!important;}
+}

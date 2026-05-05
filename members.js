@@ -31,7 +31,7 @@ function refreshMembersHeader(){
  const sync=document.querySelector('.members-sync-btn');
  if(h) h.textContent=tr('members.title');
  if(p) p.textContent=tr('members.subtitle');
- if(count) count.textContent = `${membersData.length || 0} ${tr('members.title').toLowerCase()}`;
+ if(count) count.textContent = tr('members.count',{count:membersData.length || 0});
  if(search) search.placeholder=tr('members.search');
  if(sync) sync.setAttribute('aria-label', tr('members.sync'));
 }
@@ -244,3 +244,12 @@ function refreshMemberFilterTexts(){
 }
 refreshMembersHeader(); refreshMemberFilterTexts();
 window.addEventListener('topbrs:languagechange',()=>{ refreshMembersHeader(); refreshMemberFilterTexts(); renderMembers(); });
+
+
+/* Header anti-duplicação: mantém título/subtítulo corretos mesmo após i18n global */
+function enforceMembersHeader(){
+  refreshMembersHeader();
+}
+setTimeout(enforceMembersHeader, 80);
+setTimeout(enforceMembersHeader, 450);
+window.addEventListener('topbrs:languagechange', ()=>setTimeout(enforceMembersHeader, 30));

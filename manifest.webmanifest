@@ -1,0 +1,11 @@
+{
+  "name": "TopBRS Multi-Clã",
+  "short_name": "TopBRS",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#050b16",
+  "theme_color": "#050b16",
+  "icons": [
+    { "src": "assets/icons/app-icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

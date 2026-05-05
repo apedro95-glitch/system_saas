@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050b16">
+<title>TopBRS Multi-Clã — Configurações</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css?v=stage4-basefix3">
+</head>
+<body>
+<main class="dashboard-shell settings-shell">
+  <section class="dashboard-phone settings-phone glass-panel">
+    <header class="settings-header premium-config-header">
+      <div class="settings-header-left">
+        <div class="settings-title-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.7" fill="currentColor"/>
+            <path d="M12 2.8v3M12 18.2v3M4.9 4.9 7 7M17 17l2.1 2.1M2.8 12h3M18.2 12h3M4.9 19.1 7 17M17 7l2.1-2.1" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 data-i18n="settings.title">Configurações</h1>
+          <p data-i18n="settings.subtitle">Perfil, plano e sistema</p>
+        </div>
+      </div>
+      
+    </header>
+
+    <section class="settings-profile-hero glass-inset">
+      <div class="settings-avatar-wrap">
+        <img id="userAvatar" src="assets/icons/profile-user.svg" alt="Avatar do usuário">
+        <button class="settings-avatar-edit" id="openAvatarPicker" type="button" aria-label="Editar avatar">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.5 19.5h4.2L19.1 9.1a2.2 2.2 0 0 0 0-3.1L18 4.9a2.2 2.2 0 0 0-3.1 0L4.5 15.3v4.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M13.8 6 18 10.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <h2 class="settings-nick-line"><span id="settingsNick">Usuário</span><img id="settingsAddonBadge" class="settings-addon-badge" src="" alt="" hidden></h2>
+      <p id="settingsMeta">Cargo • Tag</p>
+    </section>
+
+    <section class="settings-mini-grid">
+      <article class="settings-mini-card glass-inset plan-card" id="openPlanManagerMini" role="button" tabindex="0">
+        <div class="settings-mini-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 8.2 12 21 3 8.2 12 3Z" fill="currentColor"/></svg>
+        </div>
+        <span data-i18n="settings.plan">Plano</span>
+        <strong id="settingsPlan">Trial</strong>
+        <small id="settingsExpire">Expiração pendente</small>
+      </article>
+
+      <article class="settings-mini-card glass-inset clan-card">
+        <div class="settings-mini-icon"><img data-settings-clan-badge src="assets/icons/clan.svg" alt=""></div>
+        <span data-i18n="settings.clan">Clã</span>
+        <strong id="settingsClan">TopBRS</strong>
+        <small id="settingsClanTag">#ABC123</small>
+      </article>
+    </section>
+
+    <section class="settings-list glass-inset">
+      <button class="settings-item" type="button" id="openProfilePopup">
+        <div class="settings-item-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4.5 21c.5-4.3 3.6-6.5 7.5-6.5s7 2.2 7.5 6.5h-15Z" fill="currentColor" opacity=".78"/></svg>
+        </div>
+        <div><strong data-i18n="settings.profile">Perfil</strong><span data-i18n="settings.profileSubtitle">Dados do membro</span></div>
+        <svg class="settings-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <button class="settings-item" type="button" id="openPlanManager">
+        <div class="settings-item-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 8.2 12 21 3 8.2 12 3Z" fill="currentColor"/></svg>
+        </div>
+        <div><strong data-i18n="settings.plan">Plano</strong><span data-i18n="settings.planSubtitle">Assinatura, Add-On e pagamentos</span></div>
+        <svg class="settings-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <button class="settings-item" type="button" id="openApiPopup">
+        <div class="settings-item-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7V7Z" fill="currentColor"/><path d="M4 9h3M4 15h3M17 9h3M17 15h3M9 4v3M15 4v3M9 17v3M15 17v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div><strong data-i18n="settings.api">API Clash</strong><span data-i18n="settings.apiSubtitle">Status da conexão</span></div>
+        <small class="settings-api-status">Conectado</small>
+      </button>
+
+      <button class="settings-item" type="button" id="openUsersPopup">
+        <div class="settings-item-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.1" fill="currentColor"/><circle cx="17" cy="10" r="2.6" fill="currentColor" opacity=".72"/><path d="M3.8 20c.4-3.4 2.8-5.3 5.2-5.3s4.8 1.9 5.2 5.3H3.8Z" fill="currentColor"/></svg>
+        </div>
+        <div><strong data-i18n="settings.users">Usuários</strong><span data-i18n="settings.usersSubtitle">Cadastros e permissões</span></div>
+        <svg class="settings-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <button class="settings-item" type="button" id="openLanguagePopup">
+        <div class="settings-item-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.4 2.6 3.5 5.5 3.5 9S14.4 18.4 12 21c-2.4-2.6-3.5-5.5-3.5-9S9.6 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <div><strong data-i18n="settings.language">Idioma</strong><span data-i18n-current-language>Português (BR)</span></div>
+        <svg class="settings-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <section class="settings-list glass-inset">
+      <button class="settings-item" type="button" id="openSecurityPopup">
+        <div class="settings-item-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.4" fill="currentColor"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </div>
+        <div><strong data-i18n="settings.security">Segurança</strong><span data-i18n="settings.securitySubtitle">Senha e sessões</span></div>
+        <svg class="settings-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <button class="settings-logout glass-inset" type="button" id="logoutSettings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H6.5A2.5 2.5 0 0 0 4 7.5v9A2.5 2.5 0 0 0 6.5 19H10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M14 8l4 4-4 4M18 12H9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Sair da conta
+    </button>
+  </section>
+</main>
+
+
+<div class="settings-popup-overlay" id="settingsProfileOverlay">
+  <div class="settings-popup-modal glass-panel">
+    <button class="modal-close" data-close-settings-popup aria-label="Fechar">×</button>
+    <div class="modal-eyebrow">Perfil</div>
+    <h2>Dados do usuário</h2>
+    <p>Atualize os dados internos do sistema. Nick e tag vêm da API Clash.</p>
+    <div class="settings-form-grid">
+      <label><span>Nome</span><input id="profileRealName" type="text" placeholder="Nome real"></label>
+      <label><span>Nick</span><input id="profileNick" type="text" disabled></label>
+      <label><span>Tag</span><input id="profileTag" type="text" disabled></label>
+      <label><span>E-mail</span><input id="profileEmail" type="email" placeholder="email@exemplo.com"></label>
+    </div>
+    <div class="settings-popup-actions"><button class="ghost-btn" type="button" data-close-settings-popup>Cancelar</button><button class="gold-btn" type="button" id="saveProfilePopup">Salvar</button></div>
+    <div class="tag-feedback" id="profilePopupFeedback"></div>
+  </div>
+</div>
+
+<div class="settings-popup-overlay" id="settingsApiOverlay">
+  <div class="settings-popup-modal glass-panel">
+    <button class="modal-close" data-close-settings-popup aria-label="Fechar">×</button>
+    <div class="modal-eyebrow">API Clash</div>
+    <h2>Status da conexão</h2>
+    <p>Informações reais da sincronização do clã, membros e guerra.</p>
+    <div class="settings-api-grid" id="settingsApiGrid"></div>
+    <div class="settings-popup-actions"><button class="ghost-btn" type="button" data-close-settings-popup>Fechar</button><button class="gold-btn" type="button" id="refreshApiInfo">Atualizar dados</button></div>
+  </div>
+</div>
+
+<div class="settings-popup-overlay" id="settingsUsersOverlay">
+  <div class="settings-popup-modal glass-panel settings-users-modal">
+    <button class="modal-close" data-close-settings-popup aria-label="Fechar">×</button>
+    <div class="modal-eyebrow">Usuários</div>
+    <h2>Cadastros e permissões</h2>
+    <p>Lista dos usuários cadastrados no sistema cruzada com cargos reais do Clash.</p>
+    <div class="settings-users-list" id="settingsUsersList"></div>
+    <div class="settings-popup-actions"><button class="ghost-btn" type="button" data-close-settings-popup>Fechar</button><button class="gold-btn" type="button" id="refreshUsersList">Atualizar lista</button></div>
+  </div>
+</div>
+<div class="settings-popup-overlay" id="settingsUserDetailOverlay">
+  <div class="settings-popup-modal glass-panel settings-user-detail-modal">
+    <button class="modal-close" data-close-settings-popup aria-label="Fechar">×</button>
+    <div class="modal-eyebrow">Cadastro</div>
+    <h2 id="settingsUserDetailTitle">Dados do membro</h2>
+    <p>Informações de cadastro vinculadas ao membro do clã.</p>
+    <div class="settings-user-detail" id="settingsUserDetailBox"></div>
+    <div class="settings-popup-actions"><button class="ghost-btn" type="button" data-close-settings-popup>Fechar</button></div>
+  </div>
+</div>
+
+<div class="settings-popup-overlay" id="settingsLanguageOverlay">
+  <div class="settings-popup-modal glass-panel settings-language-modal">
+    <button class="modal-close" data-close-language-popup aria-label="Fechar" data-i18n-aria-label="common.close">×</button>
+    <div class="modal-eyebrow" data-i18n="settings.language">Idioma</div>
+    <h2 data-i18n="settings.languagePopupTitle">Idioma do sistema</h2>
+    <p class="modal-subtitle" data-i18n="settings.languagePopupText">Escolha o idioma usado nas telas do comprador, onboarding e sistema do clã. O Painel SaaS permanece em português.</p>
+    <div class="settings-language-options">
+      <button type="button" data-language-option="pt-BR"><b>PT</b><span data-i18n="language.portuguese">Português</span><small>Português (BR)</small></button>
+      <button type="button" data-language-option="en-US"><b>EN</b><span data-i18n="language.english">English</span><small>English (US)</small></button>
+      <button type="button" data-language-option="es-ES"><b>ES</b><span data-i18n="language.spanish">Español</span><small>Español (ES)</small></button>
+    </div>
+    <div class="settings-popup-actions"><button class="ghost-btn" type="button" data-close-language-popup data-i18n="common.close">Fechar</button></div>
+  </div>
+</div>
+
+<div class="settings-popup-overlay" id="settingsSecurityOverlay">
+  <div class="settings-popup-modal glass-panel settings-security-modal">
+    <button class="modal-close" data-close-settings-popup aria-label="Fechar">×</button>
+    <div class="modal-eyebrow">Segurança</div>
+    <h2>Senha e sessões</h2>
+    <p>Troque a senha e confira os dispositivos com sessão registrada.</p>
+    <div class="settings-form-grid">
+      <label><span>Nova senha</span><input id="newPassword" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres"></label>
+      <label><span>Confirmar nova senha</span><input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Repita a nova senha"></label>
+    </div>
+    <div class="settings-popup-actions"><button class="ghost-btn" type="button" data-clear-password>Cancelar</button><button class="gold-btn" type="button" id="savePasswordBtn">Salvar senha</button></div>
+    <div class="tag-feedback" id="securityPopupFeedback"></div>
+    <div class="settings-session-head"><strong>Sessões iniciadas</strong><span>Controle simples via Firestore</span></div>
+    <div class="settings-sessions-list" id="settingsSessionsList"></div>
+  </div>
+</div>
+
+<div class="avatar-picker-overlay" id="avatarPickerOverlay">
+  <div class="avatar-picker-modal glass-panel">
+    <button class="modal-close" id="closeAvatarPicker" aria-label="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-eyebrow">Perfil</div>
+    <h2>Escolher avatar</h2>
+    <p id="avatarPickerSubtitle">Selecione uma imagem para o seu perfil ou faça UPGRADE de seu plano para liberar todos os avatares e fundos.</p>
+    <div class="avatar-picker-grid" id="avatarPickerGrid"></div><section class="premium-bg-selector" id="premiumBgSelector"></section>
+  </div>
+</div>
+
+
+<div class="plan-manager-overlay" id="planManagerOverlay">
+  <div class="plan-manager-modal glass-panel">
+    <button class="modal-close" id="closePlanManager" aria-label="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-eyebrow">Plano</div>
+    <h2>Assinatura, Add-On e pagamentos</h2>
+
+    <div class="plan-tabs">
+      <button class="plan-tab active" data-plan-tab="subscription" type="button">Assinatura</button>
+      <button class="plan-tab" data-plan-tab="addon" type="button">Add-On</button>
+      <button class="plan-tab" data-plan-tab="payment" type="button">Pagamento</button>
+    </div>
+
+    <section class="plan-panel active" data-plan-panel="subscription">
+      <div class="plan-summary-card plan-summary-card-active">
+        <img id="planStatusActiveIcon" class="plan-status-active-icon" src="assets/icons/status-active.svg" alt="Plano ativo">
+        <span>Plano do clã</span>
+        <strong id="planModalCurrent">Trial</strong>
+        <small id="planModalStatus">Status pendente</small>
+      </div>
+      <div class="plan-info-grid">
+        <div><span>Tempo restante</span><strong id="planModalRemaining">—</strong></div>
+        <div><span>Renovação/Expiração</span><strong id="planModalRenewal">—</strong></div>
+      </div>
+      <div class="plan-benefits" id="planModalBenefits"></div>
+    </section>
+
+    <section class="plan-panel" data-plan-panel="addon">
+      <div class="addon-current-card" id="addonCurrentCard"></div>
+      <div class="addon-options">
+        <article class="addon-option plus">
+          <div class="addon-option-head"><img src="assets/icons/status-defense.svg" alt=""><strong>Add-On Plus</strong></div>
+          <p>Selo exclusivo Plus, avatares liberados e fundos simples do perfil. Novidades Plus futuras entram aqui.</p>
+          <button class="gold-btn addon-request-btn addon-price-btn" data-addon-plan="plus" type="button"><span>Solicitar Add-On Plus</span><small>Por R$ 4,99</small></button>
+        </article>
+        <article class="addon-option premium">
+          <div class="addon-option-head"><img src="assets/icons/status-premium.svg" alt=""><strong>Add-On Premium</strong></div>
+          <p>Selo Premium, todos os avatares, todos os fundos premium estilo Clash Royale e futuras novidades Premium.</p>
+          <button class="gold-btn addon-request-btn addon-price-btn" data-addon-plan="premium" type="button"><span>Solicitar Add-On Premium</span><small>Por R$ 9,99</small></button>
+        </article>
+      </div>
+      <small class="addon-disabled-note" id="addonDisabledNote" hidden>O plano Premium do clã já libera tudo para todos os membros. Add-On individual desabilitado.</small>
+      <small class="tag-feedback" id="addonRequestFeedback"></small>
+    </section>
+
+    <section class="plan-panel" data-plan-panel="payment">
+      <div class="payment-manual-card">
+        <strong>Pagamento manual</strong>
+        <p>Escolha o plano desejado e envie a solicitação ao Painel SaaS. Após confirmação manual do pagamento, o administrador libera e o sistema atualiza automaticamente.</p>
+      </div>
+      <div class="payment-upgrade-flow">
+        <label class="payment-select-label" for="paymentPlanSelect">
+          <span>1. Escolha o plano</span>
+          <select id="paymentPlanSelect" class="payment-plan-select">
+            <option value="basic">Básico — R$ 19,90</option>
+            <option value="plus">Plus — R$ 39,90</option>
+            <option value="premium">Premium — R$ 79,90</option>
+          </select>
+        </label>
+        <button id="requestPlanUpgrade" class="gold-btn payment-request-btn" type="button">2. Enviar solicitação</button>
+        <div class="payment-request-status pending" id="paymentRequestStatus" hidden>
+          <span>3. Aguarde liberação no SaaS</span>
+          <img id="paymentRequestStatusIcon" src="assets/icons/history-clock.svg" alt="Pendente">
+        </div>
+      </div>
+      <small class="tag-feedback" id="paymentRequestFeedback"></small>
+    </section>
+  </div>
+</div>
+
+
+<nav class="bottom-nav" aria-label="Menu principal">
+  <button class="nav-btn" onclick="window.location.href='war.html'"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/><circle cx="6" cy="6" r="2.15" fill="currentColor"/><circle cx="18" cy="6" r="2.15" fill="currentColor"/></svg><span>Guerra</span></button>
+  <button class="nav-btn" onclick="window.location.href='classification.html'"><svg class="nav-svg" viewBox="0 0 24 24"><rect x="3" y="12" width="5" height="8" rx="1.6" fill="currentColor" opacity=".72"/><rect x="10" y="7" width="5" height="13" rx="1.6" fill="currentColor"/><rect x="17" y="10" width="4" height="10" rx="1.6" fill="currentColor" opacity=".82"/></svg><span>Class.</span></button>
+  <button class="nav-btn" onclick="window.location.href='members.html'"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.1" fill="currentColor"/><circle cx="17" cy="10" r="2.6" fill="currentColor" opacity=".72"/><path d="M3.8 20c.4-3.4 2.8-5.3 5.2-5.3s4.8 1.9 5.2 5.3H3.8Z" fill="currentColor"/></svg><span>Membros</span></button>
+  <button class="nav-btn nav-home" onclick="window.location.href='dashboard.html'"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M3.8 11.1 12 4.8l8.2 6.3v7.6a2 2 0 0 1-2 2h-4.1v-5.4H9.9v5.4H5.8a2 2 0 0 1-2-2v-7.6Z" fill="currentColor"/></svg><span>Início</span></button>
+  <button class="nav-btn" type="button" data-construction="true"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M8 4h8v3.2a4 4 0 0 1-8 0V4Z" fill="currentColor"/><path d="M6 4h2v2.2A2.8 2.8 0 0 1 5.2 9H4V6a2 2 0 0 1 2-2Z" fill="currentColor" opacity=".72"/><path d="M18 4h-2v2.2A2.8 2.8 0 0 0 18.8 9H20V6a2 2 0 0 0-2-2Z" fill="currentColor" opacity=".72"/><rect x="10.2" y="13" width="3.6" height="3.2" rx=".7" fill="currentColor"/><rect x="7.4" y="16" width="9.2" height="2.2" rx="1" fill="currentColor"/></svg><span>Torneio</span></button>
+  <button class="nav-btn" type="button" data-construction="true"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M3.5 10.2 7.2 6l4.8 5.2L16.8 6l3.7 4.2v8.3a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5v-8.3Z" fill="currentColor"/></svg><span>Liderança</span></button>
+  <button class="nav-btn active" onclick="window.location.href='settings.html'"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.7" fill="currentColor"/><path d="M12 2.8v3M12 18.2v3M4.9 4.9 7 7M17 17l2.1 2.1M2.8 12h3M18.2 12h3M4.9 19.1 7 17M17 7l2.1-2.1" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round"/></svg><span>Config.</span></button>
+</nav>
+
+
+<div class="construction-overlay" id="constructionOverlay">
+  <div class="construction-modal glass-panel">
+    <button class="modal-close" id="closeConstruction" aria-label="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-eyebrow">Aviso</div>
+    <h2>Menu em construção…</h2>
+    <p>Essa área será liberada nas próximas etapas.</p>
+  </div>
+</div>
+
+<script id="construction-popup-js">
+function openConstructionMenu(){
+  document.body.classList.add('modal-open');
+  document.documentElement.classList.add('modal-open');
+  document.querySelector('#constructionOverlay')?.classList.add('show');
+}
+function closeConstructionMenu(){
+  document.querySelector('#constructionOverlay')?.classList.remove('show');
+  document.body.classList.remove('modal-open');
+  document.documentElement.classList.remove('modal-open');
+}
+document.querySelector('#closeConstruction')?.addEventListener('click', closeConstructionMenu);
+document.querySelector('#constructionOverlay')?.addEventListener('click', (event)=>{
+  if(event.target.id === 'constructionOverlay') closeConstructionMenu();
+});
+document.querySelectorAll('[data-construction="true"]').forEach(btn=>{
+  btn.addEventListener('click', (event)=>{
+    event.preventDefault();
+    openConstructionMenu();
+  });
+});
+</script>
+
+<script type="module" src="auth.js?v=stage4-basefix3"></script>
+<script type="module" src="auth-guard.js?v=stage4-basefix3"></script>
+<script type="module" src="i18n.js?v=stage4-basefix3"></script>
+<script type="module" src="internal-i18n.js?v=stage4-basefix3"></script>
+<script type="module" src="settings.js?v=stage4-basefix3"></script>
+<script type="module" src="auto-sync.js?v=stage4-basefix3"></script>
+<script src="zoom-lock.js?v=stage4-basefix3"></script>
+</body>
+</html>

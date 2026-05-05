@@ -1,0 +1,22 @@
+TopBRS Multi-Clã — Regras Firestore necessárias para Add-On
+
+Adicione/ajuste estas permissões para permitir que membros criem solicitações de Add-On e que o painel SaaS consiga aprovar:
+
+match /addonRequests/{requestId} {
+  allow create: if request.auth != null;
+  allow read, update, delete: if request.auth != null
+    && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+    && (
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.saasOwner == true ||
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.systemOwner == true ||
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "systemOwner"
+    );
+}
+
+match /clans/{clanTag}/members/{memberTag} {
+  allow read: if request.auth != null;
+  allow update: if request.auth != null;
+}
+
+Observação:
+Se suas regras já permitem leitura/escrita em clans/{clanTag}/{subCollection=**} para usuários logados, talvez não precise duplicar a regra de members.

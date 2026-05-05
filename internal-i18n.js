@@ -164,7 +164,7 @@ function applyStage3(root=document){
     const warGrid=root.querySelectorAll('.go-war-card .war-grid small'); if(warGrid[0]) warGrid[0].textContent=t('dashboard.attacksUsed'); if(warGrid[1]) warGrid[1].textContent=t('dashboard.fame');
     const sectionLabels=root.querySelectorAll('.dash-section-label');
     sectionLabels.forEach(label=>{
-      const inNotice=label.closest('.dash-notification-head,.dashboard-notification-list,.notifications-modal');
+      const inNotice=label.closest('.notifications-card,.dash-notification-head,.dashboard-notification-list,.notifications-modal');
       const inWar=label.closest('.go-war-card,.war-dashboard-copy');
       if(inNotice) label.textContent=t('dashboard.latestNotifications');
       else if(inWar) label.textContent=t('dashboard.currentWar');

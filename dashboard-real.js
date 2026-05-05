@@ -1,12 +1,9 @@
-import { loadClan, loadMembers, formatNumber, periodLabelNow, warWindowState, cleanTag, syncClanAndMembersFromApi } from './real-data.js';
+import { loadClan, loadMembers, formatNumber, periodLabelNow, warWindowState, cleanTag } from './real-data.js';
 import { syncWarSilently, loadCurrentWarForUi, getWarWeekContext } from './war-logic.js';
 import { isCurrentUserMember, getAvatarForMember, findCurrentMemberProfile, saveClanBadgeEverywhere } from './identity.js';
 
-const liveSyncResult = await syncClanAndMembersFromApi().catch(error=>{ console.warn('Sync inicial dashboard indisponível:', error); return null; });
-await syncWarSilently().catch(error=>console.warn('Sync guerra dashboard indisponível:', error));
-if(liveSyncResult) localStorage.setItem('topbrs_last_sync', new Date().toISOString());
-const clan = liveSyncResult?.clan || await loadClan();
-const members = (liveSyncResult?.members || await loadMembers()).filter(m=>!m.removed);
+const clan=await loadClan();
+const members=(await loadMembers()).filter(m=>!m.removed);
 const currentProfile = await findCurrentMemberProfile();
 function dashboardPlanKey(value){
  const p=String(value||'basic').toLowerCase();
@@ -25,9 +22,8 @@ if(badge){ badge.src=clan?.badge || clan?.badgeSrc || clan?.badgeUrl || clan?.ba
 
 const ctxDash=getWarWeekContext(new Date());
 const monthsDash=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const nowDash = new Date();
 const monthIdxDash=Number(String(ctxDash.monthKey||'').split('-')[1])-1;
-const warDashLabel=`${monthsDash[Number.isFinite(monthIdxDash) && monthIdxDash>=0 ? monthIdxDash : nowDash.getMonth()]} • Semana ${String(ctxDash.weekKey||`S${Math.min(4, Math.max(1, Math.ceil(nowDash.getDate()/7)))}`).replace('S','')}`;
+const warDashLabel=`${monthsDash[monthIdxDash] || 'Maio'} • Semana ${String(ctxDash.weekKey||'S1').replace('S','')}`;
 document.querySelectorAll('[data-war-month-week]').forEach(el=>el.textContent=warDashLabel);
 const war=warWindowState();
 const currentWar = await loadCurrentWarForUi();
@@ -88,6 +84,7 @@ document.querySelectorAll('.notification-row,.notification-item').forEach(row=>{
 });
 
 
+syncWarSilently().then(()=>console.log('guerra sincronizada')).catch(()=>{});
 
 
 
@@ -189,142 +186,37 @@ window.addEventListener("topbrs:open-clan-badge-picker", openClanBadgePicker);
 
 
 /* ===== Stage 4 final: notification bell popup restored ===== */
-const DASH_FALLBACK = {
-  'pt-BR': {
-    'dashboard.latestNotifications':'ÚLTIMAS NOTIFICAÇÕES',
-    'dashboard.notifications':'Notificações',
-    'dashboard.notificationsText':'Últimas mensagens do seu clã',
-    'dashboard.noNotifications':'Sem notificações no momento.',
-    'dashboard.currentWar':'Guerra atual',
-    'settings.api':'Status da conexão',
-    'dashboard.seedReady':'Sistema pronto para receber avisos do clã.',
-    'dashboard.seedWar':'Acompanhe a janela de guerra e os ataques da semana.',
-    'dashboard.seedSync':'Sincronização API/VPS conectada ao clã atual.'
-  },
-  'en-US': {
-    'dashboard.latestNotifications':'LATEST NOTIFICATIONS',
-    'dashboard.notifications':'Notifications',
-    'dashboard.notificationsText':'Latest clan messages',
-    'dashboard.noNotifications':'No notifications right now.',
-    'dashboard.currentWar':'Current war',
-    'settings.api':'Connection status',
-    'dashboard.seedReady':'System ready to receive clan notices.',
-    "dashboard.seedWar":"Track the war window and this week's attacks.",
-    'dashboard.seedSync':'API/VPS sync connected to the current clan.'
-  },
-  'es-ES': {
-    'dashboard.latestNotifications':'ÚLTIMAS NOTIFICACIONES',
-    'dashboard.notifications':'Notificaciones',
-    'dashboard.notificationsText':'Últimos mensajes de tu clan',
-    'dashboard.noNotifications':'Sin notificaciones por ahora.',
-    'dashboard.currentWar':'Guerra actual',
-    'settings.api':'Estado de conexión',
-    'dashboard.seedReady':'Sistema listo para recibir avisos del clan.',
-    'dashboard.seedWar':'Sigue la ventana de guerra y los ataques de la semana.',
-    'dashboard.seedSync':'Sincronización API/VPS conectada al clan actual.'
-  }
-};
-function dashLang(){ return window.TopBRSI18n?.getLanguage?.() || localStorage.getItem('topbrs_language') || 'pt-BR'; }
-function dashT(key, vars={}){
-  const lang = dashLang();
-  let text = window.TopBRSI18n?.t ? window.TopBRSI18n.t(key, vars) : key;
-  if(text === key) text = DASH_FALLBACK[lang]?.[key] || DASH_FALLBACK['pt-BR']?.[key] || key;
-  Object.entries(vars || {}).forEach(([k,v])=>{ text = String(text).replaceAll(`{{${k}}}`, v); });
-  return text;
-}
+function dashT(key, vars={}){ return window.TopBRSI18n?.t ? window.TopBRSI18n.t(key, vars) : key; }
 function getDashboardNotifications(){
   try{
     const raw = JSON.parse(localStorage.getItem('topbrs_notifications') || '[]');
     if(Array.isArray(raw) && raw.length) return raw;
   }catch{}
   return [
-    {type:'system', titleKey:'dashboard.notifications', messageKey:'dashboard.seedReady', createdAt:new Date().toISOString()},
-    {type:'war', titleKey:'dashboard.currentWar', messageKey:'dashboard.seedWar', createdAt:new Date().toISOString()},
-    {type:'sync', titleKey:'settings.api', messageKey:'dashboard.seedSync', createdAt:new Date().toISOString()}
+    {type:'system', titleKey:'dashboard.notifications', message:'Sistema pronto para receber avisos do clã.', createdAt:new Date().toISOString()},
+    {type:'war', titleKey:'dashboard.currentWar', message:'Acompanhe a janela de guerra e os ataques da semana.', createdAt:new Date().toISOString()},
+    {type:'sync', titleKey:'settings.api', message:'Sincronização API/VPS conectada ao clã atual.', createdAt:new Date().toISOString()}
   ];
 }
-function notificationTitle(n){
-  if(n.titleKey) return dashT(n.titleKey);
-  if(typeof n.title === 'string' && n.title.includes('.')) return dashT(n.title);
-  return n.title || dashT('dashboard.notifications');
-}
-function notificationMessage(n){
-  if(n.messageKey) return dashT(n.messageKey);
-  if(typeof n.message === 'string' && n.message.includes('.') && !n.message.includes(' ')) return dashT(n.message);
-  return n.message || n.messageOriginal || '';
-}
+function notificationTitle(n){ return n.titleKey ? dashT(n.titleKey) : (n.title || dashT('dashboard.notifications')); }
+function notificationMessage(n){ return n.message || n.messageOriginal || ''; }
 function notificationDate(n){ try{ return new Date(n.createdAt || n.date || Date.now()).toLocaleString(); }catch{return '';} }
-function notificationMarkup(n, idx){
-  return `<article class="notification-item" data-notification-item>
-    <i class="notification-dot" aria-hidden="true"></i>
-    <div class="notification-copy">
-      <div class="notification-summary">
-        <strong>${notificationTitle(n)}</strong>
-        <span>${notificationDate(n)}</span>
-      </div>
-      <p class="notification-message" data-notification-message hidden>${notificationMessage(n)}</p>
-    </div>
-    <button type="button" class="notification-toggle" data-notification-toggle aria-expanded="false" aria-controls="notification-${idx}" title="toggle">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-  </article>`;
-}
-function bindNotificationToggles(root=document){
-  root.querySelectorAll('[data-notification-toggle]').forEach(btn=>{
-    if(btn.dataset.bound === 'true') return;
-    btn.dataset.bound = 'true';
-    btn.addEventListener('click', e=>{
-      e.preventDefault();
-      const item = btn.closest('[data-notification-item]');
-      const message = item?.querySelector('[data-notification-message]');
-      if(!message) return;
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!expanded));
-      message.hidden = expanded;
-      item.classList.toggle('is-open', !expanded);
-    });
-  });
-}
-function clearLatestDashboardNotifications(){
-  const items = getDashboardNotifications();
-  const trimmed = Array.isArray(items) ? items.slice(3) : [];
-  localStorage.setItem('topbrs_notifications', JSON.stringify(trimmed));
-  renderDashboardNotifications();
+function notificationMarkup(n){
+  return `<article class="notification-item"><i class="notification-dot" aria-hidden="true"></i><div class="notification-copy"><strong>${notificationTitle(n)}</strong><span>${notificationDate(n)}</span><p>${notificationMessage(n)}</p></div></article>`;
 }
 function renderDashboardNotifications(){
   const latest = getDashboardNotifications().slice(0,3);
   const small = document.querySelector('#dashboardNotificationList');
   const modal = document.querySelector('#modalNotificationList');
-  const html = latest.length ? latest.map((n,idx)=>notificationMarkup(n, idx)).join('') : `<div class="empty-notifications">${dashT('dashboard.noNotifications')}</div>`;
+  const html = latest.length ? latest.map(notificationMarkup).join('') : `<div class="empty-notifications">${dashT('dashboard.noNotifications')}</div>`;
   if(small) small.innerHTML = html;
   if(modal) modal.innerHTML = html;
-  bindNotificationToggles(document);
   document.querySelectorAll('.notifications-modal-head .modal-eyebrow,.dash-notification-head .dash-section-label').forEach(el=>el.textContent=dashT('dashboard.latestNotifications'));
   const h2=document.querySelector('.notifications-modal-head h2'); if(h2) h2.textContent=dashT('dashboard.notifications');
   const p=document.querySelector('.notifications-modal-head p'); if(p) p.textContent=dashT('dashboard.notificationsText');
 }
 function openNotificationsPopup(){
   renderDashboardNotifications();
-  const overlay=document.querySelector('#notificationsOverlay');
-  if(!overlay) return;
-  overlay.classList.add('show');
-  overlay.setAttribute('aria-hidden','false');
-  document.body.classList.add('modal-open');
-  document.documentElement.classList.add('modal-open');
-}
-function closeNotificationsPopup(){
-  const overlay=document.querySelector('#notificationsOverlay');
-  overlay?.classList.remove('show');
-  overlay?.setAttribute('aria-hidden','true');
-  document.body.classList.remove('modal-open');
-  document.documentElement.classList.remove('modal-open');
-}
-document.querySelector('.dash-bell')?.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); openNotificationsPopup(); });
-document.querySelector('#closeNotifications')?.addEventListener('click', closeNotificationsPopup);
-document.querySelector('#notificationsOverlay')?.addEventListener('click', e=>{ if(e.target.id==='notificationsOverlay') closeNotificationsPopup(); });
-document.querySelector('#clearDashNotifications')?.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); clearLatestDashboardNotifications(); });
-window.addEventListener('topbrs:languagechange', renderDashboardNotifications);
-renderDashboardNotifications();
   const overlay=document.querySelector('#notificationsOverlay');
   if(!overlay) return;
   overlay.classList.add('show');
